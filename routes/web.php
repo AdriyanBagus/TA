@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnalisisController;
+use App\Http\Controllers\BebanKinerjaDosenController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KerjasamaPendidikanController;
@@ -11,40 +12,106 @@ use App\Http\Controllers\FormSettingController;
 use App\Models\KerjasamaPenelitian;
 use App\Models\KerjasamaPengabdianKepadaMasyarakat;
 use App\Http\Controllers\DiagramController;
+use App\Http\Controllers\EvaluasiPelaksanaanController;
+use App\Http\Controllers\KetersediaanDokumenController;
+use App\Http\Controllers\LahanPraktekController;
+use App\Http\Controllers\PelaksanaanTaController;
+use App\Http\Controllers\ProfilDosenController;
+use App\Http\Controllers\ProfilDosenTidakTetapController;
+use App\Http\Controllers\KinerjaDtpsController;
+use App\Http\Controllers\PenelitianDosenController;
+use App\Http\Controllers\PenelitianMahasiswaController;
+use App\Http\Controllers\ProfilTenagaKependidikanController;
+use App\Http\Controllers\RekognisiTenagaKependidikanController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckFormStatus;
+use App\Models\KinerjaDtps;
 
 Route::get('/', function () {
     return view('login.index');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified', 'user'])->name('dashboard');
+Route::get('/dashboard', [UserController::class, 'index'])
+    ->middleware(['auth', 'verified', 'user'])
+    ->name('dashboard');
 
-Route::get('/visimisi', [VisiMisiController::class, 'show'], function() {
-    return view('pages.visi_misi');
-})->middleware(['auth','verified', 'user', CheckFormStatus::class . ':visi misi'])->name('pages.visi_misi');
-Route::post('/visimisi', [VisiMisiController::class, 'add'])->name('pages.visi_misi.add');
-Route::put('/visimisi/{id}', [VisiMisiController::class, 'update'])->name('pages.visi_misi.update');
+Route::middleware(['auth','verified','user'])->group(function () {
+    Route::get('/visimisi', [VisiMisiController::class, 'show'])->name('pages.visi_misi');
+    Route::post('/visimisi', [VisiMisiController::class, 'add'])->name('pages.visi_misi.add');
+    Route::put('/visimisi/{id}', [VisiMisiController::class, 'update'])->name('pages.visi_misi.update');
 
-Route::get('/kerjasamapendidikan', [KerjasamaPendidikanController::class, 'show'], function() {
-    return view('pages.kerjasama_pendidikan');
-})->middleware(['auth','verified','user', CheckFormStatus::class . ':kerjasama pendidikan'])->name('pages.kerjasama_pendidikan');
-Route::post('/kerjasamapendidikan', [KerjasamaPendidikanController::class, 'add'])->name('pages.kerjasama_pendidikan.add');
-Route::put('/kerjasamapendidikan/{id}', [KerjasamaPendidikanController::class, 'update'])->name('pages.kerjasama_pendidikan.update');
+    Route::get('/kerjasamapendidikan', [KerjasamaPendidikanController::class, 'show'])->name('pages.kerjasama_pendidikan');
+    Route::post('/kerjasamapendidikan', [KerjasamaPendidikanController::class, 'add'])->name('pages.kerjasama_pendidikan.add');
+    Route::put('/kerjasamapendidikan/{id}', [KerjasamaPendidikanController::class, 'update'])->name('pages.kerjasama_pendidikan.update');
 
-Route::get('/kerjasamapenelitian', [KerjasamaPenelitianController::class, 'show'], function() {
-    return view('pages.kerjasama_penelitian');
-})->middleware(['auth','verified','user'])->name('pages.kerjasama_penelitian');
-Route::post('/kerjasamapenelitian', [KerjasamaPenelitianController::class, 'add'])->name('pages.kerjasama_penelitian.add');
-Route::put('/kerjasamapenelitian/{id}', [KerjasamaPenelitianController::class, 'update'])->name('pages.kerjasama_penelitian.update');
+    Route::get('/kerjasamapenelitian', [KerjasamaPenelitianController::class, 'show'])->name('pages.kerjasama_penelitian');
+    Route::post('/kerjasamapenelitian', [KerjasamaPenelitianController::class, 'add'])->name('pages.kerjasama_penelitian.add');
+    Route::put('/kerjasamapenelitian/{id}', [KerjasamaPenelitianController::class, 'update'])->name('pages.kerjasama_penelitian.update');
 
-Route::get('/kerjasamapengabiankepadamasyarakat', [KerjasamaPengabdianKepadaMasyarakatController::class, 'show'], function() {
-    return view('pages.kerjasama_pengabdian_kepada_masyarakat');
-})->middleware(['auth','verified','user'])->name('pages.kerjasama_pengabdian_kepada_masyarakat');
-Route::post('/kerjasamapengabiankepadamasyarakat', [KerjasamaPengabdianKepadaMasyarakatController::class, 'add'])->name('pages.kerjasama_pengabdian_kepada_masyarakat.add');
-Route::put('/kerjasamapengabiankepadamasyarakat/{id}', [KerjasamaPengabdianKepadaMasyarakatController::class, 'update'])->name('pages.kerjasama_pengabdian_kepada_masyarakat.update');
+    Route::get('/kerjasamapengabiankepadamasyarakat', [KerjasamaPengabdianKepadaMasyarakatController::class, 'show'])->name('pages.kerjasama_pengabdian_kepada_masyarakat');
+    Route::post('/kerjasamapengabiankepadamasyarakat', [KerjasamaPengabdianKepadaMasyarakatController::class, 'add'])->name('pages.kerjasama_pengabdian_kepada_masyarakat.add');
+    Route::put('/kerjasamapengabiankepadamasyarakat/{id}', [KerjasamaPengabdianKepadaMasyarakatController::class, 'update'])->name('pages.kerjasama_pengabdian_kepada_masyarakat.update');
+
+    Route::get('/ketersediaandokumen', [KetersediaanDokumenController::class, 'show'])->name('pages.ketersediaan_dokumen');
+    Route::post('/ketersediaandokumen', [KetersediaanDokumenController::class, 'add'])->name('pages.ketersediaan_dokumen.add');
+    Route::put('/ketersediaandokumen/{id}', [KetersediaanDokumenController::class, 'update'])->name('pages.ketersediaan_dokumen.update');
+
+    Route::get('/profildosen', [ProfilDosenController::class, 'show'])->name('pages.profil_dosen');
+    Route::post('/profildosen', [ProfilDosenController::class, 'add'])->name('pages.profil_dosen.add');
+    Route::put('/profildosen/{id}', [ProfilDosenController::class, 'update'])->name('pages.profil_dosen.update');
+    Route::delete('/profildosen/{id}', [ProfilDosenController::class, 'destroy'])->name('pages.profil_dosen.destroy');
+
+    Route::get('/evaluasipelaksanaan', [EvaluasiPelaksanaanController::class, 'show'])->name('pages.evaluasi_pelaksanaan');
+    Route::post('/evaluasipelaksanaan', [EvaluasiPelaksanaanController::class, 'add'])->name('pages.evaluasi_pelaksanaan.add');
+    Route::put('/evaluasipelaksanaan/{id}', [EvaluasiPelaksanaanController::class, 'update'])->name('pages.evaluasi_pelaksanaan.update');
+    Route::delete('/evaluasipelaksanaan/{id}', [EvaluasiPelaksanaanController::class, 'destroy'])->name('pages.evaluasi_pelaksanaan.destroy');
+
+    Route::get('/bebankinerjadosen', [BebanKinerjaDosenController::class, 'show'])->name('pages.beban_kinerja_dosen');
+    Route::post('/bebankinerjadosen', [BebanKinerjaDosenController::class, 'add'])->name('pages.beban_kinerja_dosen.add');
+    Route::put('/bebankinerjadosen/{id}', [BebanKinerjaDosenController::class, 'update'])->name('pages.beban_kinerja_dosen.update');
+    Route::delete('/bebankinerjadosen/{id}', [BebanKinerjaDosenController::class, 'destroy'])->name('pages.beban_kinerja_dosen.destroy');
+
+    Route::get('/profildosentidaktetap', [ProfilDosenTidakTetapController::class, 'show'])->name('pages.profil_dosen_tidak_tetap');
+    Route::post('/profildosentidaktetap', [ProfilDosenTidakTetapController::class, 'add'])->name('pages.profil_dosen_tidak_tetap.add');
+    Route::put('/profildosentidaktetap/{id}', [ProfilDosenTidakTetapController::class, 'update'])->name('pages.profil_dosen_tidak_tetap.update');
+    Route::delete('/profildosentidaktetap/{id}', [ProfilDosenTidakTetapController::class, 'destroy'])->name('pages.profil_dosen_tidak_tetap.destroy');
+
+    Route::get('/pelaksanaanta', [PelaksanaanTaController::class, 'show'])->name('pages.pelaksanaan_ta');
+    Route::post('/pelaksanaanta', [PelaksanaanTaController::class, 'add'])->name('pages.pelaksanaan_ta.add');
+    Route::put('/pelaksanaanta/{id}', [PelaksanaanTaController::class, 'update'])->name('pages.pelaksanaan_ta.update');
+    Route::delete('/pelaksanaanta/{id}', [PelaksanaanTaController::class, 'destroy'])->name('pages.pelaksanaan_ta.destroy');
+
+    Route::get('/lahanpraktek', [LahanPraktekController::class, 'show'])->name('pages.lahan_praktek');
+    Route::post('/lahanpraktek', [LahanPraktekController::class, 'add'])->name('pages.lahan_praktek.add');
+    Route::put('/lahanpraktek/{id}', [LahanPraktekController::class, 'update'])->name('pages.lahan_praktek.update');
+    Route::delete('/lahanpraktek/{id}', [LahanPraktekController::class, 'destroy'])->name('pages.lahan_praktek.destroy');
+
+    Route::get('/kinerjadtps', [KinerjaDtpsController::class, 'show'])->name('pages.kinerja_dtps');
+    Route::post('/kinerjadtps', [KinerjaDtpsController::class, 'add'])->name('pages.kinerja_dtps.add');
+    Route::put('/kinerjadtps/{id}', [KinerjaDtpsController::class, 'update'])->name('pages.kinerja_dtps.update');
+    Route::delete('/kinerjadtps/{id}', [KinerjaDtpsController::class, 'destroy'])->name('pages.kinerja_dtps.destroy');
+
+    Route::get('/profiltenagakependidikan', [ProfilTenagaKependidikanController::class, 'show'])->name('pages.profil_tenaga_kependidikan');
+    Route::post('/profiltenagakependidikan', [ProfilTenagaKependidikanController::class, 'add'])->name('pages.profil_tenaga_kependidikan.add');
+    Route::put('/profiltenagakependidikan/{id}', [ProfilTenagaKependidikanController::class, 'update'])->name('pages.profil_tenaga_kependidikan.update');
+    Route::delete('/profiltenagakependidikan/{id}', [ProfilTenagaKependidikanController::class, 'destroy'])->name('pages.profil_tenaga_kependidikan.destroy');
+
+    Route::get('/rekognisitenagakependidikan', [RekognisiTenagaKependidikanController::class, 'show'])->name('pages.rekognisi_tenaga_kependidikan');
+    Route::post('/rekognisitenagakependidikan', [RekognisiTenagaKependidikanController::class, 'add'])->name('pages.rekognisi_tenaga_kependidikan.add');
+    Route::put('/rekognisitenagakependidikan/{id}', [RekognisiTenagaKependidikanController::class, 'update'])->name('pages.rekognisi_tenaga_kependidikan.update');
+    Route::delete('/rekognisitenagakependidikan/{id}', [RekognisiTenagaKependidikanController::class, 'destroy'])->name('pages.rekognisi_tenaga_kependidikan.destroy');
+
+    Route::get('/penelitiandosen', [PenelitianDosenController::class, 'show'])->name('pages.penelitian_dosen');
+    Route::post('/penelitiandosen', [PenelitianDosenController::class, 'add'])->name('pages.penelitian_dosen.add');
+    Route::put('/penelitiandosen/{id}', [PenelitianDosenController::class, 'update'])->name('pages.penelitian_dosen.update');
+    Route::delete('/penelitiandosen/{id}', [PenelitianDosenController::class, 'destroy'])->name('pages.penelitian_dosen.destroy');
+
+    Route::get('/penelitianmahasiswa', [PenelitianMahasiswaController::class, 'show'])->name('pages.penelitian_mahasiswa');
+    Route::post('/penelitianmahasiswa', [PenelitianMahasiswaController::class, 'add'])->name('pages.penelitian_mahasiswa.add');
+    Route::put('/penelitianmahasiswa/{id}', [PenelitianMahasiswaController::class, 'update'])->name('pages.penelitian_mahasiswa.update');
+    Route::delete('/penelitianmahasiswa/{id}', [PenelitianMahasiswaController::class, 'destroy'])->name('pages.penelitian_mahasiswa.destroy');
+});
 
 Route::get('/diagram', [DiagramController::class, 'show'], function() {
     return view('pages.diagram_view');
@@ -87,5 +154,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/kerjasama-pendidikan', [AnalisisController::class, 'kerjasama_pendidikan'])->name('pendidikan');
     Route::get('/kerjasama-penelitian', [AnalisisController::class, 'kerjasama_penelitian'])->name('penelitian');
     Route::get('/kerjasama-pengabdian', [AnalisisController::class, 'kerjasama_pengabdian'])->name('pengabdian');
+    Route::get('/ketersediaan-dokumen', [AnalisisController::class, 'ketersediaan_dokumen'])->name('dokumen');
     
 });
