@@ -19,7 +19,9 @@
                             <th class="px-2 py-2 border">No</th>
                             <th class="px-4 py-2 border">Nama</th>
                             <th class="px-4 py-2 border">NIDN</th>
-                            <th class="px-4 py-2 border">Pengajaran</th>
+                            <th class="px-4 py-2 border">Prodi Sendiri</th>
+                            <th class="px-4 py-2 border">Prodi Lain</th>
+                            <th class="px-4 py-2 border">Prodi diluar PT</th>
                             <th class="px-4 py-2 border">Penelitian</th>
                             <th class="px-4 py-2 border">PKM</th>
                             <th class="px-4 py-2 border">Penunjang</th>
@@ -34,16 +36,18 @@
                                 <td class="px-1 py-2 border">{{ $loop->iteration }}</td>
                                 <td class="px-4 py-2 border">{{ $bebankinerjadosen->nama }}</td>
                                 <td class="px-4 py-2 border">{{ $bebankinerjadosen->nidn }}</td>
-                                <td class="px-4 py-2 border">{{ $bebankinerjadosen->pengajaran }}</td>
-                                <td class="px-4 py-2 border">{{ $bebankinerjadosen->penelitian }}</td>
-                                <td class="px-4 py-2 border">{{ $bebankinerjadosen->pkm }}</td>
-                                <td class="px-4 py-2 border">{{ $bebankinerjadosen->penunjang }}</td>
-                                <td class="px-4 py-2 border">{{ $bebankinerjadosen->jumlah_sks }}</td>
-                                <td class="px-4 py-2 border">{{ $bebankinerjadosen->rata_rata_sks }}</td>
+                                <td class="px-4 py-2 border">{{ rtrim(rtrim(number_format($bebankinerjadosen->ps_sendiri, 4, '.', ''), '0'), '.') }}</td>
+                                <td class="px-4 py-2 border">{{ rtrim(rtrim(number_format($bebankinerjadosen->ps_lain, 4, '.', ''), '0'), '.') }}</td>
+                                <td class="px-4 py-2 border">{{ rtrim(rtrim(number_format($bebankinerjadosen->ps_diluar_pt, 4, '.', ''), '0'), '.') }}</td>
+                                <td class="px-4 py-2 border">{{ rtrim(rtrim(number_format($bebankinerjadosen->penelitian, 4, '.', ''), '0'), '.') }}</td>
+                                <td class="px-4 py-2 border">{{ rtrim(rtrim(number_format($bebankinerjadosen->pkm, 4, '.', ''), '0'), '.') }}</td>
+                                <td class="px-4 py-2 border">{{ rtrim(rtrim(number_format($bebankinerjadosen->penunjang, 4, '.', ''), '0'), '.') }}</td>
+                                <td class="px-4 py-2 border">{{ rtrim(rtrim(number_format($bebankinerjadosen->jumlah_sks, 4, '.', ''), '0'), '.') }}</td>
+                                <td class="px-4 py-2 border">{{ rtrim(rtrim(number_format($bebankinerjadosen->rata_rata_sks, 4, '.', ''), '0'), '.') }}</td>
                                 <td class="px-1 py-3 border flex flex-col items-center space-y-2">
                                     <!-- Tombol Edit -->
                                     <button 
-                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded" data-bs-toggle="modal" data-bs-target="#exampleModal{{ $evaluasipelaksanaan->id }}">
+                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded" data-bs-toggle="modal" data-bs-target="#exampleModal{{ $bebankinerjadosen->id }}">
                                         Edit
                                 </button>
 
@@ -81,13 +85,17 @@
                                                     <label for="nidn" class="form-label">NIDN:</label>
                                                     <input type="text" class="form-control" id="nidn" name="nidn" value="{{ $bebankinerjadosen->nidn }}" required>
                                                 </div>
-                                                <div class="form-group">
-                                                    <label>Pengajaran</label>
-                                                    <select class="form-control" name="pengajaran" value="{{ $bebankinerjadosen->pengajaran }}">
-                                                      <option value="Program studi sendiri" {{ old('pengajaran') == 'Program studi sendiri' ? 'selected' : '' }}>Program studi sendiri</option>
-                                                      <option value="Program studi lain" {{ old('pengajaran') == 'Program studi lain' ? 'selected' : '' }}>Program studi lain</option>
-                                                      <option value="Program studi diluar PT" {{ old('pengajaran') == 'Program studi diluar PT' ? 'selected' : '' }}>Program studi diluar PT</option>
-                                                    </select>
+                                                <div class="mb-3">
+                                                    <label for="ps_sendiri" class="form-label">Prodi Sendiri:</label>
+                                                    <input type="text" class="form-control" id="ps_sendiri" name="ps_sendiri" value="{{ $bebankinerjadosen->ps_sendiri }}" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="ps_lain" class="form-label">Prodi Lain:</label>
+                                                    <input type="text" class="form-control" id="ps_lain" name="ps_lain" value="{{ $bebankinerjadosen->ps_lain }}" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="ps_diluar_pt" class="form-label">Prodi diluar PT:</label>
+                                                    <input type="text" class="form-control" id="ps_diluar_pt" name="ps_diluar_pt" value="{{ $bebankinerjadosen->ps_diluar_pt }}" required>
                                                 </div>
                                                 <div class="mb-3">
                                                   <label for="penelitian" class="form-label">Penelitian:</label>
@@ -111,7 +119,7 @@
                                                 </div>
                                               <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                <button type="submit" class="btn btn-primary">Tambah</button>
+                                                <button type="submit" class="btn btn-primary">Update</button>
                                             </div>
                                             </form>
                                         </div>
@@ -136,39 +144,43 @@
 
                                     <div class="mb-3">
                                         <label for="nama" class="form-label">Nama:</label>
-                                        <input type="text" class="form-control" id="nama" name="nama" value="{{ old('nama') }}" required>
+                                        <input type="text" class="form-control" id="nama" name="nama" value="{{ session('nama') }}" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="nidn" class="form-label">NIDN:</label>
-                                        <input type="text" class="form-control" id="nidn" name="nidn" value="{{ old('nidn') }}" required>
+                                        <input type="text" class="form-control" id="nidn" name="nidn" value="{{ session('nidn') }}" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="pengajaran" class="form-label">Pengajaran:</label>
-                                        <select class="form-control" id="pengajaran" name="pengajaran">
-                                            <option value="Program studi sendiri" {{ old('pengajaran') == 'Program studi sendiri' ? 'selected' : '' }}>Program studi sendiri</option>
-                                            <option value="Program studi lain" {{ old('pengajaran') == 'Program studi lain' ? 'selected' : '' }}>Program studi lain</option>
-                                            <option value="Program studi diluar PT" {{ old('pengajaran') == 'Program studi diluar PT' ? 'selected' : '' }}>Program studi diluar PT</option>
-                                        </select>
+                                        <label for="ps_sendiri" class="form-label">Prodi Sendiri:</label>
+                                        <input type="text" class="form-control" id="ps_sendiri" name="ps_sendiri" value="{{ session('ps_sendiri') }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="ps_lain" class="form-label">Prodi Lain:</label>
+                                        <input type="text" class="form-control" id="ps_lain" name="ps_lain" value="{{ session('ps_lain') }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="ps_diluar_pt" class="form-label">Prodi diluar PT:</label>
+                                        <input type="text" class="form-control" id="ps_diluar_pt" name="ps_diluar_pt" value="{{ session('ps_diluar_pt') }}" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="penelitian" class="form-label">Penelitian:</label>
-                                        <input type="text" class="form-control" id="penelitian" name="penelitian" value="{{ old('penelitian') }}" required>
+                                        <input type="text" class="form-control" id="penelitian" name="penelitian" value="{{ session('penelitian') }}" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="pkm" class="form-label">PKM:</label>
-                                        <input type="text" class="form-control" id="pkm" name="pkm" value="{{ old('pkm') }}" required>
+                                        <input type="text" class="form-control" id="pkm" name="pkm" value="{{ session('pkm') }}" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="penunjang" class="form-label">Penunjang:</label>
-                                        <input type="text" class="form-control" id="penunjang" name="penunjang" value="{{ old('penunjang') }}" required>
+                                        <input type="text" class="form-control" id="penunjang" name="penunjang" value="{{ session('penunjang') }}" >
                                     </div>
                                     <div class="mb-3">
                                         <label for="jumlah_sks" class="form-label">Jumlah SKS:</label>
-                                        <input type="text" class="form-control" id="jumlah_sks" name="jumlah_sks" value="{{ old('jumlah_sks') }}" required>
+                                        <input type="text" class="form-control" id="jumlah_sks" name="jumlah_sks" value="{{ session('jumlah_sks') }}" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="rata_rata_sks" class="form-label">Rata Rata SKS per Semester:</label>
-                                        <input type="text" class="form-control" id="rata_rata_sks" name="rata_rata_sks" value="{{ old('rata_rata_sks') }}" required>
+                                        <input type="text" class="form-control" id="rata_rata_sks" name="rata_rata_sks" value="{{ session('rata_rata_sks') }}">
                                     </div>
                                   <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

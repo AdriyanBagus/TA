@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="card-header pb-0 d-flex justify-content-between align-items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Profil Dosen') }}
+                {{ __('Profil Dosen Tidak Tetap') }}
             </h2>
             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
                 Tambah
@@ -70,32 +70,32 @@
                                                 <input type="text" hidden name="id" value="{{ $profildosentidaktetap->id }}">
             
                                                 <div class="mb-3">
-                                                    <label for="nama" class="form-label">Visi:</label>
+                                                    <label for="nama" class="form-label">Nama:</label>
                                                     <input type="text" class="form-control" id="nama" name="nama" value="{{ $profildosentidaktetap->nama }}" required>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="asal_instansi" class="form-label">Asal Instansi:</label>
-                                                    <input type="text" class="form-control" id="asal_instansi" name="asal_instansi" value="{{ $profildosentidaktetap->asal_instansi }}" required>
+                                                    <input type="text" class="form-control" id="asal_instansi" name="asal_instansi" value="{{ $profildosentidaktetap->asal_instansi }}">
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="kualifikasi_pendidikan" class="form-label">Kualifikasi Pendidikan:</label>
-                                                    <input type="text" class="form-control" id="kualifikasi_pendidikan" name="kualifikasi_pendidikan" value="{{ $profildosentidaktetap->kualifikasi_pendidikan }}" required>
+                                                    <input type="text" class="form-control" id="kualifikasi_pendidikan" name="kualifikasi_pendidikan" value="{{ $profildosentidaktetap->kualifikasi_pendidikan }}">
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="sertifikasi_pendidik_profesional" class="form-label">Sertifikasi Profesional:</label>
-                                                    <input type="text" class="form-control" id="sertifikasi_pendidik_profesional" name="sertifikasi_pendidik_profesional" value="{{ $profildosentidaktetap->sertifikasi_pendidik_profesional }}" required>
+                                                    <input type="text" class="form-control" id="sertifikasi_pendidik_profesional" name="sertifikasi_pendidik_profesional" value="{{ $profildosentidaktetap->sertifikasi_pendidik_profesional }}">
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="sertifikat_kompetensi" class="form-label">Sertifikat Kompetensi:</label>
-                                                    <input type="text" class="form-control" id="sertifikat_kompetensi" name="sertifikat_kompetensi" value="{{ $profildosentidaktetap->sertifikat_kompetensi }}" required>
+                                                    <input type="text" class="form-control" id="sertifikat_kompetensi" name="sertifikat_kompetensi" value="{{ $profildosentidaktetap->sertifikat_kompetensi }}">
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="bidang_keahlian" class="form-label">Bidang Keahlian:</label>
-                                                    <input type="text" class="form-control" id="bidang_keahlian" name="bidang_keahlian" value="{{ $profildosentidaktetap->bidang_keahlian }}" required>
+                                                    <input type="text" class="form-control" id="bidang_keahlian" name="bidang_keahlian" value="{{ $profildosentidaktetap->bidang_keahlian }}">
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="kesesuaian_bidang_ilmu_prodi" class="form-label">Bidang Ilmu Prodi:</label>
-                                                    <input type="text" class="form-control" id="kesesuaian_bidang_ilmu_prodi" name="kesesuaian_bidang_ilmu_prodi" value="{{ $profildosentidaktetap->kesesuaian_bidang_ilmu_prodi }}" required>
+                                                    <input type="text" class="form-control" id="kesesuaian_bidang_ilmu_prodi" name="kesesuaian_bidang_ilmu_prodi" value="{{ $profildosentidaktetap->kesesuaian_bidang_ilmu_prodi }}">
                                                 </div>
                                               <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -128,27 +128,27 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="asal_instansi" class="form-label">Asal Instansi:</label>
-                                        <input type="text" class="form-control" id="asal_instansi" name="asal_instansi" value="{{ session('asal_instansi') }}" required>
+                                        <input type="text" class="form-control" id="asal_instansi" name="asal_instansi" value="{{ session('asal_instansi') }}">
                                     </div>
                                     <div class="mb-3">
                                         <label for="kualifikasi_pendidikan" class="form-label">Kualifikasi Pendidikan:</label>
-                                        <input type="text" class="form-control" id="kualifikasi_pendidikan" name="kualifikasi_pendidikan" value="{{ session('kualifikasi_pendidikan') }}" required>
+                                        <input type="text" class="form-control" id="kualifikasi_pendidikan" name="kualifikasi_pendidikan" value="{{ session('kualifikasi_pendidikan') }}">
                                     </div>
                                     <div class="mb-3">
                                         <label for="sertifikasi_pendidik_profesional" class="form-label">Sertifikasi Profesional:</label>
-                                        <input type="text" class="form-control" id="sertifikasi_pendidik_profesional" name="sertifikasi_pendidik_profesional" value="{{ session('sertifikasi_pendidik_profesional') }}" required>
+                                        <input type="text" class="form-control" id="sertifikasi_pendidik_profesional" name="sertifikasi_pendidik_profesional" value="{{ session('sertifikasi_pendidik_profesional') }}">
                                     </div>
                                     <div class="mb-3">
                                         <label for="sertifikat_kompetensi" class="form-label">Sertifikat Kompetensi:</label>
-                                        <input type="text" class="form-control" id="sertifikat_kompetensi" name="sertifikat_kompetensi" value="{{ session('sertifikat_kompetensi') }}" required>
+                                        <input type="text" class="form-control" id="sertifikat_kompetensi" name="sertifikat_kompetensi" value="{{ session('sertifikat_kompetensi') }}">
                                     </div>
                                     <div class="mb-3">
                                         <label for="bidang_keahlian" class="form-label">Bidang Keahlian:</label>
-                                        <input type="text" class="form-control" id="bidang_keahlian" name="bidang_keahlian" value="{{ session('bidang_keahlian') }}" required>
+                                        <input type="text" class="form-control" id="bidang_keahlian" name="bidang_keahlian" value="{{ session('bidang_keahlian') }}">
                                     </div>
                                     <div class="mb-3">
                                         <label for="kesesuaian_bidang_ilmu_prodi" class="form-label">Bidang Ilmu Prodi:</label>
-                                        <input type="text" class="form-control" id="kesesuaian_bidang_ilmu_prodi" name="kesesuaian_bidang_ilmu_prodi" value="{{ session('kesesuaian_bidang_ilmu_prodi') }}" required>
+                                        <input type="text" class="form-control" id="kesesuaian_bidang_ilmu_prodi" name="kesesuaian_bidang_ilmu_prodi" value="{{ session('kesesuaian_bidang_ilmu_prodi') }}">
                                     </div>
                                   <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

@@ -43,22 +43,15 @@ class EvaluasiPelaksanaanController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'nama' => 'required|string|max:255',
-            'kualifikasi_pendidikan' => 'required|string|max:255',
-            'sertifikasi_pendidik_profesional' => 'nullable|string|max:255',
-            'bidang_keahlian' => 'required|string|max:255',
-            'bidang_ilmu_prodi' => 'required|string|max:255',
-        ]);
+        $evaluasi_pelaksanaan = EvaluasiPelaksanaan::findOrFail($id);
 
-        $evaluasi_pelaksanaan = EvaluasiPelaksanaan::find($id);
         $evaluasi_pelaksanaan->nomor_ptk = $request->nomor_ptk;
         $evaluasi_pelaksanaan->kategori_ptk = $request->kategori_ptk;
         $evaluasi_pelaksanaan->rencana_penyelesaian = $request->rencana_penyelesaian;
         $evaluasi_pelaksanaan->realisasi_perbaikan = $request->realisasi_perbaikan;
         $evaluasi_pelaksanaan->penanggungjawab_perbaikan = $request->penanggungjawab_perbaikan;
         $evaluasi_pelaksanaan->user_id = Auth::user()->id;
+
         $evaluasi_pelaksanaan->save();
 
         return redirect()->back()->with('success', 'Data Profil Dosen berhasil diubah!');

@@ -8,11 +8,13 @@ use Illuminate\Support\Facades\Auth;
 
 class BebanKinerjaDosenController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         return view('pages.beban_kinerja_dosen');
     }
 
-    public function show(){
+    public function show()
+    {
         if (Auth::user()->id) {
             $beban_kinerja_dosen = BebanKinerjaDosen::where('user_id', Auth::user()->id)->get();
         }
@@ -21,22 +23,34 @@ class BebanKinerjaDosenController extends Controller
 
     public function add(Request $request)
     {
-        $request->validate([
-            'nama' => 'required',
-            'nidn' => 'required',
-            'pengajaran' => 'required',
-            'penelitian' => 'required',
-            'pkm' => 'required',
-            'penunjang' => 'required',
-            'jumlah_sks' => 'required',
-            'rata_rata_sks' => 'required',
-        ]);
+        $numericFields = [
+            'ps_sendiri',
+            'ps_lain',
+            'ps_diluar_pt',
+            'pengajaran',
+            'penelitian',
+            'pkm',
+            'penunjang',
+            'jumlah_sks',
+            'rata_rata_sks'
+        ];
+        foreach ($numericFields as $field) {
+            $value = $request->input($field);
+
+            // Ganti koma jadi titik
+            $value = str_replace(',', '.', $value);
+
+            // Kosong => null
+            $request[$field] = $value === '' ? null : $value;
+        }
 
         BebanKinerjaDosen::create([
             'user_id' => Auth::user()->id,
             'nama' => $request->nama,
             'nidn' => $request->nidn,
-            'pengajaran' => $request->pengajaran,
+            'ps_sendiri' => $request->ps_sendiri,
+            'ps_lain' => $request->ps_lain,
+            'ps_diluar_pt' => $request->ps_diluar_pt,
             'penelitian' => $request->penelitian,
             'pkm' => $request->pkm,
             'penunjang' => $request->penunjang,
@@ -63,7 +77,9 @@ class BebanKinerjaDosenController extends Controller
         $beban_kinerja_dosen = BebanKinerjaDosen::find($id);
         $beban_kinerja_dosen->nama = $request->nama;
         $beban_kinerja_dosen->nidn = $request->nidn;
-        $beban_kinerja_dosen->pengajaran = $request->pengajaran;
+        $beban_kinerja_dosen->ps_sendiri = $request->ps_sendiri;
+        $beban_kinerja_dosen->ps_lain = $request->ps_lain;
+        $beban_kinerja_dosen->ps_diluar_pt = $request->ps_diluar_pt;
         $beban_kinerja_dosen->penelitian = $request->penelitian;
         $beban_kinerja_dosen->pkm = $request->pkm;
         $beban_kinerja_dosen->penunjang = $request->penunjang;

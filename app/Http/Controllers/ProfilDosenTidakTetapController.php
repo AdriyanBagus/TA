@@ -21,17 +21,6 @@ class ProfilDosenTidakTetapController extends Controller
 
     public function add(Request $request)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'nama' => 'required|string|max:255',
-            'asal_instansi' => 'required|string|max:255',
-            'kualifikasi_pendidikan' => 'required|string|max:255',
-            'sertifikasi_pendidik_profesional' => 'nullable|string|max:255',
-            'sertifikat_kompetensi' => 'nullable|string|max:255',
-            'bidang_keahlian' => 'required|string|max:255',
-            'kesesuaian_bidang_ilmu_prodi' => 'required|string|max:255',
-        ]);
-
         ProfilDosenTidakTetap::create([
             'user_id' => Auth::user()->id,
             'nama' => $request->nama,
@@ -48,17 +37,6 @@ class ProfilDosenTidakTetapController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'nama' => 'required|string|max:255',
-            'asal_instansi' => 'required|string|max:255',
-            'kualifikasi_pendidikan' => 'required|string|max:255',
-            'sertifikasi_pendidik_profesional' => 'nullable|string|max:255',
-            'sertifikat_kompetensi' => 'nullable|string|max:255',
-            'bidang_keahlian' => 'required|string|max:255',
-            'kesesuaian_bidang_ilmu_prodi' => 'required|string|max:255',
-        ]);
-
         $profil_dosen_tidak_tetap = ProfilDosenTidakTetap::find($id);
         $profil_dosen_tidak_tetap->nama = $request->nama;
         $profil_dosen_tidak_tetap->asal_instansi = $request->asal_instansi;

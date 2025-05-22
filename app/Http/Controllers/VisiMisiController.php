@@ -19,7 +19,9 @@ class VisiMisiController extends Controller
             return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
         }
     
-        $visi_misi = VisiMisi::where('user_id', Auth::user()->id)->get();
+        $visi_misi = VisiMisi::where('user_id', Auth::user()->id)
+                            ->whereYear('created_at', date('Y'))
+                            ->get();
     
         return view('pages.visi_misi', compact('visi_misi'));
     }
@@ -58,5 +60,13 @@ class VisiMisiController extends Controller
         $visi_misi->save();
 
         return redirect()->back()->with('success', 'Data Visi & Misi berhasil diubah!');
+    }
+
+    public function destroy($id)
+    {
+        $visi_misi = VisiMisi::find($id);
+        $visi_misi->delete();
+
+        return redirect()->back()->with('success', 'Data berhasil dihapus!');
     }
 }

@@ -21,15 +21,6 @@ class ProfilDosenController extends Controller
 
     public function add(Request $request)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'nama' => 'required|string|max:255',
-            'kualifikasi_pendidikan' => 'required|string|max:255',
-            'sertifikasi_pendidik_profesional' => 'nullable|string|max:255',
-            'bidang_keahlian' => 'required|string|max:255',
-            'bidang_ilmu_prodi' => 'required|string|max:255',
-        ]);
-
         ProfilDosen::create([
             'user_id' => Auth::user()->id,
             'nama' => $request->nama,
@@ -45,15 +36,6 @@ class ProfilDosenController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'nama' => 'required|string|max:255',
-            'kualifikasi_pendidikan' => 'required|string|max:255',
-            'sertifikasi_pendidik_profesional' => 'nullable|string|max:255',
-            'bidang_keahlian' => 'required|string|max:255',
-            'bidang_ilmu_prodi' => 'required|string|max:255',
-        ]);
-
         $profil_dosen = ProfilDosen::find($id);
         $profil_dosen->nama = $request->nama;
         $profil_dosen->nidn = $request->nidn;

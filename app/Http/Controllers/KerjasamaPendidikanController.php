@@ -23,11 +23,6 @@ class KerjasamaPendidikanController extends Controller
 
     public function add(Request $request)
     {
-        // $request->validate([
-        //     '' => 'required|string',
-        //     'misi' => 'required|string',
-        //     'deskripsi' => 'required|string',
-        // ]);
 
         KerjasamaPendidikan::create([
             'user_id' => Auth::user()->id,
@@ -44,11 +39,6 @@ class KerjasamaPendidikanController extends Controller
 
     public function update(Request $request, $id)
     {
-        // $request->validate([
-        //     'visi' => 'required|string',
-        //     'misi' => 'required|string',
-        //     'deskripsi' => 'required|string',
-        // ]);
 
         $kerjasama_pendidikan = KerjasamaPendidikan::find($id);
         $kerjasama_pendidikan->lembaga_mitra = $request->lembaga_mitra;

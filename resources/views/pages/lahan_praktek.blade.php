@@ -27,7 +27,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($lahan_praktek as $lahan_praktek)
+                        @foreach($lahan_praktek as $lahanpraktek)
                             <tr>
                                 <td class="px-1 py-2 border">{{ $loop->iteration }}</td>
                                 <td class="px-4 py-2 border">{{ $lahanpraktek->lahan_praktek }}</td>

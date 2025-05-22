@@ -16,32 +16,32 @@
                 <table class="min-w-full bg-white border border-gray-500">
                     <thead>
                         <tr>
-                            <th class="px-2 py-2 border">No</th>
-                            <th class="px-4 py-2 border">Visi</th>
-                            <th class="px-4 py-2 border">Misi</th>
-                            <th class="px-4 py-2 border">Deskripsi</th>
-                            <th class="px-4 py-2 border">action</th>
+                            <th class="px-2 py-2 border text-sm">No</th>
+                            <th class="px-4 py-2 border text-sm">Visi</th>
+                            <th class="px-4 py-2 border text-sm">Misi</th>
+                            <th class="px-4 py-2 border text-sm">Deskripsi</th>
+                            <th class="px-4 py-2 border text-sm">action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($visi_misi as $visimisi)
                             <tr>
-                                <td class="px-1 py-2 border">{{ $loop->iteration }}</td>
-                                <td class="px-4 py-2 border">{{ $visimisi->visi }}</td>
-                                <td class="px-4 py-2 border">{{ $visimisi->misi }}</td>
-                                <td class="px-4 py-2 border">{{ $visimisi->deskripsi }}</td>
+                                <td class="px-1 py-2 border text-sm">{{ $loop->iteration }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $visimisi->visi }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $visimisi->misi }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $visimisi->deskripsi }}</td>
                                 <td class="px-1 py-3 border flex flex-col items-center space-y-2">
                                     <!-- Tombol Edit -->
                                     <button 
-                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded" data-bs-toggle="modal" data-bs-target="#exampleModal{{ $visimisi->id }}">
+                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm" data-bs-toggle="modal" data-bs-target="#exampleModal{{ $visimisi->id }}">
                                         Edit
                                     </button>
 
                                     <!-- Tombol Delete -->
-                                    <form action="" method="POST" onsubmit="return confirm('Yakin ingin menghapus user ini?');">
+                                    <form action="" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?');">
                                         {{-- @csrf
                                         @method('DELETE') --}}
-                                        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded">
+                                        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm">
                                             Delete
                                         </button>
                                     </form>
@@ -121,12 +121,14 @@
                   </div>   
                   {{-- End Modal --}}
 
-                {{-- @if($users->isEmpty())
+                @if($visi_misi->isEmpty())
                     <p class="text-center text-gray-500 mt-4">Tidak ada pengguna yang terdaftar.</p>
-                @endif --}}
+                @endif
             </div>
         </div>
     </div>
+
+    
     <script>
         document.getElementById('exampleModal').addEventListener('show.bs.modal', function (event) {
          const button = event.relatedTarget; // Button yang memicu modal
