@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Komentar;
 use App\Models\ProfilTenagaKependidikan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,8 +16,13 @@ class ProfilTenagaKependidikanController extends Controller
     public function show(){
         if (Auth::user()->id) {
             $profil_tenaga_kependidikan = ProfilTenagaKependidikan::where('user_id', Auth::user()->id)->get();
+
+            // Ambil data dari tabel Komentar berdasarkan nama_tabel
+            // dan prodi_id yang sesuai dengan user yang sedang login
+            $tabel = (new ProfilTenagaKependidikan())->getTable(); 
+            $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
         }
-        return view('pages.profil_tenaga_kependidikan', compact('profil_tenaga_kependidikan'));
+        return view('pages.profil_tenaga_kependidikan', compact('profil_tenaga_kependidikan', 'komentar'));
     }
 
     public function add(Request $request)

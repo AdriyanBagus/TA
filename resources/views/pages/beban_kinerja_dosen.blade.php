@@ -33,21 +33,21 @@
                     <tbody>
                         @foreach($beban_kinerja_dosen as $bebankinerjadosen)
                             <tr>
-                                <td class="px-1 py-2 border">{{ $loop->iteration }}</td>
-                                <td class="px-4 py-2 border">{{ $bebankinerjadosen->nama }}</td>
-                                <td class="px-4 py-2 border">{{ $bebankinerjadosen->nidn }}</td>
-                                <td class="px-4 py-2 border">{{ rtrim(rtrim(number_format($bebankinerjadosen->ps_sendiri, 4, '.', ''), '0'), '.') }}</td>
-                                <td class="px-4 py-2 border">{{ rtrim(rtrim(number_format($bebankinerjadosen->ps_lain, 4, '.', ''), '0'), '.') }}</td>
-                                <td class="px-4 py-2 border">{{ rtrim(rtrim(number_format($bebankinerjadosen->ps_diluar_pt, 4, '.', ''), '0'), '.') }}</td>
-                                <td class="px-4 py-2 border">{{ rtrim(rtrim(number_format($bebankinerjadosen->penelitian, 4, '.', ''), '0'), '.') }}</td>
-                                <td class="px-4 py-2 border">{{ rtrim(rtrim(number_format($bebankinerjadosen->pkm, 4, '.', ''), '0'), '.') }}</td>
-                                <td class="px-4 py-2 border">{{ rtrim(rtrim(number_format($bebankinerjadosen->penunjang, 4, '.', ''), '0'), '.') }}</td>
-                                <td class="px-4 py-2 border">{{ rtrim(rtrim(number_format($bebankinerjadosen->jumlah_sks, 4, '.', ''), '0'), '.') }}</td>
-                                <td class="px-4 py-2 border">{{ rtrim(rtrim(number_format($bebankinerjadosen->rata_rata_sks, 4, '.', ''), '0'), '.') }}</td>
+                                <td class="px-1 py-2 border text-sm">{{ $loop->iteration }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $bebankinerjadosen->nama }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $bebankinerjadosen->nidn }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ rtrim(rtrim(number_format($bebankinerjadosen->ps_sendiri, 4, '.', ''), '0'), '.') }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ rtrim(rtrim(number_format($bebankinerjadosen->ps_lain, 4, '.', ''), '0'), '.') }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ rtrim(rtrim(number_format($bebankinerjadosen->ps_diluar_pt, 4, '.', ''), '0'), '.') }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ rtrim(rtrim(number_format($bebankinerjadosen->penelitian, 4, '.', ''), '0'), '.') }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ rtrim(rtrim(number_format($bebankinerjadosen->pkm, 4, '.', ''), '0'), '.') }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ rtrim(rtrim(number_format($bebankinerjadosen->penunjang, 4, '.', ''), '0'), '.') }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ rtrim(rtrim(number_format($bebankinerjadosen->jumlah_sks, 4, '.', ''), '0'), '.') }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ rtrim(rtrim(number_format($bebankinerjadosen->rata_rata_sks, 4, '.', ''), '0'), '.') }}</td>
                                 <td class="px-1 py-3 border flex flex-col items-center space-y-2">
                                     <!-- Tombol Edit -->
                                     <button 
-                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded" data-bs-toggle="modal" data-bs-target="#exampleModal{{ $bebankinerjadosen->id }}">
+                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm" data-bs-toggle="modal" data-bs-target="#exampleModal{{ $bebankinerjadosen->id }}">
                                         Edit
                                 </button>
 
@@ -57,7 +57,7 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
-                                            class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded">
+                                            class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm">
                                             Delete
                                         </button>
                                     </form>
@@ -87,35 +87,35 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="ps_sendiri" class="form-label">Prodi Sendiri:</label>
-                                                    <input type="text" class="form-control" id="ps_sendiri" name="ps_sendiri" value="{{ $bebankinerjadosen->ps_sendiri }}" required>
+                                                    <input type="text" class="form-control" id="ps_sendiri" name="ps_sendiri" value="{{ $bebankinerjadosen->ps_sendiri }}">
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="ps_lain" class="form-label">Prodi Lain:</label>
-                                                    <input type="text" class="form-control" id="ps_lain" name="ps_lain" value="{{ $bebankinerjadosen->ps_lain }}" required>
+                                                    <input type="text" class="form-control" id="ps_lain" name="ps_lain" value="{{ $bebankinerjadosen->ps_lain }}">
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="ps_diluar_pt" class="form-label">Prodi diluar PT:</label>
-                                                    <input type="text" class="form-control" id="ps_diluar_pt" name="ps_diluar_pt" value="{{ $bebankinerjadosen->ps_diluar_pt }}" required>
+                                                    <input type="text" class="form-control" id="ps_diluar_pt" name="ps_diluar_pt" value="{{ $bebankinerjadosen->ps_diluar_pt }}">
                                                 </div>
                                                 <div class="mb-3">
                                                   <label for="penelitian" class="form-label">Penelitian:</label>
-                                                  <input type="text" class="form-control" id="penelitian" name="penelitian" value="{{ $bebankinerjadosen->penelitian }}" required>
+                                                  <input type="text" class="form-control" id="penelitian" name="penelitian" value="{{ $bebankinerjadosen->penelitian }}">
                                                 </div>
                                                 <div class="mb-3">
                                                   <label for="pkm" class="form-label">PKM:</label>
-                                                  <input type="text" class="form-control" id="pkm" name="pkm" value="{{ $bebankinerjadosen->pkm }}" required>
+                                                  <input type="text" class="form-control" id="pkm" name="pkm" value="{{ $bebankinerjadosen->pkm }}">
                                                 </div>
                                                 <div class="mb-3">
                                                   <label for="penunjang" class="form-label">Penunjang:</label>
-                                                  <input type="text" class="form-control" id="penunjang" name="penunjang" value="{{ $bebankinerjadosen->penunjang }}" required>
+                                                  <input type="text" class="form-control" id="penunjang" name="penunjang" value="{{ $bebankinerjadosen->penunjang }}">
                                                 </div>
                                                 <div class="mb-3">
                                                   <label for="jumlah_sks" class="form-label">Jumlah SKS:</label>
-                                                  <input type="text" class="form-control" id="jumlah_sks" name="jumlah_sks" value="{{ $bebankinerjadosen->jumlah_sks }}" required>
+                                                  <input type="text" class="form-control" id="jumlah_sks" name="jumlah_sks" value="{{ $bebankinerjadosen->jumlah_sks }}">
                                                 </div>
                                                 <div class="mb-3">
                                                   <label for="rata_rata_sks" class="form-label">Rata Rata SKS per Semester:</label>
-                                                  <input type="text" class="form-control" id="rata_rata_sks" name="rata_rata_sks" value="{{ $bebankinerjadosen->rata_rata_sks }}" required>
+                                                  <input type="text" class="form-control" id="rata_rata_sks" name="rata_rata_sks" value="{{ $bebankinerjadosen->rata_rata_sks }}">
                                                 </div>
                                               <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -152,23 +152,23 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="ps_sendiri" class="form-label">Prodi Sendiri:</label>
-                                        <input type="text" class="form-control" id="ps_sendiri" name="ps_sendiri" value="{{ session('ps_sendiri') }}" required>
+                                        <input type="text" class="form-control" id="ps_sendiri" name="ps_sendiri" value="{{ session('ps_sendiri') }}">
                                     </div>
                                     <div class="mb-3">
                                         <label for="ps_lain" class="form-label">Prodi Lain:</label>
-                                        <input type="text" class="form-control" id="ps_lain" name="ps_lain" value="{{ session('ps_lain') }}" required>
+                                        <input type="text" class="form-control" id="ps_lain" name="ps_lain" value="{{ session('ps_lain') }}">
                                     </div>
                                     <div class="mb-3">
                                         <label for="ps_diluar_pt" class="form-label">Prodi diluar PT:</label>
-                                        <input type="text" class="form-control" id="ps_diluar_pt" name="ps_diluar_pt" value="{{ session('ps_diluar_pt') }}" required>
+                                        <input type="text" class="form-control" id="ps_diluar_pt" name="ps_diluar_pt" value="{{ session('ps_diluar_pt') }}">
                                     </div>
                                     <div class="mb-3">
                                         <label for="penelitian" class="form-label">Penelitian:</label>
-                                        <input type="text" class="form-control" id="penelitian" name="penelitian" value="{{ session('penelitian') }}" required>
+                                        <input type="text" class="form-control" id="penelitian" name="penelitian" value="{{ session('penelitian') }}">
                                     </div>
                                     <div class="mb-3">
                                         <label for="pkm" class="form-label">PKM:</label>
-                                        <input type="text" class="form-control" id="pkm" name="pkm" value="{{ session('pkm') }}" required>
+                                        <input type="text" class="form-control" id="pkm" name="pkm" value="{{ session('pkm') }}">
                                     </div>
                                     <div class="mb-3">
                                         <label for="penunjang" class="form-label">Penunjang:</label>
@@ -176,7 +176,7 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="jumlah_sks" class="form-label">Jumlah SKS:</label>
-                                        <input type="text" class="form-control" id="jumlah_sks" name="jumlah_sks" value="{{ session('jumlah_sks') }}" required>
+                                        <input type="text" class="form-control" id="jumlah_sks" name="jumlah_sks" value="{{ session('jumlah_sks') }}">
                                     </div>
                                     <div class="mb-3">
                                         <label for="rata_rata_sks" class="form-label">Rata Rata SKS per Semester:</label>
@@ -199,6 +199,36 @@
             </div>
         </div>
     </div>
+
+    {{-- Komentar --}}
+    <div class="py-4">
+        <div class="max-w-10xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-xl rounded-lg p-6">
+                <h3 class="text-lg font-bold mb-3">Komentar</h3>
+                <ul>
+                    @if ($komentar->isNotEmpty())
+                        @foreach ($komentar as $item)
+                            <li class="mb-4 p-3 border rounded-md shadow-sm">
+                                <div class="flex items-center mb-1">
+                                    <div class=" bg-gray-500 rounded-full mr-2" style="width: 40px; height: 40px"></div>
+                                    <div>
+                                        <p class="font-semibold text-sm">Admin</p>
+                                        <p class="text-xs text-gray-500">
+                                            {{ $item->created_at->format('d F Y - H:i') }} WIB</p>
+                                    </div>
+                                </div>
+                                <div class="text-sm mt-1 whitespace-pre-line">
+                                    {!! nl2br(e($item->komentar)) !!}
+                                </div>
+                            </li>
+                        @endforeach
+                    @else
+                        <p class="text-center text-gray-500 mt-4">Belum ada komentar.</p>
+                    @endif  
+                </ul>
+            </div>
+        </div>
+    </div>
     <script>
         document.getElementById('exampleModal').addEventListener('show.bs.modal', function (event) {
          const button = event.relatedTarget; // Button yang memicu modal
@@ -207,5 +237,6 @@
      
          modalTitle.textContent = 'Tambah Beban Kinerja Dosen ';
          // modalBodyInput.value = recipient;
-    });
+        });
+    </script>
 </x-app-layout>

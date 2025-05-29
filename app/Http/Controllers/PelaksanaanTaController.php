@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Komentar;
 use App\Models\PelaksanaanTa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,8 +18,13 @@ class PelaksanaanTaController extends Controller
     {
         if (Auth::user()->id) {
             $pelaksanaan_ta = PelaksanaanTa::where('user_id', Auth::user()->id)->get();
+
+            // Ambil data dari tabel Komentar berdasarkan nama_tabel
+            // dan prodi_id yang sesuai dengan user yang sedang login
+            $tabel = (new PelaksanaanTa())->getTable(); 
+            $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
         }
-        return view('pages.pelaksanaan_ta', compact('pelaksanaan_ta'));
+        return view('pages.pelaksanaan_ta', compact('pelaksanaan_ta', 'komentar'));
     }
 
     public function add(Request $request)

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Komentar;
 use App\Models\RekognisiTenagaKependidikan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,8 +16,13 @@ class RekognisiTenagaKependidikanController extends Controller
     public function show(){
         if (Auth::user()->id) {
             $rekognisi_tenaga_kependidikan = RekognisiTenagaKependidikan::where('user_id', Auth::user()->id)->get();
+
+            // Ambil data dari tabel Komentar berdasarkan nama_tabel
+            // dan prodi_id yang sesuai dengan user yang sedang login
+            $tabel = (new RekognisiTenagaKependidikan())->getTable(); 
+            $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
         }
-        return view('pages.rekognisi_tenaga_kependidikan', compact('rekognisi_tenaga_kependidikan'));
+        return view('pages.rekognisi_tenaga_kependidikan', compact('rekognisi_tenaga_kependidikan', 'komentar'));
     }
 
     public function add(Request $request)

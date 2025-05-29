@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\EvaluasiPelaksanaan;
+use App\Models\Komentar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,20 +16,17 @@ class EvaluasiPelaksanaanController extends Controller
     public function show(){
         if (Auth::user()->id) {
             $evaluasi_pelaksanaan = EvaluasiPelaksanaan::where('user_id', Auth::user()->id)->get();
+
+            // Ambil data dari tabel Komentar berdasarkan nama_tabel
+            // dan prodi_id yang sesuai dengan user yang sedang login
+            $tabel = (new EvaluasiPelaksanaan())->getTable(); 
+            $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
         }
-        return view('pages.evaluasi_pelaksanaan', compact('evaluasi_pelaksanaan'));
+        return view('pages.evaluasi_pelaksanaan', compact('evaluasi_pelaksanaan', 'komentar'));
     }
 
     public function add(Request $request)
     {
-        $request->validate([
-            'nomor_ptk' => 'required',
-            'kategori_ptk' => 'required',
-            'rencana_penyelesaian' => 'required',
-            'realisasi_perbaikan' => 'required',
-            'penanggungjawab_perbaikan' => 'required'
-        ]);
-
         EvaluasiPelaksanaan::create([
             'user_id' => Auth::user()->id,
             'nomor_ptk' => $request->nomor_ptk,

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 use App\Models\KerjasamaPendidikan;
 use App\Models\VisiMisi;
 use App\Http\Controllers\Controller;
+use App\Models\Komentar;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +23,12 @@ class AnalisisController extends Controller
             ->orderBy($sortBy, $sortOrder)
             ->get();
 
-        return view('admin.analisis.visimisi', compact('visimisi', 'sortBy', 'sortOrder'));
+        //Komentar
+        $tabel = (new VisiMisi())->getTable(); 
+        $prodi= User::select('id','name')->where('usertype','!=','admin')->get();
+        $komentar = Komentar::where('nama_tabel', $tabel)->get();
+
+        return view('admin.analisis.visimisi', compact('visimisi', 'sortBy', 'sortOrder', 'tabel', 'prodi', 'komentar'));
     }
     public function kerjasama_pendidikan(Request $request)
     {
@@ -33,6 +40,11 @@ class AnalisisController extends Controller
             ->select('kerjasama_pendidikan.*', 'users.name as nama_user')
             ->orderBy($sortBy, $sortOrder)
             ->get();
+
+        //Komentar
+        $tabel = (new KerjasamaPendidikan())->getTable(); 
+        $prodi= User::select('id','name')->where('usertype','!=','admin')->get();
+        $komentar = Komentar::where('nama_tabel', $tabel)->get();
 
         return view('admin.analisis.kerjasama.pendidikan', compact('pendidikan', 'sortBy', 'sortOrder'));
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Komentar;
 use App\Models\SitasiLuaranPkmDosen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,9 +18,14 @@ class SitasiLuaranPkmDosenController extends Controller
     {
         if (Auth::user()->id) {
             $sitasi_luaran_pkm_dosen = SitasiLuaranPkmDosen::where('user_id', Auth::user()->id)->get();
+
+            // Ambil data dari tabel Komentar berdasarkan nama_tabel
+            // dan prodi_id yang sesuai dengan user yang sedang login
+            $tabel = (new SitasiLuaranPkmDosen())->getTable(); 
+            $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
         }
     
-        return view('pages.sitasi_luaran_pkm_dosen', compact('sitasi_luaran_pkm_dosen'));
+        return view('pages.sitasi_luaran_pkm_dosen', compact('sitasi_luaran_pkm_dosen', 'komentar'));
     }
 
     public function add(Request $request)

@@ -16,30 +16,30 @@
                 <table class="min-w-full bg-white border border-gray-500">
                     <thead>
                         <tr>
-                            <th class="px-1 py-2 border">No</th>
-                            <th class="px-4 py-2 border">Nama</th>
-                            <th class="px-4 py-2 border">NIDN</th>
-                            <th class="px-4 py-2 border">Kualifikasi Pendidikan</th>
-                            <th class="px-4 py-2 border">Sertifikasi Profesional</th>
-                            <th class="px-4 py-2 border">Bidang Keahlian</th>
-                            <th class="px-4 py-2 border">Bidang Ilmu Prodi</th>
-                            <th class="px-1 py-2 border">Action</th>
+                        <th class="px-1 py-2 border text-sm">No</th>
+                        <th class="px-4 py-2 border text-sm">Nama</th>
+                        <th class="px-4 py-2 border text-sm">NIDN</th>
+                        <th class="px-4 py-2 border text-sm">Kualifikasi Pendidikan</th>
+                        <th class="px-4 py-2 border text-sm">Sertifikasi Profesional</th>
+                        <th class="px-4 py-2 border text-sm">Bidang Keahlian</th>
+                        <th class="px-4 py-2 border text-sm">Bidang Ilmu Prodi</th>
+                        <th class="px-1 py-2 border text-sm">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($profil_dosen as $profildosen)
                             <tr>
-                                <td class="px-1 py-2 border">{{ $loop->iteration }}</td>
-                                <td class="px-4 py-2 border">{{ $profildosen->nama }}</td>
-                                <td class="px-4 py-2 border">{{ $profildosen->nidn }}</td>
-                                <td class="px-4 py-2 border">{{ $profildosen->kualifikasi_pendidikan }}</td>
-                                <td class="px-4 py-2 border">{{ $profildosen->sertifikasi_pendidik_profesional }}</td>
-                                <td class="px-4 py-2 border">{{ $profildosen->bidang_keahlian }}</td>
-                                <td class="px-4 py-2 border">{{ $profildosen->bidang_ilmu_prodi }}</td>
+                                <td class="px-1 py-2 border text-sm">{{ $loop->iteration }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $profildosen->nama }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $profildosen->nidn }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $profildosen->kualifikasi_pendidikan }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $profildosen->sertifikasi_pendidik_profesional }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $profildosen->bidang_keahlian }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $profildosen->bidang_ilmu_prodi }}</td>
                                 <td class="px-1 py-3 border flex flex-col items-center space-y-2">
                                     <!-- Tombol Edit -->
                                     <button 
-                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded" data-bs-toggle="modal" data-bs-target="#exampleModal{{ $profildosen->id }}">
+                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm" data-bs-toggle="modal" data-bs-target="#exampleModal{{ $profildosen->id }}">
                                         Edit
                                     </button>
 
@@ -47,7 +47,7 @@
                                     <form action="{{ route('pages.profil_dosen.destroy', $profildosen->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus user ini?');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded">
+                                        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm">
                                             Delete
                                         </button>
                                     </form>
@@ -81,11 +81,14 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="sertifikasi_pendidik_profesional" class="form-label">Sertifikasi Profesional:</label>
-                                                    <input type="text" class="form-control" id="sertifikasi_pendidik_profesional" name="sertifikasi_pendidik_profesional" value="{{ $profildosen->sertifikasi_pendidik_profesional }}" required>
+                                                    <select class="form-control" id="sertifikasi_pendidik_profesional" name="sertifikasi_pendidik_profesional" required>
+                                                        <option value="Ya" {{ $profildosen->sertifikasi_pendidik_profesional == 'Ya' ? 'selected' : '' }}>Ya</option>
+                                                        <option value="Tidak" {{ $profildosen->sertifikasi_pendidik_profesional == 'Tidak' ? 'selected' : '' }}>Tidak</option>
+                                                    </select>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="bidang_keahlian" class="form-label">Bidang Keahlian:</label>
-                                                    <input type="text" class="form-control" id="bidang_keahlian" name="bidang_keahlian" value="{{ $profildosen->bidang_keahlian }}" required>
+                                                    <input type="text" class="form-control" id="bidang_keahlian" name="bidang_keahlian" value="{{ $profildosen->bidang_keahlian }}">
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="bidang_ilmu_prodi" class="form-label">Bidang Ilmu Prodi:</label>
@@ -130,11 +133,14 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="sertifikasi_pendidik_profesional" class="form-label">Sertifikasi Profesional:</label>
-                                        <input type="text" class="form-control" id="sertifikasi_pendidik_profesional" name="sertifikasi_pendidik_profesional" value="{{ session('sertifikasi_pendidik_profesional') }}" required>
+                                        <select class="form-control" id="sertifikasi_pendidik_profesional" name="sertifikasi_pendidik_profesional" required>
+                                            <option value="Ya" {{ session('sertifikasi_pendidik_profesional') == 'Ya' ? 'selected' : '' }}>Ya</option>
+                                            <option value="Tidak" {{ session('sertifikasi_pendidik_profesional') == 'Tidak' ? 'selected' : '' }}>Tidak</option>
+                                        </select>
                                     </div>
                                     <div class="mb-3">
                                         <label for="bidang_keahlian" class="form-label">Bidang Keahlian:</label>
-                                        <input type="text" class="form-control" id="bidang_keahlian" name="bidang_keahlian" value="{{ session('bidang_keahlian') }}" required>
+                                        <input type="text" class="form-control" id="bidang_keahlian" name="bidang_keahlian" value="{{ session('bidang_keahlian') }}">
                                     </div>
                                     <div class="mb-3">
                                         <label for="bidang_ilmu_prodi" class="form-label">Bidang Ilmu Prodi:</label>
@@ -157,6 +163,36 @@
             </div>
         </div>
     </div>
+
+    {{-- Komentar --}}
+    <div class="py-4">
+        <div class="max-w-10xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-xl rounded-lg p-6">
+                <h3 class="text-lg font-bold mb-3">Komentar</h3>
+                <ul>
+                    @if ($komentar->isNotEmpty())
+                        @foreach ($komentar as $item)
+                            <li class="mb-4 p-3 border rounded-md shadow-sm">
+                                <div class="flex items-center mb-1">
+                                    <div class=" bg-gray-500 rounded-full mr-2" style="width: 40px; height: 40px"></div>
+                                    <div>
+                                        <p class="font-semibold text-sm">Admin</p>
+                                        <p class="text-xs text-gray-500">
+                                            {{ $item->created_at->format('d F Y - H:i') }} WIB</p>
+                                    </div>
+                                </div>
+                                <div class="text-sm mt-1 whitespace-pre-line">
+                                    {!! nl2br(e($item->komentar)) !!}
+                                </div>
+                            </li>
+                        @endforeach
+                    @else
+                        <p class="text-center text-gray-500 mt-4">Belum ada komentar.</p>
+                    @endif  
+                </ul>
+            </div>
+        </div>
+    </div>
     <script>
         document.getElementById('exampleModal').addEventListener('show.bs.modal', function (event) {
          const button = event.relatedTarget; // Button yang memicu modal
@@ -166,5 +202,6 @@
      
          modalTitle.textContent = 'Tambah Profil Dosen';
          // modalBodyInput.value = recipient;
-    });
+        });
+    </script>
 </x-app-layout>

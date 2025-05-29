@@ -12,6 +12,7 @@ class KetersediaanDokumen extends Model
         'user_id',
         'kegiatan',
         'ketersediaan_dokumen',
-        'nomor_dokumen'
+        'nomor_dokumen',
+        'link_dokumen',
     ];
 }

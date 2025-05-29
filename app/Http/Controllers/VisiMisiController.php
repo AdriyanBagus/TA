@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\Komentar;
 use App\Models\Settings;
 use App\Models\VisiMisi;
 use Illuminate\Http\Request;
@@ -22,8 +24,11 @@ class VisiMisiController extends Controller
         $visi_misi = VisiMisi::where('user_id', Auth::user()->id)
                             ->whereYear('created_at', date('Y'))
                             ->get();
+
+        $tabel = (new VisiMisi())->getTable(); 
+        $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
     
-        return view('pages.visi_misi', compact('visi_misi'));
+        return view('pages.visi_misi', compact('visi_misi', 'komentar'));
     }
 
     public function add(Request $request)
@@ -65,8 +70,12 @@ class VisiMisiController extends Controller
     public function destroy($id)
     {
         $visi_misi = VisiMisi::find($id);
-        $visi_misi->delete();
 
-        return redirect()->back()->with('success', 'Data berhasil dihapus!');
+        if ($visi_misi) {
+            $visi_misi->delete();
+            return redirect()->back()->with('success', 'Data Visi & Misi berhasil dihapus!');
+        }
+
+        return redirect()->back()->with('error', 'Data Visi & Misi tidak ditemukan!');
     }
 }

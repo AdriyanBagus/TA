@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Komentar;
 use App\Models\LahanPraktek;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,8 +18,13 @@ class LahanPraktekController extends Controller
     {
         if (Auth::user()->id) {
             $lahan_praktek = LahanPraktek::where('user_id', Auth::user()->id)->get();
+
+            // Ambil data dari tabel Komentar berdasarkan nama_tabel
+            // dan prodi_id yang sesuai dengan user yang sedang login
+            $tabel = (new LahanPraktek())->getTable(); 
+            $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
         }
-        return view('pages.lahan_praktek', compact('lahan_praktek'));
+        return view('pages.lahan_praktek', compact('lahan_praktek', 'komentar'));
     }
 
     public function add(Request $request)

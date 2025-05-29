@@ -153,6 +153,36 @@
             </div>
         </div>
     </div>
+
+    {{-- Komentar --}}
+    <div class="py-4">
+        <div class="max-w-10xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-xl rounded-lg p-6">
+                <h3 class="text-lg font-bold mb-3">Komentar</h3>
+                <ul>
+                    @if ($komentar->isNotEmpty())
+                        @foreach ($komentar as $item)
+                            <li class="mb-4 p-3 border rounded-md shadow-sm">
+                                <div class="flex items-center mb-1">
+                                    <div class=" bg-gray-500 rounded-full mr-2" style="width: 40px; height: 40px"></div>
+                                    <div>
+                                        <p class="font-semibold text-sm">Admin</p>
+                                        <p class="text-xs text-gray-500">
+                                            {{ $item->created_at->format('d F Y - H:i') }} WIB</p>
+                                    </div>
+                                </div>
+                                <div class="text-sm mt-1 whitespace-pre-line">
+                                    {!! nl2br(e($item->komentar)) !!}
+                                </div>
+                            </li>
+                        @endforeach
+                    @else
+                        <p class="text-center text-gray-500 mt-4">Belum ada komentar.</p>
+                    @endif  
+                </ul>
+            </div>
+        </div>
+    </div>
     <script>
         document.getElementById('exampleModal').addEventListener('show.bs.modal', function (event) {
          const button = event.relatedTarget; // Button yang memicu modal
@@ -162,5 +192,6 @@
      
          modalTitle.textContent = 'Tambah Visi Misi ';
          // modalBodyInput.value = recipient;
-    });
+        });
+    </script>
 </x-app-layout>

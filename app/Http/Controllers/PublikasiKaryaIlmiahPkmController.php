@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Komentar;
 use App\Models\PublikasiKaryaIlmiahPkm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,9 +18,14 @@ class PublikasiKaryaIlmiahPkmController extends Controller
     {
         if (Auth::user()->id) {
             $publikasi_karya_ilmiah_pkm = PublikasiKaryaIlmiahPkm::where('user_id', Auth::user()->id)->get();
+
+            // Ambil data dari tabel Komentar berdasarkan nama_tabel
+            // dan prodi_id yang sesuai dengan user yang sedang login
+            $tabel = (new PublikasiKaryaIlmiahPkm())->getTable(); 
+            $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
         }
     
-        return view('pages.publikasi_karya_ilmiah_pkm', compact('publikasi_karya_ilmiah_pkm'));
+        return view('pages.publikasi_karya_ilmiah_pkm', compact('publikasi_karya_ilmiah_pkm', 'komentar'));
     }
 
     public function add(Request $request)

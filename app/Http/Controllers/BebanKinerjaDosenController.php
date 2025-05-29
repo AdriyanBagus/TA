@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BebanKinerjaDosen;
+use App\Models\Komentar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,8 +18,11 @@ class BebanKinerjaDosenController extends Controller
     {
         if (Auth::user()->id) {
             $beban_kinerja_dosen = BebanKinerjaDosen::where('user_id', Auth::user()->id)->get();
+
+            $tabel = (new BebanKinerjaDosen())->getTable(); 
+            $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
         }
-        return view('pages.beban_kinerja_dosen', compact('beban_kinerja_dosen'));
+        return view('pages.beban_kinerja_dosen', compact('beban_kinerja_dosen', 'komentar'));
     }
 
     public function add(Request $request)

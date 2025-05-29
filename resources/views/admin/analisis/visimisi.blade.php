@@ -43,4 +43,42 @@
             </div>
         </div>
     </div>
+    <div class="py-4">
+        <div class="max-w-10xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-xl rounded-lg p-6">
+                <h3 class="text-lg font-bold mb-3">Komentar</h3>
+                <ul>
+                    @if($komentar->isNotEmpty())
+                        @foreach($komentar as $komentar)
+                            <li class="mb-2">
+                                <p class="text-sm">Prodi: {{ $komentar->user->name }}</p>
+                                <p class="text-sm">Komentar: {{ $komentar->komentar }}</p>
+                                <p class="text-sm">Ditambahkan pada: {{ $komentar->created_at }}</p>
+                                <hr>
+                            </li>
+                        @endforeach
+                    @else
+                        <p class="text-center text-gray-500 mt-4">Belum ada komentar.</p>
+                    @endif
+                </ul>
+                
+                <form action="{{ route('admin.komentar') }}" method="POST">
+                    @csrf
+                    <div class="mb-3">
+                        <input type="text" hidden name="nama_tabel" value="{{ $tabel }}">
+                        <select name="prodi_id" id="">
+                            <option value="">Pilih Prodi</option>
+                            @foreach($prodi as $prodi)
+                                <option value="{{ $prodi->id }}">{{ $prodi->name }}</option>
+                            @endforeach
+                        </select>
+                        <label for="komentar" class="form-label">Komentar:</label>
+                        <textarea class="form-control" id="komentar" name="komentar" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Kirim</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
 </x-app-layout>

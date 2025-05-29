@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KinerjaDtps;
+use App\Models\Komentar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,8 +18,13 @@ class KinerjaDtpsController extends Controller
     {
         if (Auth::user()->id) {
             $kinerja_dtps = KinerjaDtps::where('user_id', Auth::user()->id)->get();
+
+            // Ambil data dari tabel Komentar berdasarkan nama_tabel
+            // dan prodi_id yang sesuai dengan user yang sedang login
+            $tabel = (new KinerjaDtps())->getTable(); 
+            $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
         }
-        return view('pages.kinerja_dtps', compact('kinerja_dtps'));
+        return view('pages.kinerja_dtps', compact('kinerja_dtps', 'komentar'));
     }
 
     public function add(Request $request)

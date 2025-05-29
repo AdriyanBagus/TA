@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KetersediaanDokumen;
+use App\Models\Komentar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,8 +18,13 @@ class KetersediaanDokumenController extends Controller
     {
         if (Auth::user()->id) {
             $ketersediaan_dokumen = KetersediaanDokumen::where('user_id', Auth::user()->id)->get();
+
+            // Ambil data dari tabel Komentar berdasarkan nama_tabel
+            // dan prodi_id yang sesuai dengan user yang sedang login
+            $tabel = (new KetersediaanDokumen())->getTable(); 
+            $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
         }
-        return view('pages.ketersediaan_dokumen', compact('ketersediaan_dokumen'));
+        return view('pages.ketersediaan_dokumen', compact('ketersediaan_dokumen', 'komentar'));
     }
 
     public function add(Request $request)
@@ -28,7 +34,8 @@ class KetersediaanDokumenController extends Controller
             'user_id' => Auth::user()->id,
             'kegiatan' => $request->kegiatan,
             'ketersediaan_dokumen' => $request->ketersediaan_dokumen,
-            'nomor_dokumen' => $request->nomor_dokumen
+            'nomor_dokumen' => $request->nomor_dokumen,
+            'link_dokumen' => $request->link_dokumen
         ]);
 
         return redirect()->back()->with('success', 'Data berhasil ditambahkan!');
@@ -41,9 +48,9 @@ class KetersediaanDokumenController extends Controller
         $ketersediaan_dokumen->kegiatan = $request->kegiatan;
         $ketersediaan_dokumen->ketersediaan_dokumen = $request->ketersediaan_dokumen;
         $ketersediaan_dokumen->nomor_dokumen = $request->nomor_dokumen;
+        $ketersediaan_dokumen->link_dokumen = $request->link_dokumen;
         $ketersediaan_dokumen->user_id = Auth::user()->id;
         $ketersediaan_dokumen->save();
-        $ketersediaan_dokumen->kegiatan = $request->kegiatan;
 
         return redirect()->back()->with('success', 'Data berhasil diubah!');
     }

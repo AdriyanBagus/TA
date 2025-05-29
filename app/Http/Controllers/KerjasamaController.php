@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kerjasama;
+use App\Models\Komentar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,8 +18,13 @@ class KerjasamaController extends Controller
     {
         if (Auth::user()->id) {
             $kerjasama = Kerjasama::where('user_id', Auth::user()->id)->get();
+
+            // Ambil data dari tabel Komentar berdasarkan nama_tabel
+            // dan prodi_id yang sesuai dengan user yang sedang login
+            $tabel = (new Kerjasama())->getTable(); 
+            $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
         }
-        return view('pages.kerjasama', compact('kerjasama'));
+        return view('pages.kerjasama', compact('kerjasama', 'komentar'));
     }
 
     public function add(Request $request)

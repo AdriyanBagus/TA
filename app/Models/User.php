@@ -45,4 +45,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function komentar()
+    {
+        return $this->hasMany(Komentar::class, 'user_id', 'prodi_id');
+    }
 }

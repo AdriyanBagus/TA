@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Komentar;
 use App\Models\PenelitianDosen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,8 +16,13 @@ class PenelitianDosenController extends Controller
     public function show(){
         if (Auth::user()->id) {
             $penelitian_dosen = PenelitianDosen::where('user_id', Auth::user()->id)->get();
+
+            // Ambil data dari tabel Komentar berdasarkan nama_tabel
+            // dan prodi_id yang sesuai dengan user yang sedang login
+            $tabel = (new PenelitianDosen())->getTable(); 
+            $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
         }
-        return view('pages.penelitian_dosen', compact('penelitian_dosen'));
+        return view('pages.penelitian_dosen', compact('penelitian_dosen', 'komentar'));
     }
 
     public function add(Request $request)

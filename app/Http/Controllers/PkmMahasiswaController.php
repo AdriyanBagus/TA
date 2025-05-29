@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Komentar;
 use App\Models\PkmMahasiswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,9 +18,14 @@ class PkmMahasiswaController extends Controller
     {
         if (Auth::user()->id) {
             $pkm_mahasiswa = PkmMahasiswa::where('user_id', Auth::user()->id)->get();
+
+            // Ambil data dari tabel Komentar berdasarkan nama_tabel
+            // dan prodi_id yang sesuai dengan user yang sedang login
+            $tabel = (new PkmMahasiswa())->getTable(); 
+            $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
         }
     
-        return view('pages.pkm_mahasiswa', compact('pkm_mahasiswa'));
+        return view('pages.pkm_mahasiswa', compact('pkm_mahasiswa', 'komentar'));
     }
 
     public function add(Request $request)

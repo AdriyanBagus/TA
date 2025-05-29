@@ -20,6 +20,7 @@ use App\Http\Controllers\PelaksanaanTaController;
 use App\Http\Controllers\ProfilDosenController;
 use App\Http\Controllers\ProfilDosenTidakTetapController;
 use App\Http\Controllers\KinerjaDtpsController;
+use App\Http\Controllers\KomentarController;
 use App\Http\Controllers\LuaranKaryaIlmiahController;
 use App\Http\Controllers\LuaranKaryaIlmiahPkmController;
 use App\Http\Controllers\PenelitianDosenController;
@@ -49,8 +50,9 @@ Route::middleware(['auth','verified','user'])->group(function () {
     Route::get('/visimisi', [VisiMisiController::class, 'show'])->name('pages.visi_misi');
     Route::post('/visimisi', [VisiMisiController::class, 'add'])->name('pages.visi_misi.add');
     Route::put('/visimisi/{id}', [VisiMisiController::class, 'update'])->name('pages.visi_misi.update');
+    Route::delete('/visimisi/{id}', [VisiMisiController::class, 'destroy'])->name('pages.visi_misi.destroy');
 
-    Route::get('/kerjasama', [KerjasamaController::class, 'show'])->name('pages.kerjasama');
+    Route::get('/kerjasama', [KerjasamaController::class, 'show'])->name('pages.kerjasama.show');
     Route::post('/kerjasama', [KerjasamaController::class, 'add'])->name('pages.kerjasama.add');
     Route::put('/kerjasama/{id}', [KerjasamaController::class, 'update'])->name('pages.kerjasama.update');
     Route::delete('/kerjasama/{id}', [KerjasamaController::class, 'destroy'])->name('pages.kerjasama.destroy');
@@ -70,6 +72,7 @@ Route::middleware(['auth','verified','user'])->group(function () {
     Route::get('/ketersediaandokumen', [KetersediaanDokumenController::class, 'show'])->name('pages.ketersediaan_dokumen');
     Route::post('/ketersediaandokumen', [KetersediaanDokumenController::class, 'add'])->name('pages.ketersediaan_dokumen.add');
     Route::put('/ketersediaandokumen/{id}', [KetersediaanDokumenController::class, 'update'])->name('pages.ketersediaan_dokumen.update');
+    Route::delete('/ketersediaandokumen/{id}', [KetersediaanDokumenController::class, 'destroy'])->name('pages.ketersediaan_dokumen.destroy');
 
     Route::get('/profildosen', [ProfilDosenController::class, 'show'])->name('pages.profil_dosen');
     Route::post('/profildosen', [ProfilDosenController::class, 'add'])->name('pages.profil_dosen.add');
@@ -194,6 +197,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     })->middleware(['verified'])->name('admin.tambah-user');
 
     Route::get('/show', [HomeController::class, 'show'])->name('admin.show');
+
+    //Route untuk komentar
+    Route::post('/komentar', [KomentarController::class, 'store'])->name('admin.komentar');
 
     // Route untuk edit user
     Route::get('/edit-user/{id}', [HomeController::class, 'edit'])->name('admin.edit-user');
