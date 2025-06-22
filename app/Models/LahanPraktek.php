@@ -16,5 +16,6 @@ class LahanPraktek extends Model
         'jumlah_mahasiswa',
         'daya_tampung_mahasiswa',
         'kontribusi_lahan_praktek',
+        'tahun_akademik_id'
     ];
 }

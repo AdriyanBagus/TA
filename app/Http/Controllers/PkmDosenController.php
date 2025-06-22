@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Komentar;
 use App\Models\PkmDosen;
+use App\Models\TahunAkademik;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,10 +15,16 @@ class PkmDosenController extends Controller
         return view('pages.pkm_dosen');
     }
 
-    public function show()
+    public function show(Request $request)
     {
         if (Auth::user()->id) {
-            $pkm_dosen = PkmDosen::where('user_id', Auth::user()->id)->get();
+            // Ambil daftar tahun akademik
+            $tahunList = TahunAkademik::all();
+            $tahunTerpilih = $request->get('tahun') ?? TahunAkademik::where('is_active', true)->value('id');
+            
+            $pkm_dosen = PkmDosen::where('user_id', Auth::user()->id)
+                ->where('pkm_dosen.tahun_akademik_id', $tahunTerpilih)
+                ->get();
 
             // Ambil data dari tabel Komentar berdasarkan nama_tabel
             // dan prodi_id yang sesuai dengan user yang sedang login
@@ -25,13 +32,17 @@ class PkmDosenController extends Controller
             $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
         }
     
-        return view('pages.pkm_dosen', compact('pkm_dosen', 'komentar'));
+        return view('pages.pkm_dosen', compact('pkm_dosen', 'komentar', 'tahunList', 'tahunTerpilih'));
     }
 
     public function add(Request $request)
     {
+        // Ambil tahun akademik aktif
+        $tahunAktif = TahunAkademik::where('is_active', true)->first();
+
         PkmDosen::create([
             'user_id' => Auth::user()->id,
+            'tahun_akademik_id' => $tahunAktif->id,
             'judul_pkm' => $request->judul_pkm,
             'dosen' => $request->dosen,
             'mahasiswa' => $request->mahasiswa,
@@ -47,7 +58,11 @@ class PkmDosenController extends Controller
 
     public function update(Request $request, $id)
     {
+        // Ambil tahun akademik aktif
+        $tahunAktif = TahunAkademik::where('is_active', true)->first();
+
         $pkm_dosen = PkmDosen::find($id);
+        $pkm_dosen->tahun_akademik_id = $tahunAktif->id;
         $pkm_dosen->judul_pkm = $request->judul_pkm;
         $pkm_dosen->dosen = $request->dosen;
         $pkm_dosen->mahasiswa = $request->mahasiswa;
@@ -68,5 +83,52 @@ class PkmDosenController extends Controller
         $pkm_dosen->delete();
 
         return redirect()->back()->with('success', 'Data berhasil dihapus!');
+    }
+
+    public function exportCsv()
+    {
+        $records = PkmDosen::where('user_id', Auth::user()->id)
+                            ->where('tahun_akademik_id', TahunAkademik::where('is_active', true)->value('id'))
+                            ->get();
+
+        $filename = 'PKM Dosen_' . date('Y-m-d') . '.csv';
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $columns = [
+            'No', 'Judul PKM', 'Dosen','Mahasiswa', 'Tingkat', 'Sumber Dana','Kesesuaian Roadmap', 'Bentuk Integrasi', 'Mata Kuliah'
+        ];
+
+        $callback = function() use ($records, $columns) {
+            $handle = fopen('php://output', 'w');
+
+            // Tambahkan BOM di awal file (Byte Order Mark)
+            echo chr(239) . chr(187) . chr(191);
+
+            fputcsv($handle, $columns, ';', '"');
+
+            $no = 1;
+            foreach ($records as $record) {
+                fputcsv($handle, [
+                    $no++,
+                    $record->judul_pkm,
+                    $record->dosen,
+                    $record->mahasiswa,
+                    $record->tingkat,
+                    $record->sumber_dana,
+                    $record->kesesuaian_roadmap,
+                    $record->bentuk_integrasi,
+                    $record->mata_kuliah
+                ], ';', '"');
+            }
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

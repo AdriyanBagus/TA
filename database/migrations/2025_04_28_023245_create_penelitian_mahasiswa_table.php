@@ -23,7 +23,14 @@ return new class extends Migration
             $table->string('nama_pembimbing')->nullable(); // Nama pembimbing (boleh null)
             $table->enum('tingkat', ['Internasional', 'Nasional', 'Lokal']); // Tingkat
             $table->string('sumber_dana'); // Sumber dana
+            $table->enum('bentuk_dana', ['Inkind', 'Cash']);
+            $table->string('jumlah_dana')->nullable(); // Jumlah Dana
             $table->enum('kesesuaian_roadmap', ['Sesuai', 'Kurang Sesuai', 'Tidak Sesuai']); // Kesesuaian roadmap
+            $table->unsignedBigInteger('tahun_akademik_id')->nullable(); // Foreign Key mengacu ke tabel tahun akademik id
+            $table->foreign('tahun_akademik_id')
+                  ->references('id')
+                  ->on('tahun_akademik') // Mengacu ke tabel tahun akademik
+                  ->onDelete('cascade'); // Jika user dihapus, data ini ikut terhapus
             $table->timestamps();
         });
     }

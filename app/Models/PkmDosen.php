@@ -17,5 +17,6 @@ class PkmDosen extends Model
         'kesesuaian_roadmap',
         'bentuk_integrasi',
         'mata_kuliah',
+        'tahun_akademik_id'
     ];
 }

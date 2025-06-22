@@ -1,12 +1,48 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="card-header pb-0 d-flex justify-content-between align-items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Profil Tenaga Kependidikan') }}
-            </h2>
-            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                Tambah
-            </button>
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0">
+            <div class="flex items-center space-x-4">
+                <a href="javascript:history.back()"
+                    class="inline-flex items-center bg-gray-100 hover:bg-gray-200 text-black-700 text-sm px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Kembali
+                </a>
+
+                <h2 class="text-xl font-semibold text-gray-800 leading-tight">
+                    {{ __('Profil Tenaga Kependidikan') }}
+                </h2>
+            </div>
+
+            <div class="flex items-center space-x-4 mt-4">
+                {{-- Dropdown Filter Tahun Akademik --}}
+                <form method="GET" action="{{ route('pages.profil_tenaga_kependidikan') }}"
+                    class="flex flex-col md:flex-row md:items-center gap-2">
+                    <label for="tahun" class="text-sm font-medium text-gray-700">Tahun Akademik:</label>
+                    <select name="tahun" id="tahun" onchange="this.form.submit()"
+                        class="block w-64 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-700 bg-white">
+                        @foreach ($tahunList as $tahun)
+                            <option value="{{ $tahun->id }}" {{ $tahunTerpilih == $tahun->id ? 'selected' : '' }}>
+                                {{ $tahun->tahun }} {{ $tahun->is_active ? '(Aktif)' : '' }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
+
+                <div class="flex items-center space-x-4">
+                    <a href="{{ route('pages.profil_tenaga_kependidikan.export') }}" class="btn btn-success btn-sm" onclick="return confirm('Apakah Anda yakin ingin mendownload CSV?')">
+                        Download CSV
+                    </a>
+
+                    @if($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Tambah
+                        </button>
+                    @endif
+                </div>
+            </div>
         </div>
     </x-slot>
 
@@ -16,35 +52,37 @@
                 <table class="min-w-full bg-white border border-gray-500">
                     <thead>
                         <tr>
-                            <th class="px-2 py-2 border">No</th>
-                            <th class="px-4 py-2 border">Nama</th>
-                            <th class="px-4 py-2 border">NIPY</th>
-                            <th class="px-4 py-2 border">Kualifikasi Pendidikan</th>
-                            <th class="px-4 py-2 border">Jabatan</th>
-                            <th class="px-4 py-2 border">Kesesuaian Bidang Kerja</th>
-                            <th class="px-4 py-2 border">action</th>
+                            <th class="px-2 py-2 border text-sm">No</th>
+                            <th class="px-4 py-2 border text-sm">Nama</th>
+                            <th class="px-4 py-2 border text-sm">NIPY</th>
+                            <th class="px-4 py-2 border text-sm">Kualifikasi Pendidikan</th>
+                            <th class="px-4 py-2 border text-sm">Jabatan</th>
+                            <th class="px-4 py-2 border text-sm">Bidang Keahlian</th>
+                            <th class="px-4 py-2 border text-sm">Kesesuaian Bidang Kerja</th>
+                            <th class="px-4 py-2 border text-sm">action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($profil_tenaga_kependidikan as $profiltenagakependidikan)
                             <tr>
-                                <td class="px-1 py-2 border">{{ $loop->iteration }}</td>
-                                <td class="px-4 py-2 border">{{ $profiltenagakependidikan->nama }}</td>
-                                <td class="px-4 py-2 border">{{ $profiltenagakependidikan->nipy }}</td>
-                                <td class="px-4 py-2 border">{{ $profiltenagakependidikan->kualifikasi_pendidikan }}</td>
-                                <td class="px-4 py-2 border">{{ $profiltenagakependidikan->jabatan }}</td>
-                                <td class="px-4 py-2 border">{{ $profiltenagakependidikan->kesesuaian_bidang_kerja }}</td>
+                                <td class="px-1 py-2 border text-sm">{{ $loop->iteration }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $profiltenagakependidikan->nama }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $profiltenagakependidikan->nipy }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $profiltenagakependidikan->kualifikasi_pendidikan }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $profiltenagakependidikan->jabatan }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $profiltenagakependidikan->bidang_keahlian }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $profiltenagakependidikan->kesesuaian_bidang_kerja }}</td>
                                 <td class="px-1 py-3 border flex flex-col items-center space-y-2">
                                     <button 
-                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded" data-bs-toggle="modal" data-bs-target="#exampleModal{{ $profiltenagakependidikan->id }}">
+                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm" data-bs-toggle="modal" data-bs-target="#exampleModal{{ $profiltenagakependidikan->id }}">
                                         Edit
                                     </button>
 
                                     <!-- Tombol Delete -->
-                                    <form action="" method="POST" onsubmit="return confirm('Yakin ingin menghapus user ini?');">
-                                        {{-- @csrf
-                                        @method('DELETE') --}}
-                                        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded">
+                                    <form action="{{ route('pages.profil_tenaga_kependidikan.destroy', $profiltenagakependidikan->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus user ini?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm">
                                             Delete
                                         </button>
                                     </form>
@@ -55,7 +93,7 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Tambah Ketersediaan Dokumen</h5>
+                                            <h5 class="modal-title" id="exampleModalLabel">Tambah Profil Tenaga Kependidikan</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
@@ -74,11 +112,15 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="kualifikasi_pendidikan" class="form-label">Kualifikasi Pendidikan:</label>
-                                                    <input type="text" class="form-control" id="kualifikasi_pendidikan" name="kualifikasi_pendidikan" value="{{ $profiltenagakependidikan->kualifikasi_pendidikan }}" required>
+                                                    <input type="text" class="form-control" id="kualifikasi_pendidikan" name="kualifikasi_pendidikan" value="{{ $profiltenagakependidikan->kualifikasi_pendidikan }}">
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="jabatan" class="form-label">Jabatan:</label>
                                                     <input type="text" class="form-control" id="jabatan" name="jabatan" value="{{ $profiltenagakependidikan->jabatan }}" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="bidang_keahlian" class="form-label">Bidang Keahlian:</label>
+                                                    <input type="text" class="form-control" id="bidang_keahlian" name="bidang_keahlian" value="{{ $profiltenagakependidikan->bidang_keahlian }}" required>
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Kesesuaian Bidang Kerja</label>
@@ -127,6 +169,10 @@
                                     <div class="mb-3">
                                         <label for="jabatan" class="form-label">Jabatan:</label>
                                         <input type="text" class="form-control" id="jabatan" name="jabatan" value="{{ session('jabatan') }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="bidang_keahlian" class="form-label">Bidang Keahlian:</label>
+                                        <input type="text" class="form-control" id="bidang_keahlian" name="bidang_keahlian" value="{{ session('bidang_keahlian') }}" required>
                                     </div>
                                     <div class="form-group">
                                         <label>Kesesuaian Bidang Kerja</label>
@@ -190,7 +236,7 @@
          const modalTitle = this.querySelector('.modal-title');
          const modalBodyInput = this.querySelector('.modal-body input');
      
-         modalTitle.textContent = 'Tambah Visi Misi ';
+         modalTitle.textContent = 'Tambah Profil Tenaga Kependidikan';
          // modalBodyInput.value = recipient;
         });
     </script>

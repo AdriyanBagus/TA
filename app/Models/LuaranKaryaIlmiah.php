@@ -10,13 +10,12 @@ class LuaranKaryaIlmiah extends Model
 
     protected $fillable = [
         'user_id',
-        'judul_kegiatan_pkm',
+        'judul_kegiatan',
         'judul_karya',
-        'dosen',
-        'mahasiswa',
-        'penyusun_utama',
+        'pencipta_utama',
         'jenis',
         'nomor_karya',
-        'keterangan'
+        'url',
+        'tahun_akademik_id'
     ];
 }

@@ -10,9 +10,9 @@ class KetersediaanDokumen extends Model
 
     protected $fillable = [
         'user_id',
-        'kegiatan',
         'ketersediaan_dokumen',
         'nomor_dokumen',
-        'link_dokumen',
+        'url',
+        'tahun_akademik_id'
     ];
 }

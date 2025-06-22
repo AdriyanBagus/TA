@@ -15,6 +15,7 @@ class PkmMahasiswa extends Model
         'tingkat',
         'sumber_dana',
         'kesesuaian_roadmap',
+        'tahun_akademik_id'
     ];
 
 }

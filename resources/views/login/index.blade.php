@@ -32,7 +32,7 @@
                             <div class="card card-plain">
                                 <div class="card-header pb-0 text-start">
                                     <h4 class="font-weight-bolder">Selamat datang</h4>
-                                    <p class="mb-0">Masukan Username dan Password</p>
+                                    <p class="mb-0">Masuk untuk melanjutkan</p>
                                 </div>
                                 <div class="card-body">
                                     <form method="POST" action="{{ route('login') }}">
@@ -59,7 +59,7 @@
                                             <input id="remember_me" type="checkbox" class="form-check-input"
                                                 name="remember">
                                             <label class="form-check-label"
-                                                for="remember_me">{{ __('Remember me') }}</label>
+                                                for="remember_me">{{ __('Ingat saya') }}</label>
                                         </div>
 
                                         <div class="text-center mt-4">
@@ -71,7 +71,7 @@
                                             @endif -->
 
                                             <button type="submit"
-                                                class="btn btn-lg btn-primary w-100 mt-2">{{ __('Log in') }}</button>
+                                                class="btn btn-lg btn-primary w-100 mt-2">{{ __('Masuk') }}</button>
                                         </div>
                                     </form>
 
@@ -82,7 +82,12 @@
                             class="col-6 d-lg-flex d-none h-100 my-auto pe-0 position-absolute top-0 end-0 text-center justify-content-center flex-column">
                             <div class="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center overflow-hidden"
                                 style="background-image: url('/assets/image/banner.jpg'); background-size: cover;">
-                                <span class="mask bg-gradient-primary opacity-6"></span>
+                                <span class="mask bg-gradient-primary opacity-6 d-flex align-items-center">
+                                    <div class="container text-start ms-5">
+                                        <h1 class="text-white fw-bold" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.8);">ILEDIN</h1>
+                                        <p class="text-white" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.7);">Instrumen Laporan Evaluasi Diri Internal</p>
+                                    </div>
+                                </span>
 
                             </div>
                         </div>

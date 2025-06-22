@@ -21,6 +21,11 @@ return new class extends Migration
             $table->text('visi');
             $table->text('misi');
             $table->text('deskripsi'); // Tujuan dari visi dan misi
+            $table->unsignedBigInteger('tahun_akademik_id')->nullable(); // Foreign Key mengacu ke tabel tahun akademik id
+            $table->foreign('tahun_akademik_id')
+                  ->references('id')
+                  ->on('tahun_akademik') // Mengacu ke tabel tahun akademik
+                  ->onDelete('cascade'); // Jika user dihapus, data ini ikut terhapus
             $table->timestamps();
         });
     }

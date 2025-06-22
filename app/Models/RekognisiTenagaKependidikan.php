@@ -11,9 +11,12 @@ class RekognisiTenagaKependidikan extends Model
     protected $fillable = [
         'user_id',
         'nama',
-        'bidang_keahlian',
-        'jenis_rekognisi',
+        'nidn',
+        'nama_kegiatan_rekognisi',
         'tingkat',
+        'bahan_ajar',
         'tahun_perolehan',
+        'url',
+        'tahun_akademik_id'
     ];
 }

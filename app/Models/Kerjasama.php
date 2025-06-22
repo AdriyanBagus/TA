@@ -15,6 +15,8 @@ class Kerjasama extends Model
         'judul_kerjasama', 
         'waktu_durasi',
         'realisasi_kerjasama', 
-        'spk'
+        'spk',
+        'url',
+        'tahun_akademik_id'
     ];
 }

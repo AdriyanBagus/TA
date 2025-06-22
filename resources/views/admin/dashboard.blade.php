@@ -1,194 +1,35 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard Admin') }}
+            {{ __('INSTRUMEN LAPORAN EVALUASI DIRI INTERNAL') }}
         </h2>
     </x-slot>
 
+    <?php
+    $menu = App\Models\menuAdmin::get();
+    
+    // Warna latar belakang dinamis (loop)
+    $colors = ['bg-blue-100', 'bg-green-100', 'bg-yellow-100', 'bg-purple-100', 'bg-pink-100', 'bg-indigo-100'];
+    ?>
     <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-1">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="container-fluid py-4">
-                    <div class="row">
-                      <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-                        <a href="{{ route('visimisi') }}">
-                            <div class="card">
-                              <div class="card-body p-3">
-                                <div class="row">
-                                  <div class="col-8">
-                                    <div class="numbers">
-                                      <p class="text-xs mb-0 text-uppercase font-weight-bold">Analisis Visi Misi</p>
-                                      <h5 class="font-weight-bolder">
-                                        {{ $dataCounts['tabel1'] }} 
-                                      </h5>
-                                      <p class="mb-0">
-                                        <span class="text-success text-sm font-weight-bolder"></span> 2025
-                                      </p>
-                                    </div>
-                                  </div>
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    @foreach ($menu as $index => $item)
+                        <a href="{{ route($item->link) }}"
+                            class="transition duration-300 ease-in-out transform hover:-translate-y-1">
+                            <div class="rounded-xl shadow-md p-5 flex flex-col {{ $colors[$index % count($colors)] }} hover:shadow-xl"
+                                style="height: 100%;">
+                                <div class="mb-2 text-sm text-gray-700 font-semibold uppercase tracking-wide flex-1">
+                                    {{ $item->menu_id }}
                                 </div>
-                              </div>
-                            </div>
-                          </a>
-                      </div>
-                      <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-                        <a href="{{ route('pendidikan') }}">
-                            <div class="card">
-                                <div class="card-body p-3">
-                                  <div class="row">
-                                    <div class="col-8">
-                                      <div class="numbers">
-                                        <p class="text-xs mb-0 text-uppercase font-weight-bold">Kerjasama Pendidikan</p>
-                                        <h5 class="font-weight-bolder">
-                                        {{ $dataCounts['tabel2'] }} 
-                                        </h5>
-                                        <p class="mb-0">
-                                          <span class="text-success text-sm font-weight-bolder"></span>
-                                          2025
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </div>
+                                <div class="text-sm font-bold text-gray-900 flex-1">
+                                    {{ $item->menu }}
                                 </div>
                             </div>
                         </a>
-                      </div>
-                      <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-                        <a href="{{ route('penelitian') }}">
-                            <div class="card">
-                                <div class="card-body p-3">
-                                  <div class="row">
-                                    <div class="col-8">
-                                      <div class="numbers">
-                                        <p class="text-xs mb-0 text-uppercase font-weight-bold">Kerjasama Penelitian</p>
-                                        <h5 class="font-weight-bolder">
-                                        {{ $dataCounts['tabel3'] }} 
-                                        </h5>
-                                        <p class="mb-0">
-                                          <span class="text-success text-sm font-weight-bolder"></span>
-                                          2025
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                            </div>
-                        </a>
-                      </div>
-                      <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-                        <a href="{{ route('pengabdian') }}">
-                            <div class="card">
-                                <div class="card-body p-3">
-                                  <div class="row">
-                                    <div class="col-8">
-                                      <div class="numbers">
-                                        <p class="text-xs mb-0 text-uppercase font-weight-bold">Kerjasama Pengabdian</p>
-                                        <h5 class="font-weight-bolder">
-                                        {{ $dataCounts['tabel4'] }} 
-                                        </h5>
-                                        <p class="mb-0">
-                                          <span class="text-success text-sm font-weight-bolder"></span>
-                                          2025
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                            </div>
-                        </a>
-                      </div>
-                    </div>
+                    @endforeach
                 </div>
-
-                <div class="container-fluid py-4">
-                  <div class="row">
-                    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-                      <a href="{{ route('pages.diagram_view') }}">
-                          <div class="card">
-                            <div class="card-body p-3">
-                              <div class="row">
-                                <div class="col-8">
-                                  <div class="numbers">
-                                    <p class="text-xs mb-0 text-uppercase font-weight-bold">Ketersediaan Dokumen</p>
-                                    <h5 class="font-weight-bolder">2</h5>
-                                    <p class="mb-0">
-                                      <span class="text-success text-sm font-weight-bolder"></span> 2025
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </a>
-                    </div>
-                    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-                      <a href="{{ route('pages.kerjasama_pendidikan') }}">
-                          <div class="card">
-                              <div class="card-body p-3">
-                                <div class="row">
-                                  <div class="col-8">
-                                    <div class="numbers">
-                                      <p class="text-xs mb-0 text-uppercase font-weight-bold">Evaluasi Pelaksanaan</p>
-                                      <h5 class="font-weight-bolder">
-                                        2
-                                      </h5>
-                                      <p class="mb-0">
-                                        <span class="text-success text-sm font-weight-bolder"></span>
-                                        2025
-                                      </p>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                          </div>
-                      </a>
-                    </div>
-                    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-                      <a href="{{ route('pages.kerjasama_penelitian') }}">
-                          <div class="card">
-                              <div class="card-body p-3">
-                                <div class="row">
-                                  <div class="col-8">
-                                    <div class="numbers">
-                                      <p class="text-xs mb-0 text-uppercase font-weight-bold">Profil Dosen</p>
-                                      <h5 class="font-weight-bolder">
-                                        2
-                                      </h5>
-                                      <p class="mb-0">
-                                        <span class="text-success text-sm font-weight-bolder"></span>
-                                        2025
-                                      </p>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                          </div>
-                      </a>
-                    </div>
-                    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-                      <a href="{{ route('pages.kerjasama_pengabdian_kepada_masyarakat') }}">
-                          <div class="card">
-                              <div class="card-body p-3">
-                                <div class="row">
-                                  <div class="col-8">
-                                    <div class="numbers">
-                                      <p class="text-xs mb-0 text-uppercase font-weight-bold">Beban Kinerja Dosen</p>
-                                      <h5 class="font-weight-bolder">
-                                        2
-                                      </h5>
-                                      <p class="mb-0">
-                                        <span class="text-success text-sm font-weight-bolder"></span>
-                                        2025
-                                      </p>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                          </div>
-                      </a>
-                    </div>
-                  </div>
-              </div>
             </div>
         </div>
     </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Komentar;
 use App\Models\Settings;
+use App\Models\TahunAkademik;
 use App\Models\VisiMisi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,24 +16,31 @@ class VisiMisiController extends Controller
         return view('pages.visi_misi');
     }
 
-    public function show()
+    public function show(Request $request)
     {
         if (!Auth::check()) {
             return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
         }
+
+        // Ambil tahun akademik aktif
+        $tahunList = TahunAkademik::all();
+        $tahunTerpilih = $request->get('tahun') ?? TahunAkademik::where('is_active', true)->value('id');
     
         $visi_misi = VisiMisi::where('user_id', Auth::user()->id)
-                            ->whereYear('created_at', date('Y'))
+                            ->where('visi_misi.tahun_akademik_id', $tahunTerpilih)
                             ->get();
 
         $tabel = (new VisiMisi())->getTable(); 
         $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
     
-        return view('pages.visi_misi', compact('visi_misi', 'komentar'));
+        return view('pages.visi_misi', compact('visi_misi', 'komentar', 'tahunList', 'tahunTerpilih'));
     }
 
     public function add(Request $request)
     {
+        // Ambil tahun akademik aktif
+        $tahunAktif = TahunAkademik::where('is_active', true)->first();
+
         $request->validate([
             'visi' => 'required|string',
             'misi' => 'required|string',
@@ -43,7 +51,8 @@ class VisiMisiController extends Controller
             'visi' => $request->visi,
             'misi' => $request->misi,
             'deskripsi' => $request->deskripsi,
-            'user_id' => Auth::user()->id
+            'user_id' => Auth::user()->id,
+            'tahun_akademik_id' => $tahunAktif->id,
         ]);
 
         return redirect()->back()->with('success', 'Data Visi & Misi berhasil ditambahkan!');
@@ -51,6 +60,9 @@ class VisiMisiController extends Controller
 
     public function update(Request $request, $id)
     {
+        // Ambil tahun akademik aktif
+        $tahunAktif = TahunAkademik::where('is_active', true)->first();
+
         $request->validate([
             'visi' => 'required|string',
             'misi' => 'required|string',
@@ -58,6 +70,7 @@ class VisiMisiController extends Controller
         ]);
 
         $visi_misi = VisiMisi::find($id);
+        $visi_misi->tahun_akademik_id = $tahunAktif->id;
         $visi_misi->visi = $request->visi;
         $visi_misi->misi = $request->misi;
         $visi_misi->deskripsi = $request->deskripsi;
@@ -77,5 +90,47 @@ class VisiMisiController extends Controller
         }
 
         return redirect()->back()->with('error', 'Data Visi & Misi tidak ditemukan!');
+    }
+
+    public function exportCsv()
+    {
+        $records = VisiMisi::where('user_id', Auth::user()->id)
+                            ->where('tahun_akademik_id', TahunAkademik::where('is_active', true)->value('id'))
+                            ->get();
+
+        $filename = 'visi_misi_' . date('Y-m-d_H-i-s') . '.csv';
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $columns = [
+            'ID', 'Visi', 'Misi', 'Deskripsi'
+        ];
+
+        $callback = function() use ($records, $columns) {
+            $handle = fopen('php://output', 'w');
+
+            // Tambahkan BOM di awal file (Byte Order Mark)
+            echo chr(239) . chr(187) . chr(191);
+
+            fputcsv($handle, $columns, ';', '"');
+
+            $no = 1;
+            foreach ($records as $record) {
+                fputcsv($handle, [
+                    $no++,
+                    $record->visi,
+                    $record->misi,
+                    $record->deskripsi
+                ], ';', '"');
+            }
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

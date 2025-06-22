@@ -1,12 +1,48 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="card-header pb-0 d-flex justify-content-between align-items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Profil Dosen Tidak Tetap') }}
-            </h2>
-            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                Tambah
-            </button>
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0">
+            <div class="flex items-center space-x-4">
+                <a href="javascript:history.back()"
+                    class="inline-flex items-center bg-gray-100 hover:bg-gray-200 text-black-700 text-sm px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Kembali
+                </a>
+
+                <h2 class="text-xl font-semibold text-gray-800 leading-tight">
+                    {{ __('Profil Dosen') }}
+                </h2>
+            </div>
+
+            <div class="flex items-center space-x-4 mt-4">
+                {{-- Dropdown Filter Tahun Akademik --}}
+                <form method="GET" action="{{ route('pages.profil_dosen') }}"
+                    class="flex flex-col md:flex-row md:items-center gap-2">
+                    <label for="tahun" class="text-sm font-medium text-gray-700">Tahun Akademik:</label>
+                    <select name="tahun" id="tahun" onchange="this.form.submit()"
+                        class="block w-64 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-700 bg-white">
+                        @foreach ($tahunList as $tahun)
+                            <option value="{{ $tahun->id }}" {{ $tahunTerpilih == $tahun->id ? 'selected' : '' }}>
+                                {{ $tahun->tahun }} {{ $tahun->is_active ? '(Aktif)' : '' }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
+
+                <div class="flex items-center space-x-4">
+                    <a href="{{ route('pages.profil_dosen.export') }}" class="btn btn-success btn-sm" onclick="return confirm('Apakah Anda yakin ingin mendownload CSV?')">
+                        Download CSV
+                    </a>
+
+                    @if($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Tambah
+                        </button>
+                    @endif
+                </div>
+            </div>
         </div>
     </x-slot>
 
@@ -16,32 +52,32 @@
                 <table class="min-w-full bg-white border border-gray-500">
                     <thead>
                         <tr>
-                            <th class="px-1 py-2 border">No</th>
-                            <th class="px-4 py-2 border">Nama</th>
-                            <th class="px-4 py-2 border">Asal Instansi</th>
-                            <th class="px-4 py-2 border">Kualifikasi Pendidikan</th>
-                            <th class="px-4 py-2 border">Sertifikasi Profesional</th>
-                            <th class="px-4 py-2 border">Sertifikat Kompetensi</th>
-                            <th class="px-4 py-2 border">Bidang Keahlian</th>
-                            <th class="px-4 py-2 border">Bidang Ilmu Prodi</th>
-                            <th class="px-1 py-2 border">Action</th>
+                            <th class="px-1 py-2 border text-sm">No</th>
+                            <th class="px-4 py-2 border text-sm">Nama</th>
+                            <th class="px-4 py-2 border text-sm">Asal Instansi</th>
+                            <th class="px-4 py-2 border text-sm">Kualifikasi Pendidikan</th>
+                            <th class="px-4 py-2 border text-sm">Sertifikasi Profesional</th>
+                            <th class="px-4 py-2 border text-sm">Sertifikat Kompetensi</th>
+                            <th class="px-4 py-2 border text-sm">Bidang Keahlian</th>
+                            <th class="px-4 py-2 border text-sm">Bidang Ilmu Prodi</th>
+                            <th class="px-1 py-2 border text-sm">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($profil_dosen_tidak_tetap as $profildosentidaktetap)
                             <tr>
-                                <td class="px-1 py-2 border">{{ $loop->iteration }}</td>
-                                <td class="px-4 py-2 border">{{ $profildosentidaktetap->nama }}</td>
-                                <td class="px-4 py-2 border">{{ $profildosentidaktetap->asal_instansi }}</td>
-                                <td class="px-4 py-2 border">{{ $profildosentidaktetap->kualifikasi_pendidikan }}</td>
-                                <td class="px-4 py-2 border">{{ $profildosentidaktetap->sertifikasi_pendidik_profesional }}</td>
-                                <td class="px-4 py-2 border">{{ $profildosentidaktetap->sertifikat_kompetensi }}</td>
-                                <td class="px-4 py-2 border">{{ $profildosentidaktetap->bidang_keahlian }}</td>
-                                <td class="px-4 py-2 border">{{ $profildosentidaktetap->kesesuaian_bidang_ilmu_prodi }}</td>
+                                <td class="px-1 py-2 border text-sm">{{ $loop->iteration }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $profildosentidaktetap->nama }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $profildosentidaktetap->asal_instansi }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $profildosentidaktetap->kualifikasi_pendidikan }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $profildosentidaktetap->sertifikasi_pendidik_profesional }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $profildosentidaktetap->sertifikat_kompetensi }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $profildosentidaktetap->bidang_keahlian }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $profildosentidaktetap->bidang_ilmu_prodi }}</td>
                                 <td class="px-1 py-3 border flex flex-col items-center space-y-2">
                                     <!-- Tombol Edit -->
                                     <button 
-                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded" data-bs-toggle="modal" data-bs-target="#exampleModal{{ $profildosentidaktetap->id }}">
+                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm" data-bs-toggle="modal" data-bs-target="#exampleModal{{ $profildosentidaktetap->id }}">
                                         Edit
                                     </button>
 
@@ -49,7 +85,7 @@
                                     <form action="{{ route('pages.profil_dosen_tidak_tetap.destroy', $profildosentidaktetap->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus user ini?');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded">
+                                        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm">
                                             Delete
                                         </button>
                                     </form>
@@ -83,19 +119,27 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="sertifikasi_pendidik_profesional" class="form-label">Sertifikasi Profesional:</label>
-                                                    <input type="text" class="form-control" id="sertifikasi_pendidik_profesional" name="sertifikasi_pendidik_profesional" value="{{ $profildosentidaktetap->sertifikasi_pendidik_profesional }}">
+                                                    <select class="form-control" id="sertifikasi_pendidik_profesional" name="sertifikasi_pendidik_profesional" required>
+                                                        <option value="Ya" {{ $profildosentidaktetap->sertifikasi_pendidik_profesional == 'Ya' ? 'selected' : '' }}>Ya</option>
+                                                        <option value="Tidak" {{ $profildosentidaktetap->sertifikasi_pendidik_profesional == 'Tidak' ? 'selected' : '' }}>Tidak</option>
+                                                    </select>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="sertifikat_kompetensi" class="form-label">Sertifikat Kompetensi:</label>
-                                                    <input type="text" class="form-control" id="sertifikat_kompetensi" name="sertifikat_kompetensi" value="{{ $profildosentidaktetap->sertifikat_kompetensi }}">
+                                                    <label for="status" class="form-label">Status:</label>
+                                                    <select class="form-control" id="status" name="status" required>
+                                                        <option value="Dosen Praktisi" {{ $profildosentidaktetap->status == 'Dosen Praktisi' ? 'selected' : '' }}>Dosen Praktisi</option>
+                                                    </select>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="bidang_keahlian" class="form-label">Bidang Keahlian:</label>
                                                     <input type="text" class="form-control" id="bidang_keahlian" name="bidang_keahlian" value="{{ $profildosentidaktetap->bidang_keahlian }}">
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="kesesuaian_bidang_ilmu_prodi" class="form-label">Bidang Ilmu Prodi:</label>
-                                                    <input type="text" class="form-control" id="kesesuaian_bidang_ilmu_prodi" name="kesesuaian_bidang_ilmu_prodi" value="{{ $profildosentidaktetap->kesesuaian_bidang_ilmu_prodi }}">
+                                                    <label for="bidang_ilmu_prodi" class="form-label">Kesesuaian Bidang Ilmu Prodi:</label>
+                                                    <select class="form-control" id="bidang_ilmu_prodi" name="bidang_ilmu_prodi" required>
+                                                        <option value="Sesuai" {{ $profildosentidaktetap->bidang_ilmu_prodi == 'Sesuai' ? 'selected' : '' }}>Sesuai</option>
+                                                        <option value="Tidak Sesuai" {{ $profildosentidaktetap->bidang_ilmu_prodi == 'Tidak Sesuai' ? 'selected' : '' }}>Tidak Sesuai</option>
+                                                    </select>
                                                 </div>
                                               <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -115,7 +159,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Tambah Profil Dosen</h5>
+                                <h5 class="modal-title" id="exampleModalLabel">Tambah Profil Dosen Tidak Tetap</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
@@ -136,19 +180,27 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="sertifikasi_pendidik_profesional" class="form-label">Sertifikasi Profesional:</label>
-                                        <input type="text" class="form-control" id="sertifikasi_pendidik_profesional" name="sertifikasi_pendidik_profesional" value="{{ session('sertifikasi_pendidik_profesional') }}">
+                                        <select class="form-control" id="sertifikasi_pendidik_profesional" name="sertifikasi_pendidik_profesional" required>
+                                            <option value="Ya" {{ session('sertifikasi_pendidik_profesional') == 'Ya' ? 'selected' : '' }}>Ya</option>
+                                            <option value="Tidak" {{ session('sertifikasi_pendidik_profesional') == 'Tidak' ? 'selected' : '' }}>Tidak</option>
+                                        </select>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="sertifikat_kompetensi" class="form-label">Sertifikat Kompetensi:</label>
-                                        <input type="text" class="form-control" id="sertifikat_kompetensi" name="sertifikat_kompetensi" value="{{ session('sertifikat_kompetensi') }}">
+                                        <label for="status" class="form-label">Status:</label>
+                                        <select class="form-control" id="status" name="status" required>
+                                            <option value="Dosen Praktisi" {{ session('status') == 'Dosen Praktisi' ? 'selected' : '' }}>Dosen Praktisi</option>
+                                        </select>
                                     </div>
                                     <div class="mb-3">
                                         <label for="bidang_keahlian" class="form-label">Bidang Keahlian:</label>
                                         <input type="text" class="form-control" id="bidang_keahlian" name="bidang_keahlian" value="{{ session('bidang_keahlian') }}">
                                     </div>
-                                    <div class="mb-3">
-                                        <label for="kesesuaian_bidang_ilmu_prodi" class="form-label">Bidang Ilmu Prodi:</label>
-                                        <input type="text" class="form-control" id="kesesuaian_bidang_ilmu_prodi" name="kesesuaian_bidang_ilmu_prodi" value="{{ session('kesesuaian_bidang_ilmu_prodi') }}">
+                                    <div class="form-group">
+                                        <label>Kesesuaian Bidang Ilmu Prodi</label>
+                                        <select class="form-control" name="bidang_ilmu_prodi" required>
+                                          <option value="Sesuai" {{ old('bidang_ilmu_prodi') == 'Sesuai' ? 'selected' : '' }}>Sesuai</option>
+                                          <option value="Tidak Sesuai" {{ old('bidang_ilmu_prodi') == 'Tidak Sesuai' ? 'selected' : '' }}>Tidak Sesuai</option>
+                                        </select>
                                     </div>
                                   <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -204,7 +256,7 @@
          const modalTitle = this.querySelector('.modal-title');
          const modalBodyInput = this.querySelector('.modal-body input');
      
-         modalTitle.textContent = 'Tambah Visi Misi ';
+         modalTitle.textContent = 'Tambah Profil Dosen Tidak Tetap ';
          // modalBodyInput.value = recipient;
         });
     </script>

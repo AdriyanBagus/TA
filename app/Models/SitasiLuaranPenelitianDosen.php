@@ -13,5 +13,6 @@ class SitasiLuaranPenelitianDosen extends Model
         'judul_artikel',
         'jumlah_sitasi',
         'link_sitasi',
+        'tahun_akademik_id'
     ];
 }

@@ -14,8 +14,8 @@ class ProfilDosenTidakTetap extends Model
         'asal_instansi',
         'kualifikasi_pendidikan',
         'sertifikasi_pendidik_profesional',
-        'sertifikat_kompetensi',
+        'status',
         'bidang_keahlian',
-        'kesesuaian_bidang_ilmu_prodi',
+        'bidang_ilmu_prodi',
     ];
 }

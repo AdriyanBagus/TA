@@ -1,12 +1,48 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="card-header pb-0 d-flex justify-content-between align-items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Ketersediaan Dokumen') }}
-            </h2>
-            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                Tambah
-            </button>
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0">
+            <div class="flex items-center space-x-4">
+                <a href="javascript:history.back()"
+                    class="inline-flex items-center bg-gray-100 hover:bg-gray-200 text-black-700 text-sm px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Kembali
+                </a>
+
+                <h2 class="text-xl font-semibold text-gray-800 leading-tight">
+                    {{ __('Ketersediaan Dokumen') }}
+                </h2>
+            </div>
+
+            <div class="flex items-center space-x-4 mt-4">
+                {{-- Dropdown Filter Tahun Akademik --}}
+                <form method="GET" action="{{ route('pages.ketersediaan_dokumen') }}"
+                    class="flex flex-col md:flex-row md:items-center gap-2">
+                    <label for="tahun" class="text-sm font-medium text-gray-700">Tahun Akademik:</label>
+                    <select name="tahun" id="tahun" onchange="this.form.submit()"
+                        class="block w-64 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-700 bg-white">
+                        @foreach ($tahunList as $tahun)
+                            <option value="{{ $tahun->id }}" {{ $tahunTerpilih == $tahun->id ? 'selected' : '' }}>
+                                {{ $tahun->tahun }} {{ $tahun->is_active ? '(Aktif)' : '' }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
+
+                <div class="flex items-center space-x-4">
+                    <a href="{{ route('pages.ketersediaan_dokumen.export') }}" class="btn btn-success btn-sm" onclick="return confirm('Apakah Anda yakin ingin mendownload CSV?')">
+                        Download CSV
+                    </a>
+
+                    @if($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Tambah
+                        </button>
+                    @endif
+                </div>
+            </div>
         </div>
     </x-slot>
 
@@ -17,7 +53,6 @@
                     <thead>
                         <tr>
                             <th class="px-2 py-2 border text-sm">No</th>
-                            <th class="px-4 py-2 border text-sm">Kegiatan</th>
                             <th class="px-4 py-2 border text-sm">Ketersediaan Dokumen</th>
                             <th class="px-4 py-2 border text-sm">Nomor Dokumen</th>
                             <th class="px-1 py-2 border text-sm">Link Dokumen</th>
@@ -28,11 +63,10 @@
                         @foreach($ketersediaan_dokumen as $ketersediaandokumen)
                             <tr>
                                 <td class="px-1 py-2 border text-sm">{{ $loop->iteration }}</td>
-                                <td class="px-4 py-2 border text-sm">{{ $ketersediaandokumen->kegiatan }}</td>
                                 <td class="px-4 py-2 border text-sm">{{ $ketersediaandokumen->ketersediaan_dokumen }}</td>
                                 <td class="px-4 py-2 border text-sm">{{ $ketersediaandokumen->nomor_dokumen }}</td>
                                 <td class="px-1 py-2 border text-sm">
-                                    <a href="{{ $ketersediaandokumen->link_dokumen }}" target="_blank" class="text-blue-500 hover:underline">
+                                    <a href="{{ $ketersediaandokumen->url }}" target="_blank" class="text-blue-500 hover:underline">
                                         Link
                                     </a>
                                 </td>
@@ -44,7 +78,7 @@
                                     </button>
 
                                     <!-- Tombol Delete -->
-                                    <form action="{{ route('pages.ketersediaan_dokumen.destroy', $ketersediaandokumen->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus user ini?');">
+                                    <form action="{{ route('pages.ketersediaan_dokumen.destroy', $ketersediaandokumen->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?');">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm">
@@ -68,10 +102,6 @@
                                                 <input type="text" hidden name="id" value="{{ $ketersediaandokumen->id }}">
             
                                                 <div class="mb-3">
-                                                    <label for="kegiatan" class="form-label">Kegiatan:</label>
-                                                    <input type="text" class="form-control" id="kegiatan" name="kegiatan" value="{{ $ketersediaandokumen->kegiatan }}" required>
-                                                </div>
-                                                <div class="mb-3">
                                                     <label for="ketersediaan_dokumen" class="form-label">Ketersediaan Dokumen:</label>
                                                     <input type="text" class="form-control" id="ketersediaan_dokumen" name="ketersediaan_dokumen" value="{{ $ketersediaandokumen->ketersediaan_dokumen }}" required>
                                                 </div>
@@ -80,8 +110,8 @@
                                                     <input type="text" class="form-control" id="nomor_dokumen" name="nomor_dokumen" value="{{ $ketersediaandokumen->nomor_dokumen }}">
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="link_dokumen" class="form-label">Link Dokumen:</label>
-                                                    <textarea class="form-control" id="link_dokumen" name="link_dokumen" rows="3" placeholder="eg: https://drive.google.com/">{{ $ketersediaandokumen->link_dokumen }}</textarea>
+                                                    <label for="url" class="form-label">Url Dokumen:</label>
+                                                    <textarea class="form-control" id="url" name="url" rows="3" placeholder="eg: https://drive.google.com/">{{ $ketersediaandokumen->url }}</textarea>
                                                 </div>
                                               <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -107,11 +137,7 @@
                             <div class="modal-body">
                                 <form action="{{ route('pages.ketersediaan_dokumen.add') }}" method="POST">
                                     @csrf
-
-                                    <div class="mb-3">
-                                        <label for="kegiatan" class="form-label">Kegiatan:</label>
-                                        <input type="text" class="form-control" id="kegiatan" name="kegiatan" value="{{ session('kegiatan') }}" required>
-                                    </div>
+                                    
                                     <div class="mb-3">
                                         <label for="ketersediaan_dokumen" class="form-label">Ketersediaan Dokumen:</label>
                                         <input type="text" class="form-control" id="ketersediaan_dokumen" name="ketersediaan_dokumen" value="{{ session('ketersediaan_dokumen') }}" required>
@@ -121,8 +147,8 @@
                                         <input type="text" class="form-control" id="nomor_dokumen" name="nomor_dokumen" value="{{ session('nomor_dokumen') }}">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="link_dokumen" class="form-label">Link Dokumen:</label>
-                                        <textarea class="form-control" id="link_dokumen" name="link_dokumen" placeholder="eg: https://drive.google.com/">{{ session('link_dokumen') }}</textarea>
+                                        <label for="url" class="form-label">Url Dokumen:</label>
+                                        <textarea class="form-control" id="url" name="url" placeholder="eg: https://drive.google.com/">{{ session('url') }}</textarea>
                                     </div>
 
                                   <div class="modal-footer">

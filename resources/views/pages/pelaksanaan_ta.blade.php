@@ -1,12 +1,48 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="card-header pb-0 d-flex justify-content-between align-items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Pelaksanaan TA') }}
-            </h2>
-            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                Tambah
-            </button>
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0">
+            <div class="flex items-center space-x-4">
+                <a href="javascript:history.back()"
+                    class="inline-flex items-center bg-gray-100 hover:bg-gray-200 text-black-700 text-sm px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Kembali
+                </a>
+
+                <h2 class="text-xl font-semibold text-gray-800 leading-tight">
+                    {{ __('Pelaksanaa TA') }}
+                </h2>
+            </div>
+
+            <div class="flex items-center space-x-4 mt-4">
+                {{-- Dropdown Filter Tahun Akademik --}}
+                <form method="GET" action="{{ route('pages.pelaksanaan_ta') }}"
+                    class="flex flex-col md:flex-row md:items-center gap-2">
+                    <label for="tahun" class="text-sm font-medium text-gray-700">Tahun Akademik:</label>
+                    <select name="tahun" id="tahun" onchange="this.form.submit()"
+                        class="block w-64 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-700 bg-white">
+                        @foreach ($tahunList as $tahun)
+                            <option value="{{ $tahun->id }}" {{ $tahunTerpilih == $tahun->id ? 'selected' : '' }}>
+                                {{ $tahun->tahun }} {{ $tahun->is_active ? '(Aktif)' : '' }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
+
+                <div class="flex items-center space-x-4">
+                    <a href="{{ route('pages.pelaksanaan_ta.export') }}" class="btn btn-success btn-sm" onclick="return confirm('Apakah Anda yakin ingin mendownload CSV?')">
+                        Download CSV
+                    </a>
+
+                    @if($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Tambah
+                        </button>
+                    @endif
+                </div>
+            </div>
         </div>
     </x-slot>
 
@@ -16,38 +52,40 @@
                 <table class="min-w-full bg-white border border-gray-500">
                     <thead>
                         <tr>
-                            <th class="px-2 py-2 border">No</th>
-                            <th class="px-4 py-2 border">Nama</th>
-                            <th class="px-4 py-2 border">NIDN</th>
-                            <th class="px-4 py-2 border">Bimbingan Mahasiswa</th>
-                            <th class="px-4 py-2 border">Jumlah Bimbingan</th>
-                            <th class="px-4 py-2 border">Bimbingan Mahasiswa PS Lain</th>
-                            <th class="px-4 py-2 border">Jumlah Bimbingan Seluruh PS</th>
-                            <th class="px-4 py-2 border">action</th>
+                            <th class="px-2 py-2 border text-sm">No</th>
+                            <th class="px-4 py-2 border text-sm">Nama</th>
+                            <th class="px-4 py-2 border text-sm">NIDN</th>
+                            <th class="px-4 py-2 border text-sm">Bimbingan Mahasiswa PS Sendiri</th>
+                            <th class="px-4 py-2 border text-sm">Jumlah Bimbingan PS sendiri</th>
+                            <th class="px-4 py-2 border text-sm">Bimbingan Mahasiswa PS Lain</th>
+                            <th class="px-4 py-2 border text-sm">Jumlah Bimbingan PS Lain</th>
+                            <th class="px-4 py-2 border text-sm">Jumlah Bimbingan Seluruh PS</th>
+                            <th class="px-4 py-2 border text-sm">action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($pelaksanaan_ta as $pelaksanaanta)
                             <tr>
-                                <td class="px-1 py-2 border">{{ $loop->iteration }}</td>
-                                <td class="px-4 py-2 border">{{ $pelaksanaanta->nama }}</td>
-                                <td class="px-4 py-2 border">{{ $pelaksanaanta->nidn }}</td>
-                                <td class="px-4 py-2 border">{{ $pelaksanaanta->bimbingan_mahasiswa_ps }}</td>
-                                <td class="px-4 py-2 border">{{ $pelaksanaanta->rata_rata_jumlah_bimbingan }}</td>
-                                <td class="px-4 py-2 border">{{ $pelaksanaanta->bimbingan_mahasiswa_ps_lain }}</td>
-                                <td class="px-4 py-2 border">{{ $pelaksanaanta->rata_rata_jumlah_bimbingan_seluruh_ps }}</td>
+                                <td class="px-1 py-2 border text-sm">{{ $loop->iteration }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $pelaksanaanta->nama }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $pelaksanaanta->nidn }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $pelaksanaanta->bimbingan_mahasiswa_ps_sendiri }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $pelaksanaanta->rata_rata_jumlah_bimbingan_ps_sendiri }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $pelaksanaanta->bimbingan_mahasiswa_ps_lain }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $pelaksanaanta->rata_rata_jumlah_bimbingan_ps_lain }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $pelaksanaanta->rata_rata_jumlah_bimbingan_seluruh_ps }}</td>
                                 <td class="px-1 py-3 border flex flex-col items-center space-y-2">
                                     <!-- Tombol Edit -->
                                     <button 
-                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded" data-bs-toggle="modal" data-bs-target="#exampleModal{{ $pelaksanaanta->id }}">
+                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm" data-bs-toggle="modal" data-bs-target="#exampleModal{{ $pelaksanaanta->id }}">
                                         Edit
                                     </button>
 
                                     <!-- Tombol Delete -->
-                                    <form action="" method="POST" onsubmit="return confirm('Yakin ingin menghapus user ini?');">
-                                        {{-- @csrf
-                                        @method('DELETE') --}}
-                                        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded">
+                                    <form action="{{ route('pages.pelaksanaan_ta.destroy', $pelaksanaanta->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm">
                                             Delete
                                         </button>
                                     </form>
@@ -73,23 +111,27 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="nidn" class="form-label">NIDN:</label>
-                                                    <input type="text" class="form-control" id="nidn" name="nidn" value="{{ $pelaksanaanta->nidn }}" required>
+                                                    <input type="number" class="form-control" id="nidn" name="nidn" value="{{ $pelaksanaanta->nidn }}" required>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="bimbingan_mahasiswa_ps" class="form-label">Bimbingan Mahasiswa:</label>
-                                                    <input type="text" class="form-control" id="bimbingan_mahasiswa_ps" name="bimbingan_mahasiswa_ps" value="{{ $pelaksanaanta->bimbingan_mahasiswa_ps }}" required>
+                                                    <label for="bimbingan_mahasiswa_ps_sendiri" class="form-label">Bimbingan Mahasiswa PS sendiri:</label>
+                                                    <input type="number" class="form-control" id="bimbingan_mahasiswa_ps_sendiri" name="bimbingan_mahasiswa_ps_sendiri" value="{{ $pelaksanaanta->bimbingan_mahasiswa_ps_sendiri }}" required>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="rata_rata_jumlah_bimbingan" class="form-label">Jumlah Bimbingan:</label>
-                                                    <input type="text" class="form-control" id="rata_rata_jumlah_bimbingan" name="rata_rata_jumlah_bimbingan" value="{{ $pelaksanaanta->rata_rata_jumlah_bimbingan }}" required>
+                                                    <label for="rata_rata_jumlah_bimbingan_ps_sendiri" class="form-label">Jumlah Bimbingan PS Sendiri:</label>
+                                                    <input type="number" class="form-control" id="rata_rata_jumlah_bimbingan_ps_sendiri" name="rata_rata_jumlah_bimbingan_ps_sendiri" value="{{ $pelaksanaanta->rata_rata_jumlah_bimbingan_ps_sendiri }}" readonly>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="bimbingan_mahasiswa_ps_lain" class="form-label">Bimbingan Mahasiswa PS Lain:</label>
-                                                    <input type="text" class="form-control" id="bimbingan_mahasiswa_ps_lain" name="bimbingan_mahasiswa_ps_lain" value="{{ $pelaksanaanta->bimbingan_mahasiswa_ps_lain }}" required>
+                                                    <input type="number" class="form-control" id="bimbingan_mahasiswa_ps_lain" name="bimbingan_mahasiswa_ps_lain" value="{{ $pelaksanaanta->bimbingan_mahasiswa_ps_lain }}" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="rata_rata_jumlah_bimbingan_ps_lain" class="form-label">Jumlah Bimbingan PS Lain:</label>
+                                                    <input type="number" class="form-control" id="rata_rata_jumlah_bimbingan_ps_lain" name="rata_rata_jumlah_bimbingan_ps_lain" value="{{ $pelaksanaanta->rata_rata_jumlah_bimbingan_ps_lain }}" readonly>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="rata_rata_jumlah_bimbingan_seluruh_ps" class="form-label">Jumlah Bimbingan Seluruh PS:</label>
-                                                    <input type="text" class="form-control" id="rata_rata_jumlah_bimbingan_seluruh_ps" name="rata_rata_jumlah_bimbingan_seluruh_ps" value="{{ $pelaksanaanta->rata_rata_jumlah_bimbingan_seluruh_ps }}" required>
+                                                    <input type="number" class="form-control" id="rata_rata_jumlah_bimbingan_seluruh_ps" name="rata_rata_jumlah_bimbingan_seluruh_ps" value="{{ $pelaksanaanta->rata_rata_jumlah_bimbingan_seluruh_ps }}" readonly>
                                                 </div>
 
                                               <div class="modal-footer">
@@ -110,7 +152,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">New Message</h5>
+                                <h5 class="modal-title" id="exampleModalLabel">Tambah Pelaksanaan TA</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
@@ -119,27 +161,19 @@
 
                                     <div class="mb-3">
                                         <label for="nama" class="form-label">Nama:</label>
-                                        <input type="text" class="form-control" id="nama" name="nama" value="{{ session('nama') }}" required>
+                                        <input type="text" class="form-control" id="nama" name="nama" value="{{ old('nama') }}" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="nidn" class="form-label">NIDN:</label>
-                                        <input type="text" class="form-control" id="nidn" name="nidn" value="{{ session('nidn') }}" required>
+                                        <input type="number" class="form-control" id="nidn" name="nidn" value="{{ old('nidn') }}" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="bimbingan_mahasiswa_ps" class="form-label">Bimbingan Mahasiswa:</label>
-                                        <input type="text" class="form-control" id="bimbingan_mahasiswa_ps" name="bimbingan_mahasiswa_ps" value="{{ session('bimbingan_mahasiswa_ps') }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="rata_rata_jumlah_bimbingan" class="form-label">Jumlah Bimbingan:</label>
-                                        <input type="text" class="form-control" id="rata_rata_jumlah_bimbingan" name="rata_rata_jumlah_bimbingan" value="{{ session('rata_rata_jumlah_bimbingan') }}" required>
+                                        <label for="bimbingan_mahasiswa_ps_sendiri" class="form-label">Bimbingan Mahasiswa PS sendiri:</label>
+                                        <input type="number" class="form-control" id="bimbingan_mahasiswa_ps_sendiri" name="bimbingan_mahasiswa_ps_sendiri" value="{{ old('bimbingan_mahasiswa_ps_sendiri') }}" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="bimbingan_mahasiswa_ps_lain" class="form-label">Bimbingan Mahasiswa PS Lain:</label>
-                                        <input type="text" class="form-control" id="bimbingan_mahasiswa_ps_lain" name="bimbingan_mahasiswa_ps_lain" value="{{ session('bimbingan_mahasiswa_ps_lain') }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="rata_rata_jumlah_bimbingan_seluruh_ps" class="form-label">Jumlah Bimbingan Seluruh PS:</label>
-                                        <input type="text" class="form-control" id="rata_rata_jumlah_bimbingan_seluruh_ps" name="rata_rata_jumlah_bimbingan_seluruh_ps" value="{{ session('rata_rata_jumlah_bimbingan_seluruh_ps') }}" required>
+                                        <input type="number" class="form-control" id="bimbingan_mahasiswa_ps_lain" name="bimbingan_mahasiswa_ps_lain" value="{{ old('bimbingan_mahasiswa_ps_lain') }}" required>
                                     </div>
 
                                   <div class="modal-footer">
@@ -196,7 +230,7 @@
          const modalTitle = this.querySelector('.modal-title');
          const modalBodyInput = this.querySelector('.modal-body input');
      
-         modalTitle.textContent = 'Tambah Visi Misi ';
+         modalTitle.textContent = 'Tambah Pelaksanaan TA ';
          // modalBodyInput.value = recipient;
         });
     </script>

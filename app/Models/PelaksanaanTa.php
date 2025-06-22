@@ -12,9 +12,11 @@ class PelaksanaanTa extends Model
         'user_id',
         'nama',
         'nidn',
-        'bimbingan_mahasiswa_ps',
-        'rata_rata_jumlah_bimbingan',
+        'bimbingan_mahasiswa_ps_sendiri',
+        'rata_rata_jumlah_bimbingan_ps_sendiri',
         'bimbingan_mahasiswa_ps_lain',
+        'rata_rata_jumlah_bimbingan_ps_lain',
         'rata_rata_jumlah_bimbingan_seluruh_ps',
+        'tahun_akademik_id'
     ];
 }

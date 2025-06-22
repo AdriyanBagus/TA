@@ -15,6 +15,9 @@ class PenelitianMahasiswa extends Model
         'nama_pembimbing',
         'tingkat',
         'sumber_dana',
-        'kesesuaian_roadmap'
+        'bentuk_dana',
+        'jumlah_dana',
+        'kesesuaian_roadmap',
+        'tahun_akademik_id'
     ];
 }

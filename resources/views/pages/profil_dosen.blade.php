@@ -1,12 +1,48 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="card-header pb-0 d-flex justify-content-between align-items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Profil Dosen') }}
-            </h2>
-            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                Tambah
-            </button>
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0">
+            <div class="flex items-center space-x-4">
+                <a href="javascript:history.back()"
+                    class="inline-flex items-center bg-gray-100 hover:bg-gray-200 text-black-700 text-sm px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Kembali
+                </a>
+
+                <h2 class="text-xl font-semibold text-gray-800 leading-tight">
+                    {{ __('Profil Dosen Tidak Tetap') }}
+                </h2>
+            </div>
+
+            <div class="flex items-center space-x-4 mt-4">
+                {{-- Dropdown Filter Tahun Akademik --}}
+                <form method="GET" action="{{ route('pages.profil_dosen_tidak_tetap') }}"
+                    class="flex flex-col md:flex-row md:items-center gap-2">
+                    <label for="tahun" class="text-sm font-medium text-gray-700">Tahun Akademik:</label>
+                    <select name="tahun" id="tahun" onchange="this.form.submit()"
+                        class="block w-64 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-700 bg-white">
+                        @foreach ($tahunList as $tahun)
+                            <option value="{{ $tahun->id }}" {{ $tahunTerpilih == $tahun->id ? 'selected' : '' }}>
+                                {{ $tahun->tahun }} {{ $tahun->is_active ? '(Aktif)' : '' }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
+
+                <div class="flex items-center space-x-4">
+                    <a href="{{ route('pages.profil_dosen_tidak_tetap.export') }}" class="btn btn-success btn-sm" onclick="return confirm('Apakah Anda yakin ingin mendownload CSV?')">
+                        Download CSV
+                    </a>
+
+                    @if($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Tambah
+                        </button>
+                    @endif
+                </div>
+            </div>
         </div>
     </x-slot>
 
@@ -91,8 +127,11 @@
                                                     <input type="text" class="form-control" id="bidang_keahlian" name="bidang_keahlian" value="{{ $profildosen->bidang_keahlian }}">
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="bidang_ilmu_prodi" class="form-label">Bidang Ilmu Prodi:</label>
-                                                    <input type="text" class="form-control" id="bidang_ilmu_prodi" name="bidang_ilmu_prodi" value="{{ $profildosen->bidang_ilmu_prodi }}" required>
+                                                    <label for="bidang_ilmu_prodi" class="form-label">Kesesuaian Bidang Ilmu Prodi:</label>
+                                                    <select class="form-control" id="bidang_ilmu_prodi" name="bidang_ilmu_prodi" required>
+                                                        <option value="Sesuai" {{ $profildosen->bidang_ilmu_prodi == 'Sesuai' ? 'selected' : '' }}>Sesuai</option>
+                                                        <option value="Tidak Sesuai" {{ $profildosen->bidang_ilmu_prodi == 'Tidak Sesuai' ? 'selected' : '' }}>Tidak Sesuai</option>
+                                                    </select>
                                                 </div>
                                               <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -142,9 +181,12 @@
                                         <label for="bidang_keahlian" class="form-label">Bidang Keahlian:</label>
                                         <input type="text" class="form-control" id="bidang_keahlian" name="bidang_keahlian" value="{{ session('bidang_keahlian') }}">
                                     </div>
-                                    <div class="mb-3">
-                                        <label for="bidang_ilmu_prodi" class="form-label">Bidang Ilmu Prodi:</label>
-                                        <input type="text" class="form-control" id="bidang_ilmu_prodi" name="bidang_ilmu_prodi" value="{{ session('bidang_ilmu_prodi') }}" required>
+                                    <div class="form-group">
+                                        <label>Kesesuaian Bidang Ilmu Prodi</label>
+                                        <select class="form-control" name="bidang_ilmu_prodi" required>
+                                          <option value="Sesuai" {{ old('bidang_ilmu_prodi') == 'Sesuai' ? 'selected' : '' }}>Sesuai</option>
+                                          <option value="Tidak Sesuai" {{ old('bidang_ilmu_prodi') == 'Tidak Sesuai' ? 'selected' : '' }}>Tidak Sesuai</option>
+                                        </select>
                                     </div>
                                   <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

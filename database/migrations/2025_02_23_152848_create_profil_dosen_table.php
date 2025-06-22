@@ -19,10 +19,16 @@ return new class extends Migration
                   ->on('users') // Mengacu ke tabel users
                   ->onDelete('cascade'); // Jika user dihapus, data ini ikut terhapus
             $table->string('nama');
+            $table->string('nidn', 10);
             $table->string('kualifikasi_pendidikan');
-            $table->string('sertifikasi_pendidik_profesional')->nullable();
+            $table->enum('sertifikasi_pendidik_profesional', ['Ya', 'Tidak'])->nullable();
             $table->string('bidang_keahlian');
-            $table->string('bidang_ilmu_prodi');
+            $table->enum('bidang_ilmu_prodi', ['Sesuai', 'Tidak Sesuai']);
+            $table->unsignedBigInteger('tahun_akademik_id')->nullable(); // Foreign Key mengacu ke tabel tahun akademik id
+            $table->foreign('tahun_akademik_id')
+                  ->references('id')
+                  ->on('tahun_akademik') // Mengacu ke tabel tahun akademik
+                  ->onDelete('cascade'); // Jika user dihapus, data ini ikut terhapus
             $table->timestamps();
         });
     }

@@ -14,6 +14,8 @@ class ProfilTenagaKependidikan extends Model
         'nipy',
         'kualifikasi_pendidikan',
         'jabatan',
+        'bidang_keahlian',
         'kesesuaian_bidang_kerja',
+        'tahun_akademik_id'
     ];
 }

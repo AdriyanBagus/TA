@@ -11,13 +11,11 @@ class PublikasiKaryaIlmiah extends Model
         'user_id',
         'judul_penelitian',
         'judul_publikasi',
-        'dosen',
-        'mahasiswa',
-        'dipublikasikan',
-        'penerbit',
+        'nama_author',
+        'nama_jurnal',
         'jenis',
         'tingkat',
-        'penyusun',
-        'status'
+        'url',
+        'tahun_akademik_id'
     ];
 }

@@ -1,8 +1,24 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Visi dan Misi') }}
-        </h2>
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Visi dan Misi') }}
+            </h2>
+
+            {{-- Dropdown Filter Tahun Akademik --}}
+            <form method="GET" action="{{ route('visimisi') }}"
+                class="flex flex-col md:flex-row md:items-center gap-2">
+                <label for="tahun" class="text-sm font-medium text-gray-700">Tahun Akademik:</label>
+                <select name="tahun" id="tahun" onchange="this.form.submit()"
+                    class="block w-64 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-700 bg-white">
+                    @foreach ($tahunList as $tahun)
+                        <option value="{{ $tahun->id }}" {{ $tahunTerpilih == $tahun->id ? 'selected' : '' }}>
+                            {{ $tahun->tahun }} {{ $tahun->is_active ? '(Aktif)' : '' }}
+                        </option>
+                    @endforeach
+                </select>
+            </form>
+        </div>
     </x-slot>
 
     <div class="py-12">
