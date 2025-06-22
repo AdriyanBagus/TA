@@ -18,7 +18,7 @@
 
             <div class="flex items-center space-x-4 mt-4">
                 {{-- Dropdown Filter Tahun Akademik --}}
-                <form method="GET" action="{{ route('pages.kerjasama') }}"
+                <form method="GET" action="{{ route('pages.kerjasama.show') }}"
                     class="flex flex-col md:flex-row md:items-center gap-2">
                     <label for="tahun" class="text-sm font-medium text-gray-700">Tahun Akademik:</label>
                     <select name="tahun" id="tahun" onchange="this.form.submit()"

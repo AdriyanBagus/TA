@@ -63,7 +63,7 @@
                         @foreach($ketersediaan_dokumen as $ketersediaandokumen)
                             <tr>
                                 <td class="px-1 py-2 border text-sm">{{ $loop->iteration }}</td>
-                                <td class="px-4 py-2 border text-sm">{{ $ketersediaandokumen->ketersediaan_dokumen }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $ketersediaandokumen->dokumen }}</td>
                                 <td class="px-4 py-2 border text-sm">{{ $ketersediaandokumen->nomor_dokumen }}</td>
                                 <td class="px-1 py-2 border text-sm">
                                     <a href="{{ $ketersediaandokumen->url }}" target="_blank" class="text-blue-500 hover:underline">
@@ -102,8 +102,8 @@
                                                 <input type="text" hidden name="id" value="{{ $ketersediaandokumen->id }}">
             
                                                 <div class="mb-3">
-                                                    <label for="ketersediaan_dokumen" class="form-label">Ketersediaan Dokumen:</label>
-                                                    <input type="text" class="form-control" id="ketersediaan_dokumen" name="ketersediaan_dokumen" value="{{ $ketersediaandokumen->ketersediaan_dokumen }}" required>
+                                                    <label for="dokumen" class="form-label">Ketersediaan Dokumen:</label>
+                                                    <input type="text" class="form-control" id="dokumen" name="dokumen" value="{{ $ketersediaandokumen->dokumen }}" required>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="nomor_dokumen" class="form-label">Nomor Dokumen:</label>
@@ -139,16 +139,16 @@
                                     @csrf
                                     
                                     <div class="mb-3">
-                                        <label for="ketersediaan_dokumen" class="form-label">Ketersediaan Dokumen:</label>
-                                        <input type="text" class="form-control" id="ketersediaan_dokumen" name="ketersediaan_dokumen" value="{{ session('ketersediaan_dokumen') }}" required>
+                                        <label for="dokumen" class="form-label">Ketersediaan Dokumen:</label>
+                                        <input type="text" class="form-control" id="dokumen" name="dokumen" value="{{ old('dokumen') }}" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="nomor_dokumen" class="form-label">Nomor Dokumen:</label>
-                                        <input type="text" class="form-control" id="nomor_dokumen" name="nomor_dokumen" value="{{ session('nomor_dokumen') }}">
+                                        <input type="text" class="form-control" id="nomor_dokumen" name="nomor_dokumen" value="{{ old('nomor_dokumen') }}">
                                     </div>
                                     <div class="mb-3">
                                         <label for="url" class="form-label">Url Dokumen:</label>
-                                        <textarea class="form-control" id="url" name="url" placeholder="eg: https://drive.google.com/">{{ session('url') }}</textarea>
+                                        <textarea class="form-control" id="url" name="url" placeholder="eg: https://drive.google.com/">{{ old('url') }}</textarea>
                                     </div>
 
                                   <div class="modal-footer">
@@ -205,7 +205,7 @@
          const modalTitle = this.querySelector('.modal-title');
          const modalBodyInput = this.querySelector('.modal-body input');
      
-         modalTitle.textContent = 'Tambah Visi Misi ';
+         modalTitle.textContent = 'Tambah Ketersediaan Dokumen';
          // modalBodyInput.value = recipient;
         });
     </script>

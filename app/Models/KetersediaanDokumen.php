@@ -10,7 +10,7 @@ class KetersediaanDokumen extends Model
 
     protected $fillable = [
         'user_id',
-        'ketersediaan_dokumen',
+        'dokumen',
         'nomor_dokumen',
         'url',
         'tahun_akademik_id'

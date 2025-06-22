@@ -51,7 +51,7 @@ class KetersediaanDokumenController extends Controller
         KetersediaanDokumen::create([
             'user_id' => Auth::user()->id,
             'tahun_akademik_id' => $tahunAktif->id,
-            'ketersediaan_dokumen' => $request->ketersediaan_dokumen,
+            'dokumen' => $request->dokumen,
             'nomor_dokumen' => $request->nomor_dokumen,
             'url' => $formattedUrl,
         ]);
@@ -68,7 +68,7 @@ class KetersediaanDokumenController extends Controller
 
         $ketersediaan_dokumen = KetersediaanDokumen::find($id);
         $ketersediaan_dokumen->tahun_akademik_id = $tahunAktif->id;
-        $ketersediaan_dokumen->ketersediaan_dokumen = $request->ketersediaan_dokumen;
+        $ketersediaan_dokumen->dokumen = $request->dokumen;
         $ketersediaan_dokumen->nomor_dokumen = $request->nomor_dokumen;
         $ketersediaan_dokumen->url = $formattedUrl;
         $ketersediaan_dokumen->user_id = Auth::user()->id;
@@ -91,7 +91,7 @@ class KetersediaanDokumenController extends Controller
                             ->where('tahun_akademik_id', TahunAkademik::where('is_active', true)->value('id'))
                             ->get();
 
-        $filename = 'Ketersediaan Dokumen' . date('Y-m-d') . '.csv';
+        $filename = 'Ketersediaan Dokumen_' . date('Y-m-d') . '.csv';
         $headers = [
             "Content-type"        => "text/csv",
             "Content-Disposition" => "attachment; filename=$filename",

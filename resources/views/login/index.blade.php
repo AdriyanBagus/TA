@@ -55,12 +55,12 @@
                                         </div>
 
                                         <!-- Remember Me -->
-                                        <div class="form-check form-switch">
+                                        {{-- <div class="form-check form-switch">
                                             <input id="remember_me" type="checkbox" class="form-check-input"
                                                 name="remember">
                                             <label class="form-check-label"
                                                 for="remember_me">{{ __('Ingat saya') }}</label>
-                                        </div>
+                                        </div> --}}
 
                                         <div class="text-center mt-4">
                                             <!-- @if (Route::has('password.request'))

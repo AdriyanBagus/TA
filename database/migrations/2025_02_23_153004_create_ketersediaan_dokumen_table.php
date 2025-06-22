@@ -18,7 +18,7 @@ return new class extends Migration
                   ->references('id')
                   ->on('users') // Mengacu ke tabel users
                   ->onDelete('cascade'); // Jika user dihapus, data ini ikut terhapus
-            $table->string('ketersediaan_dokumen'); // Menyimpan path file dokumen
+            $table->string('dokumen'); // Menyimpan path file dokumen
             $table->string('nomor_dokumen')->nullable();
             $table->text('url')->nullable(); // Nama dokumen
             $table->unsignedBigInteger('tahun_akademik_id')->nullable(); // Foreign Key mengacu ke tabel tahun akademik id
