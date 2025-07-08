@@ -296,28 +296,28 @@ class AnalisisController extends Controller
         return view('admin.analisis.lahanpraktek', compact('lahan_praktek', 'sortBy', 'sortOrder', 'tabel', 'prodi', 'komentar', 'tahunList', 'tahunTerpilih'));
     }
 
-    public function kinerjaDTPS(Request $request)
-    {
-        $sortBy = $request->get('sort_by', 'nama_user'); // Default: Sort by nama_user
-        $sortOrder = $request->get('sort_order', 'asc'); // Default: Ascending
+    // public function kinerjaDTPS(Request $request)
+    // {
+    //     $sortBy = $request->get('sort_by', 'nama_user'); // Default: Sort by nama_user
+    //     $sortOrder = $request->get('sort_order', 'asc'); // Default: Ascending
 
-        // Ambil daftar tahun akademik & tahun yang dipilih (atau default ke aktif)
-        $tahunList = TahunAkademik::all();
-        $tahunTerpilih = $request->get('tahun') ?? TahunAkademik::where('is_active', true)->value('id');
+    //     // Ambil daftar tahun akademik & tahun yang dipilih (atau default ke aktif)
+    //     $tahunList = TahunAkademik::all();
+    //     $tahunTerpilih = $request->get('tahun') ?? TahunAkademik::where('is_active', true)->value('id');
 
-        $kinerjaDTPS = DB::table('kinerja_dtps')
-            ->join('users', 'kinerja_dtps.user_id', '=', 'users.id')
-            ->select('kinerja_dtps.*', 'users.name as nama_user')
-            ->orderBy($sortBy, $sortOrder)
-            ->get();
+    //     $kinerjaDTPS = DB::table('kinerja_dtps')
+    //         ->join('users', 'kinerja_dtps.user_id', '=', 'users.id')
+    //         ->select('kinerja_dtps.*', 'users.name as nama_user')
+    //         ->orderBy($sortBy, $sortOrder)
+    //         ->get();
 
-        //Komentar
-        $tabel = (new KinerjaDtps())->getTable();
-        $prodi = User::select('id', 'name')->where('usertype', '!=', 'admin')->get();
-        $komentar = Komentar::where('nama_tabel', $tabel)->get();
+    //     //Komentar
+    //     $tabel = (new KinerjaDtps())->getTable();
+    //     $prodi = User::select('id', 'name')->where('usertype', '!=', 'admin')->get();
+    //     $komentar = Komentar::where('nama_tabel', $tabel)->get();
 
-        return view('admin.analisis.kinerja_dtps', compact('kinerjaDTPS', 'sortBy', 'sortOrder', 'tabel', 'prodi', 'komentar', 'tahunList', 'tahunTerpilih'));
-    }
+    //     return view('admin.analisis.kinerja_dtps', compact('kinerjaDTPS', 'sortBy', 'sortOrder', 'tabel', 'prodi', 'komentar', 'tahunList', 'tahunTerpilih'));
+    // }
 
     public function tenaga_kependidikan(Request $request)
     {
@@ -533,51 +533,51 @@ class AnalisisController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-/*******  8f8c4820-b4f7-4415-a181-13ceedb8ed54  *******/    public function publikasi_ki_pkm(Request $request)
-    {
-        $sortBy = $request->get('sort_by', 'nama_user'); // Default: Sort by nama_user
-        $sortOrder = $request->get('sort_order', 'asc'); // Default: Ascending
+    // public function publikasi_ki_pkm(Request $request)
+    // {
+    //     $sortBy = $request->get('sort_by', 'nama_user'); // Default: Sort by nama_user
+    //     $sortOrder = $request->get('sort_order', 'asc'); // Default: Ascending
 
-        // Ambil daftar tahun akademik & tahun yang dipilih (atau default ke aktif)
-        $tahunList = TahunAkademik::all();
-        $tahunTerpilih = $request->get('tahun') ?? TahunAkademik::where('is_active', true)->value('id');
+    //     // Ambil daftar tahun akademik & tahun yang dipilih (atau default ke aktif)
+    //     $tahunList = TahunAkademik::all();
+    //     $tahunTerpilih = $request->get('tahun') ?? TahunAkademik::where('is_active', true)->value('id');
 
-        $publikasi_ki_pkm = DB::table('publikasi_karya_ilmiah_pkm')
-            ->join('users', 'publikasi_karya_ilmiah_pkm.user_id', '=', 'users.id')
-            ->select('publikasi_karya_ilmiah_pkm.*', 'users.name as nama_user')
-            ->orderBy($sortBy, $sortOrder)
-            ->get();
+    //     $publikasi_ki_pkm = DB::table('publikasi_karya_ilmiah_pkm')
+    //         ->join('users', 'publikasi_karya_ilmiah_pkm.user_id', '=', 'users.id')
+    //         ->select('publikasi_karya_ilmiah_pkm.*', 'users.name as nama_user')
+    //         ->orderBy($sortBy, $sortOrder)
+    //         ->get();
 
-        //Komentar
-        $tabel = (new PublikasiKaryaIlmiahPkm())->getTable();
-        $prodi = User::select('id', 'name')->where('usertype', '!=', 'admin')->get();
-        $komentar = Komentar::where('nama_tabel', $tabel)->get();
+    //     //Komentar
+    //     $tabel = (new PublikasiKaryaIlmiahPkm())->getTable();
+    //     $prodi = User::select('id', 'name')->where('usertype', '!=', 'admin')->get();
+    //     $komentar = Komentar::where('nama_tabel', $tabel)->get();
 
-        return view('admin.analisis.publikasi_ki_pkm', compact('publikasi_ki_pkm', 'sortBy', 'sortOrder', 'tabel', 'prodi', 'komentar', 'tahunList', 'tahunTerpilih'));
-    }
+    //     return view('admin.analisis.publikasi_ki_pkm', compact('publikasi_ki_pkm', 'sortBy', 'sortOrder', 'tabel', 'prodi', 'komentar', 'tahunList', 'tahunTerpilih'));
+    // }
 
-    public function luaran_ki_pkm(Request $request)
-    {
-        $sortBy = $request->get('sort_by', 'nama_user'); // Default: Sort by nama_user
-        $sortOrder = $request->get('sort_order', 'asc'); // Default: Ascending
+    // public function luaran_ki_pkm(Request $request)
+    // {
+    //     $sortBy = $request->get('sort_by', 'nama_user'); // Default: Sort by nama_user
+    //     $sortOrder = $request->get('sort_order', 'asc'); // Default: Ascending
 
-        // Ambil daftar tahun akademik & tahun yang dipilih (atau default ke aktif)
-        $tahunList = TahunAkademik::all();
-        $tahunTerpilih = $request->get('tahun') ?? TahunAkademik::where('is_active', true)->value('id');
+    //     // Ambil daftar tahun akademik & tahun yang dipilih (atau default ke aktif)
+    //     $tahunList = TahunAkademik::all();
+    //     $tahunTerpilih = $request->get('tahun') ?? TahunAkademik::where('is_active', true)->value('id');
 
-        $luaran_ki_pkm = DB::table('luaran_karya_ilmiah_pkm')
-            ->join('users', 'luaran_karya_ilmiah_pkm.user_id', '=', 'users.id')
-            ->select('luaran_karya_ilmiah_pkm.*', 'users.name as nama_user')
-            ->orderBy($sortBy, $sortOrder)
-            ->get();
+    //     $luaran_ki_pkm = DB::table('luaran_karya_ilmiah_pkm')
+    //         ->join('users', 'luaran_karya_ilmiah_pkm.user_id', '=', 'users.id')
+    //         ->select('luaran_karya_ilmiah_pkm.*', 'users.name as nama_user')
+    //         ->orderBy($sortBy, $sortOrder)
+    //         ->get();
 
-        //Komentar
-        $tabel = (new PublikasiKaryaIlmiahPkm())->getTable();
-        $prodi = User::select('id', 'name')->where('usertype', '!=', 'admin')->get();
-        $komentar = Komentar::where('nama_tabel', $tabel)->get();
+    //     //Komentar
+    //     $tabel = (new PublikasiKaryaIlmiahPkm())->getTable();
+    //     $prodi = User::select('id', 'name')->where('usertype', '!=', 'admin')->get();
+    //     $komentar = Komentar::where('nama_tabel', $tabel)->get();
 
-        return view('admin.analisis.luaran_ki_pkm', compact('luaran_ki_pkm', 'sortBy', 'sortOrder', 'tabel', 'prodi', 'komentar', 'tahunList', 'tahunTerpilih'));
-    }
+    //     return view('admin.analisis.luaran_ki_pkm', compact('luaran_ki_pkm', 'sortBy', 'sortOrder', 'tabel', 'prodi', 'komentar', 'tahunList', 'tahunTerpilih'));
+    // }
 
     public function sitasi_luaran_pkm_dosen(Request $request)
     {

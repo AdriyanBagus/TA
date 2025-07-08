@@ -17,6 +17,7 @@ class PelaksanaanTa extends Model
         'bimbingan_mahasiswa_ps_lain',
         'rata_rata_jumlah_bimbingan_ps_lain',
         'rata_rata_jumlah_bimbingan_seluruh_ps',
-        'tahun_akademik_id'
+        'tahun_akademik_id',
+        'parent_id'
     ];
 }

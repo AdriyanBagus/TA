@@ -31,23 +31,24 @@
                     </select>
                 </form>
 
-                @if($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
-                    <div class="flex items-center space-x-4">
-                        <a href="{{ route('pages.visi_misi.export') }}" class="btn btn-success btn-sm">
-                            Download CSV
-                        </a>
-
-                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                            Tambah
-                        </button>
-                    </div>
-                @endif
             </div>
         </div>
     </x-slot>
 
+    {{-- Tombol CSV dan Tambah --}}
+    <div class="pt-4 flex items-center justify-between space-x-4 px-8 ">
+        <a href="{{ route('pages.visi_misi.export') }}" class="btn btn-success btn-sm"
+            onclick="return confirm('Apakah Anda yakin ingin mendownload CSV?')">
+            Download CSV
+        </a>
+        @if ($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
+            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Tambah
+            </button>
+        @endif
+    </div>
 
-    <div class="py-4">
+    <div class="py-2">
         <div class="max-w-10xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl rounded-lg p-6">
                 <table class="min-w-full bg-white border border-gray-500">
@@ -76,13 +77,14 @@
                                     </button>
 
                                     <!-- Tombol Delete -->
-                                    <form action="{{ route('pages.visi_misi.destroy', $visimisi->id) }}" method="POST"
-                                        onsubmit="return confirm('Yakin ingin menghapus data ini?');">
-
+                                    <form id="form-delete-{{ $visimisi->id }}"
+                                        action="{{ route('pages.visi_misi.destroy', $visimisi->id) }}" method="POST"
+                                        class="form-delete">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit"
-                                            class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm">
+                                        <button type="button"
+                                            class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm btn-delete"
+                                            data-id="{{ $visimisi->id }}">
                                             Delete
                                         </button>
                                     </form>
@@ -94,7 +96,7 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">New Message</h5>
+                                            <h5 class="modal-title" id="exampleModalLabel">Edit Visi Misi</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
@@ -219,4 +221,52 @@
             // modalBodyInput.value = recipient;
         });
     </script>
+    @if (session('success-edit'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Data berhasil diubah',
+                text: "{{ session('success') }}",
+                showConfirmButton: false,
+                timer: 2000
+            })
+        </script>
+    @endif
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteButtons = document.querySelectorAll('.btn-delete');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+
+                    Swal.fire({
+                        title: 'Apakah Anda yakin?',
+                        text: "Data ini akan dihapus secara permanen!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Ya, Hapus',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            document.getElementById('form-delete-' + id).submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+    @if (session('success-delete'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Data berhasil diubah',
+                text: "{{ session('success') }}",
+                showConfirmButton: false,
+                timer: 2000
+            })
+        </script>
+    @endif
 </x-app-layout>

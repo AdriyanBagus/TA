@@ -33,7 +33,7 @@ class VisiMisiController extends Controller
         $tabel = (new VisiMisi())->getTable(); 
         $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
     
-        return view('pages.visi_misi', compact('visi_misi', 'komentar', 'tahunList', 'tahunTerpilih'));
+        return view('pages.visi_misi', get_defined_vars());
     }
 
     public function add(Request $request)
@@ -77,7 +77,7 @@ class VisiMisiController extends Controller
         $visi_misi->user_id = Auth::user()->id;
         $visi_misi->save();
 
-        return redirect()->back()->with('success', 'Data Visi & Misi berhasil diubah!');
+        return redirect()->back()->with('success-edit', 'Data Visi & Misi berhasil diubah!');
     }
 
     public function destroy($id)
@@ -86,7 +86,7 @@ class VisiMisiController extends Controller
 
         if ($visi_misi) {
             $visi_misi->delete();
-            return redirect()->back()->with('success', 'Data Visi & Misi berhasil dihapus!');
+            return redirect()->back()->with('success-delete', 'Data Visi & Misi berhasil dihapus!');
         }
 
         return redirect()->back()->with('error', 'Data Visi & Misi tidak ditemukan!');

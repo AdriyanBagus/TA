@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BebanKinerjaDosen;
 use App\Models\Komentar;
+use App\Models\ProfilDosen;
 use App\Models\TahunAkademik;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,7 +13,7 @@ class BebanKinerjaDosenController extends Controller
 {
     public function index()
     {
-        return view('pages.beban_kinerja_dosen');
+        return view('dosen.beban_kinerja_dosen');
     }
 
     public function show(Request $request)
@@ -26,10 +27,15 @@ class BebanKinerjaDosenController extends Controller
                 ->where('beban_kinerja_dosen.tahun_akademik_id', $tahunTerpilih)
                 ->get();
 
-            $tabel = (new BebanKinerjaDosen())->getTable(); 
+            // Cek apakah sudah ada data
+            $sudahAdaData = BebanKinerjaDosen::where('user_id', Auth::user()->id)
+                ->where('beban_kinerja_dosen.tahun_akademik_id', $tahunTerpilih)
+                ->exists();
+
+            $tabel = (new BebanKinerjaDosen())->getTable();
             $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
         }
-        return view('pages.beban_kinerja_dosen', compact('beban_kinerja_dosen', 'komentar', 'tahunList', 'tahunTerpilih'));
+        return view('dosen.beban_kinerja_dosen', get_defined_vars());
     }
 
     public function add(Request $request)
@@ -63,9 +69,9 @@ class BebanKinerjaDosenController extends Controller
 
         BebanKinerjaDosen::create([
             'user_id' => Auth::user()->id,
-            'tahun_akademik_id'=>$tahunAktif->id,
-            'nama' => $request->nama,
-            'nidn' => $request->nidn,
+            'tahun_akademik_id' => $tahunAktif->id,
+            'nama' => ProfilDosen::where('user_id', Auth::user()->id)->value('nama'),
+            'nidn' => ProfilDosen::where('user_id', Auth::user()->id)->value('nidn'),
             'ps_sendiri' => $request->ps_sendiri,
             'ps_lain' => $request->ps_lain,
             'ps_diluar_pt' => $request->ps_diluar_pt,
@@ -74,6 +80,7 @@ class BebanKinerjaDosenController extends Controller
             'penunjang' => $request->penunjang,
             'jumlah_sks' => $jumlah_sks,
             'rata_rata_sks' => $rata_rata_sks,
+            'parent_id' => Auth::user()->parent_id
         ]);
 
         return redirect()->back()->with('success', 'Data Evaluasi Pelaksanaan berhasil ditambahkan!');
@@ -117,8 +124,8 @@ class BebanKinerjaDosenController extends Controller
     public function exportCsv()
     {
         $records = BebanKinerjaDosen::where('user_id', Auth::user()->id)
-                            ->where('tahun_akademik_id', TahunAkademik::where('is_active', true)->value('id'))
-                            ->get();
+            ->where('tahun_akademik_id', TahunAkademik::where('is_active', true)->value('id'))
+            ->get();
 
         $filename = 'Beban Kinerja Dosen_' . date('Y-m-d') . '.csv';
         $headers = [
@@ -130,10 +137,20 @@ class BebanKinerjaDosenController extends Controller
         ];
 
         $columns = [
-            'No', 'Nama', 'NIDN', 'PS Sendiri', 'PS Lain', 'PS Diluar PT', 'Penelitian', 'PKM', 'Penunjang', 'Jumlah SKS', 'Rata-Rata SKS'
+            'No',
+            'Nama',
+            'NIDN',
+            'PS Sendiri',
+            'PS Lain',
+            'PS Diluar PT',
+            'Penelitian',
+            'PKM',
+            'Penunjang',
+            'Jumlah SKS',
+            'Rata-Rata SKS'
         ];
 
-        $callback = function() use ($records, $columns) {
+        $callback = function () use ($records, $columns) {
             $handle = fopen('php://output', 'w');
 
             // Tambahkan BOM di awal file (Byte Order Mark)

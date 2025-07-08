@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Komentar;
 use App\Models\PelaksanaanTa;
+use App\Models\ProfilDosen;
 use App\Models\TahunAkademik;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,7 +13,7 @@ class PelaksanaanTaController extends Controller
 {
     public function index()
     {
-        return view('pages.pelaksanaan_ta');
+        return view('dosen.pelaksanaan_ta');
     }
 
     public function show(Request $request)
@@ -26,11 +27,16 @@ class PelaksanaanTaController extends Controller
                                           ->where('pelaksanaan_ta.tahun_akademik_id', $tahunTerpilih)
                                           ->get();
 
+            // Cek apakah sudah ada data
+            $sudahAdaData = PelaksanaanTa::where('user_id', Auth::user()->id)
+                ->where('pelaksanaan_ta.tahun_akademik_id', $tahunTerpilih)
+                ->exists();
+
             // Ambil data dari tabel Komentar berdasarkan nama_tabel
             $tabel = (new PelaksanaanTa())->getTable(); 
             $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
         }
-        return view('pages.pelaksanaan_ta', compact('pelaksanaan_ta', 'komentar', 'tahunList', 'tahunTerpilih'));
+        return view('dosen.pelaksanaan_ta', get_defined_vars());
     }
 
     public function add(Request $request)
@@ -46,13 +52,14 @@ class PelaksanaanTaController extends Controller
         PelaksanaanTa::create([
             'user_id' => Auth::user()->id,
             'tahun_akademik_id' => $tahunAktif->id,
-            'nama' => $request->nama,
-            'nidn' => $request->nidn,
+            'nama' => ProfilDosen::where('user_id', Auth::user()->id)->value('nama'),
+            'nidn' => ProfilDosen::where('user_id', Auth::user()->id)->value('nidn'),
             'bimbingan_mahasiswa_ps_sendiri' => $request->bimbingan_mahasiswa_ps_sendiri,
             'rata_rata_jumlah_bimbingan_ps_sendiri' => $rata_rata_jumlah_bimbingan_ps_sendiri,
             'bimbingan_mahasiswa_ps_lain' => $request->bimbingan_mahasiswa_ps_lain,
             'rata_rata_jumlah_bimbingan_ps_lain' => $rata_rata_jumlah_bimbingan_ps_lain,
             'rata_rata_jumlah_bimbingan_seluruh_ps' => $rata_rata_jumlah_bimbingan_seluruh_ps,
+            'parent_id' => Auth::user()->parent_id
         ]);
 
         return redirect()->back()->with('success', 'Data berhasil ditambahkan!');

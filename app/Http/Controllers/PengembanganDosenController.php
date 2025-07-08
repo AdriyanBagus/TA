@@ -19,7 +19,7 @@ class PengembanganDosenController extends Controller
     }
     public function index()
     {
-        return view('pages.pengembangan_dosen');
+        return view('dosen.pengembangan_dosen');
     }
 
     public function show()
@@ -38,7 +38,7 @@ class PengembanganDosenController extends Controller
             $tabel = (new PengembanganDosen())->getTable(); 
             $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
         }
-        return view('pages.pengembangan_dosen', compact('pengembangan_dosen', 'komentar', 'tahunList', 'tahunTerpilih'));
+        return view('dosen.pengembangan_dosen', get_defined_vars());
     }
 
     public function add(Request $request)
@@ -58,6 +58,7 @@ class PengembanganDosenController extends Controller
             'waktu_pelaksanaan' => $request->waktu_pelaksanaan,
             'jenis_kegiatan' => $request->jenis_kegiatan,
             'url' => $formattedUrl,
+            'parent_id' => Auth::user()->parent_id
         ]);
 
         return redirect()->back()->with('success', 'Data Visi & Misi berhasil ditambahkan!');

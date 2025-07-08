@@ -16,5 +16,6 @@ class PengembanganDosen extends Model
         'jenis_kegiatan',
         'url',
         'tahun_akademik_id',
+        'parent_id'
     ];
 }

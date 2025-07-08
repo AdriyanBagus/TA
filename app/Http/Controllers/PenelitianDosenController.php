@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 class PenelitianDosenController extends Controller
 {
     public function index(){
-        return view('pages.penelitian_dosen');
+        return view('dosen.penelitian_dosen');
     }
 
     public function show(Request $request){
@@ -29,7 +29,7 @@ class PenelitianDosenController extends Controller
             $tabel = (new PenelitianDosen())->getTable(); 
             $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
         }
-        return view('pages.penelitian_dosen', compact('penelitian_dosen', 'komentar', 'tahunList', 'tahunTerpilih'));
+        return view('dosen.penelitian_dosen', get_defined_vars());
     }
 
     public function add(Request $request)
@@ -50,7 +50,8 @@ class PenelitianDosenController extends Controller
             'jumlah_dana' => $request->jumlah_dana,
             'kesesuaian_roadmap' => $request->kesesuaian_roadmap,
             'bentuk_integrasi' => $request->bentuk_integrasi,
-            'mata_kuliah' => $request->mata_kuliah
+            'mata_kuliah' => $request->mata_kuliah,
+            'parent_id' => Auth::user()->parent_id
         ]);
 
         return redirect()->back()->with('success', 'Data berhasil ditambahkan!');

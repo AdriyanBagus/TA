@@ -1,12 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Program Studi') }} {{ Auth::user()->name }}
+            {{ __('Dosen') }} {{ Auth::user()->name }}
         </h2>
     </x-slot>
 
     <?php
-    $menu = App\Models\Menu::get();
+    $menu = App\Models\menuDosen::get();
     
     // Warna latar belakang dinamis (loop)
     $colors = ['bg-blue-100', 'bg-green-100', 'bg-yellow-100', 'bg-purple-100', 'bg-pink-100', 'bg-indigo-100'];
@@ -32,16 +32,4 @@
             </div>
         </div>
     </div>
-
-    @if (session('success'))
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Sukses',
-                text: "{{ session('success') }}",
-                showConfirmButton: false,
-                timer: 2000
-            })
-        </script>
-    @endif
 </x-app-layout>

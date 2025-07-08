@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0">
             <div class="flex items-center space-x-4">
-                <a href="javascript:history.back()"
+                <a href="{{ route('dosen.dashboard') }}"
                     class="inline-flex items-center bg-gray-100 hover:bg-gray-200 text-black-700 text-sm px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2">
@@ -12,13 +12,13 @@
                 </a>
 
                 <h2 class="text-xl font-semibold text-gray-800 leading-tight">
-                    {{ __('Evaluasi Pelaksanaan') }}
+                    {{ __('Luaran Karya Ilmiah') }}
                 </h2>
             </div>
 
             <div class="flex items-center space-x-4 mt-4">
                 {{-- Dropdown Filter Tahun Akademik --}}
-                <form method="GET" action="{{ route('pages.evaluasi_pelaksanaan') }}"
+                <form method="GET" action="{{ route('dosen.luaran_karya_ilmiah') }}"
                     class="flex flex-col md:flex-row md:items-center gap-2">
                     <label for="tahun" class="text-sm font-medium text-gray-700">Tahun Akademik:</label>
                     <select name="tahun" id="tahun" onchange="this.form.submit()"
@@ -30,60 +30,67 @@
                         @endforeach
                     </select>
                 </form>
+
+                <div class="flex items-center space-x-4">
+                    <a href="{{ route('dosen.luaran_karya_ilmiah.export') }}" class="btn btn-success btn-sm"
+                        onclick="return confirm('Apakah Anda yakin ingin mendownload CSV?')">
+                        Download CSV
+                    </a>
+
+                    @if ($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal">
+                            Tambah
+                        </button>
+                    @endif
+                </div>
             </div>
         </div>
     </x-slot>
-    <div class="pt-4 flex items-center justify-between space-x-4 px-8 ">
-        <a href="{{ route('pages.evaluasi_pelaksanaan.export') }}" class="btn btn-success btn-sm"
-            onclick="return confirm('Apakah Anda yakin ingin mendownload CSV?')">
-            Download CSV
-        </a>
-        @if ($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
-            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                Tambah
-            </button>
-        @endif
-    </div>
 
-    <div class="py-2">
+    <div class="py-4">
         <div class="max-w-10xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl rounded-lg p-6">
                 <table class="min-w-full bg-white border border-gray-500">
                     <thead>
                         <tr>
                             <th class="px-2 py-2 border text-sm">No</th>
-                            <th class="px-4 py-2 border text-sm">Nomor PTK</th>
-                            <th class="px-4 py-2 border text-sm">Kategori PTK</th>
-                            <th class="px-4 py-2 border text-sm">Rencana Penyelesaian</th>
-                            <th class="px-4 py-2 border text-sm">Realisasi Perbaikan</th>
-                            <th class="px-4 py-2 border text-sm">Penanggungjawab Perbaikan</th>
-                            <th class="px-4 py-2 border text-sm">action</th>
+                            <th class="px-4 py-2 border text-sm">Judul Kegiatan</th>
+                            <th class="px-4 py-2 border text-sm">Judul Karya</th>
+                            <th class="px-4 py-2 border text-sm">Pencipta Utama</th>
+                            <th class="px-4 py-2 border text-sm">Jenis Karya</th>
+                            <th class="px-4 py-2 border text-sm">Nomor Karya</th>
+                            <th class="px-4 py-2 border text-sm">Url</th>
+                            <th class="px-4 py-2 border text-sm text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($evaluasi_pelaksanaan as $evaluasipelaksanaan)
+                        @foreach ($luaran_karya_ilmiah as $luaran)
                             <tr>
                                 <td class="px-1 py-2 border text-sm">{{ $loop->iteration }}</td>
-                                <td class="px-4 py-2 border text-sm">{{ $evaluasipelaksanaan->nomor_ptk }}</td>
-                                <td class="px-4 py-2 border text-sm">{{ $evaluasipelaksanaan->kategori_ptk }}</td>
-                                <td class="px-4 py-2 border text-sm">{{ $evaluasipelaksanaan->rencana_penyelesaian }}
+                                <td class="px-4 py-2 border text-sm">{{ $luaran->judul_kegiatan }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $luaran->judul_karya }}</td>
+                                <td class="px-4 py-2 border text-sm">{!! nl2br(e($luaran->pencipta_utama)) !!}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $luaran->jenis }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $luaran->nomor_karya }}</td>
+                                <td class="px-2 py-2 border text-sm">
+                                    <a href="{{ $luaran->url }}" target="_blank"
+                                        class="text-blue-500 hover:underline">
+                                        Link
+                                    </a>
                                 </td>
-                                <td class="px-4 py-2 border text-sm">{{ $evaluasipelaksanaan->realisasi_perbaikan }}
-                                </td>
-                                <td class="px-4 py-2 border text-sm">{!! nl2br(e($evaluasipelaksanaan->penanggungjawab_perbaikan)) !!}</td>
                                 <td class="px-1 py-3 border flex flex-col items-center space-y-2">
                                     <!-- Tombol Edit -->
                                     <button
                                         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#exampleModal{{ $evaluasipelaksanaan->id }}">
+                                        data-bs-toggle="modal" data-bs-target="#exampleModal{{ $luaran->id }}">
                                         Edit
                                     </button>
 
                                     <!-- Tombol Delete -->
                                     <form
-                                        action="{{ route('pages.evaluasi_pelaksanaan.destroy', $evaluasipelaksanaan->id) }}"
-                                        method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?');">
+                                        action="{{ route('dosen.luaran_karya_ilmiah.destroy', $luaran->id) }}"
+                                        method="POST" class="d-inline delete-form">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
@@ -94,61 +101,60 @@
                                 </td>
                             </tr>
 
-                            <div class="modal fade" id="exampleModal{{ $evaluasipelaksanaan->id }}" tabindex="-1"
+                            <div class="modal fade" id="exampleModal{{ $luaran->id }}" tabindex="-1"
                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Edit Evaluasi Pelaksanaan
-                                            </h5>
+                                            <h5 class="modal-title" id="exampleModalLabel">luaran Karya Ilmiah</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                            <form
-                                                action="{{ route('pages.evaluasi_pelaksanaan.update', $evaluasipelaksanaan->id) }}"
+                                            <form action="{{ route('dosen.luaran_karya_ilmiah.update', $luaran->id) }}"
                                                 method="POST">
                                                 @csrf
                                                 @method('PUT')
                                                 <input type="text" hidden name="id"
-                                                    value="{{ $evaluasipelaksanaan->id }}">
+                                                    value="{{ $luaran->id }}">
 
                                                 <div class="mb-3">
-                                                    <label for="nomor_ptk" class="form-label">Nomor PTK:</label>
-                                                    <input type="text" class="form-control" id="nomor_ptk"
-                                                        name="nomor_ptk" value="{{ $evaluasipelaksanaan->nomor_ptk }}"
-                                                        required>
+                                                    <label for="judul_kegiatan" class="form-label">Judul
+                                                        Kegiatan:</label>
+                                                    <textarea class="form-control" id="judul_kegiatan" name="judul_kegiatan" required>{{ $luaran->judul_kegiatan }}</textarea>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="judul_karya" class="form-label">Judul karya:</label>
+                                                    <textarea class="form-control" id="judul_karya" name="judul_karya" required>{{ $luaran->judul_karya }}</textarea>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="pencipta_utama" class="form-label">Pencipta
+                                                        Utama:</label>
+                                                    <textarea class="form-control" id="pencipta_utama" name="pencipta_utama" placeholder="eg: Dosen, Mahasiswa" required>{{ $luaran->pencipta_utama }}</textarea>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label>Kategori PTK</label>
-                                                    <select class="form-control" name="kategori_ptk">
-                                                        <option value="Mayor"
-                                                            {{ $evaluasipelaksanaan->kategori_ptk == 'Mayor' ? 'selected' : '' }}>
-                                                            Mayor</option>
-                                                        <option value="Minor"
-                                                            {{ $evaluasipelaksanaan->kategori_ptk == 'Minor' ? 'selected' : '' }}>
-                                                            Minor</option>
-                                                        <option value="Observasi"
-                                                            {{ $evaluasipelaksanaan->kategori_ptk == 'Observasi' ? 'selected' : '' }}>
-                                                            Observasi</option>
+                                                    <label>Jenis:</label>
+                                                    <select class="form-control" name="jenis">
+                                                        <option value="HKI"
+                                                            {{ $luaran->jenis == 'HKI' ? 'selected' : '' }}>HKI
+                                                        </option>
+                                                        <option value="Paten"
+                                                            {{ $luaran->jenis == 'Paten' ? 'selected' : '' }}>Paten
+                                                        </option>
+                                                        <option value="TTG"
+                                                            {{ $luaran->jenis == 'TTG' ? 'selected' : '' }}>TTG
+                                                        </option>
                                                     </select>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="rencana_penyelesaian" class="form-label">Rencana
-                                                        Penyelesaian:</label>
-                                                    <textarea class="form-control" id="rencana_penyelesaian" name="rencana_penyelesaian" required>{{ $evaluasipelaksanaan->rencana_penyelesaian }}</textarea>
+                                                    <label for="nomor_karya" class="form-label">Nomor Karya:</label>
+                                                    <input type="text" class="form-control" id="nomor_karya"
+                                                        name="nomor_karya" value="{{ $luaran->nomor_karya }}">
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="realisasi_perbaikan" class="form-label">Realisasi
-                                                        Perbaikan:</label>
-                                                    <input type="text" class="form-control"
-                                                        id="realisasi_perbaikan" name="realisasi_perbaikan"
-                                                        value="{{ $evaluasipelaksanaan->realisasi_perbaikan }}">
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="penanggungjawab_perbaikan"
-                                                        class="form-label">Penanggungjawab Perbaikan:</label>
-                                                    <textarea class="form-control" id="penanggungjawab_perbaikan" name="penanggungjawab_perbaikan">{{ $evaluasipelaksanaan->penanggungjawab_perbaikan }}</textarea>
+                                                    <label for="url" class="form-label">Url:</label>
+                                                    <input type="text" class="form-control" id="url"
+                                                        name="url" value="{{ $luaran->url }}">
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary"
@@ -170,46 +176,47 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Tambah Evaluasi Pelaksanaan</h5>
+                                <h5 class="modal-title" id="exampleModalLabel">Tambah Luaran Karya Ilmiah</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <form action="{{ route('pages.evaluasi_pelaksanaan.add') }}" method="POST">
+                                <form action="{{ route('dosen.luaran_karya_ilmiah.add') }}" method="POST">
                                     @csrf
 
                                     <div class="mb-3">
-                                        <label for="nomor_ptk" class="form-label">Nomor PTK:</label>
-                                        <input type="text" class="form-control" id="nomor_ptk" name="nomor_ptk"
-                                            value="{{ session('nomor_ptk') }}" required>
+                                        <label for="judul_kegiatan" class="form-label">Judul Kegiatan:</label>
+                                        <textarea class="form-control" id="judul_kegiatan" name="judul_kegiatan" required>{{ old('judul_kegiatan') }}</textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="judul_karya" class="form-label">Judul karya:</label>
+                                        <textarea class="form-control" id="judul_karya" name="judul_karya" required>{{ old('judul_karya') }}</textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="pencipta_utama" class="form-label">Pencipta Utama:</label>
+                                        <textarea class="form-control" id="pencipta_utama" name="pencipta_utama" placeholder="eg: Dosen, Mahasiswa">{{ old('pencipta_utama') }}</textarea>
                                     </div>
                                     <div class="form-group">
-                                        <label>Kategori PTK</label>
-                                        <select class="form-control" name="kategori_ptk">
-                                            <option value="Mayor"
-                                                {{ old('kategori_ptk') == 'Mayor' ? 'selected' : '' }}>Mayor</option>
-                                            <option value="Minor"
-                                                {{ old('kategori_ptk') == 'Minor' ? 'selected' : '' }}>Minor</option>
-                                            <option value="Observasi"
-                                                {{ old('kategori_ptk') == 'Observasi' ? 'selected' : '' }}>Observasi
+                                        <label>Jenis:</label>
+                                        <select class="form-control" name="jenis">
+                                            <option value="HKI" {{ old('jenis') == 'HKI' ? 'selected' : '' }}>HKI
+                                            </option>
+                                            <option value="Paten" {{ old('jenis') == 'Paten' ? 'selected' : '' }}>
+                                                Paten
+                                            </option>
+                                            <option value="TTG" {{ old('jenis') == 'TTG' ? 'selected' : '' }}>TTG
                                             </option>
                                         </select>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="rencana_penyelesaian" class="form-label">Rencana
-                                            Penyelesaian:</label>
-                                        <textarea class="form-control" id="rencana_penyelesaian" name="rencana_penyelesaian" required>{{ session('rencana_penyelesaian') }}</textarea>
+                                        <label for="nomor_karya" class="form-label">Nomor Karya:</label>
+                                        <input type="text" class="form-control" id="nomor_karya"
+                                            name="nomor_karya" value="{{ old('nomor_karya') }}">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="realisasi_perbaikan" class="form-label">Realisasi
-                                            Perbaikan:</label>
-                                        <input type="text" class="form-control" id="realisasi_perbaikan"
-                                            name="realisasi_perbaikan" value="{{ session('realisasi_perbaikan') }}">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="penanggungjawab_perbaikan" class="form-label">Penanggungjawab
-                                            Perbaikan:</label>
-                                        <textarea class="form-control" id="penanggungjawab_perbaikan" name="penanggungjawab_perbaikan">{{ session('penanggungjawab_perbaikan') }}</textarea>
+                                        <label for="url" class="form-label">Url:</label>
+                                        <input type="text" class="form-control" id="url" name="url"
+                                            placeholder="https://example.com" value="{{ old('url') }}">
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary"
@@ -223,7 +230,7 @@
                 </div>
                 {{-- End Modal --}}
 
-                @if ($evaluasi_pelaksanaan->isEmpty())
+                @if ($luaran_karya_ilmiah->isEmpty())
                     <p class="text-center text-gray-500 mt-4">Tidak ada data yang diinput.</p>
                 @endif
             </div>
@@ -263,10 +270,11 @@
     <script>
         document.getElementById('exampleModal').addEventListener('show.bs.modal', function(event) {
             const button = event.relatedTarget; // Button yang memicu modal
+            const recipient = button.getAttribute('data-whatever'); // Ambil data dari button
             const modalTitle = this.querySelector('.modal-title');
             const modalBodyInput = this.querySelector('.modal-body input');
 
-            modalTitle.textContent = 'Tambah Evaluasi Pelaksanaan ';
+            modalTitle.textContent = 'Tambah luaran Karya Ilmiah ';
             // modalBodyInput.value = recipient;
         });
     </script>

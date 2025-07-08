@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'usertype',
+        'parent_id',
     ];
 
     /**
@@ -49,5 +51,15 @@ class User extends Authenticatable
     public function komentar()
     {
         return $this->hasMany(Komentar::class, 'user_id', 'prodi_id');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(User::class, 'parent_id');
+    }
+
+    public function dosen()
+    {
+        return $this->hasMany(User::class, 'parent_id')->where('usertype', 'dosen');
     }
 }

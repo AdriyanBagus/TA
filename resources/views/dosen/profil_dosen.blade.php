@@ -12,13 +12,13 @@
                 </a>
 
                 <h2 class="text-xl font-semibold text-gray-800 leading-tight">
-                    {{ __('Profil Dosen Tidak Tetap') }}
+                    {{ __('Profil Dosen') }}
                 </h2>
             </div>
 
             <div class="flex items-center space-x-4 mt-4">
                 {{-- Dropdown Filter Tahun Akademik --}}
-                <form method="GET" action="{{ route('pages.profil_dosen') }}"
+                <form method="GET" action="{{ route('dosen.profil_dosen') }}"
                     class="flex flex-col md:flex-row md:items-center gap-2">
                     <label for="tahun" class="text-sm font-medium text-gray-700">Tahun Akademik:</label>
                     <select name="tahun" id="tahun" onchange="this.form.submit()"
@@ -34,11 +34,11 @@
         </div>
     </x-slot>
     <div class="pt-4 flex items-center justify-between space-x-4 px-8 ">
-        <a href="{{ route('pages.profil_dosen.export') }}" class="btn btn-success btn-sm"
+        <a href="{{ route('dosen.profil_dosen.export') }}" class="btn btn-success btn-sm"
             onclick="return confirm('Apakah Anda yakin ingin mendownload CSV?')">
             Download CSV
         </a>
-        @if ($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
+        @if (!$sudahAdaData)
             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
                 Tambah
             </button>
@@ -81,7 +81,7 @@
                                     </button>
 
                                     <!-- Tombol Delete -->
-                                    <form action="{{ route('pages.profil_dosen.destroy', $profildosen->id) }}"
+                                    <form action="{{ route('dosen.profil_dosen.destroy', $profildosen->id) }}"
                                         method="POST" onsubmit="return confirm('Yakin ingin menghapus user ini?');">
                                         @csrf
                                         @method('DELETE')
@@ -103,7 +103,7 @@
                                                 aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                            <form action="{{ route('pages.profil_dosen.update', $profildosen->id) }}"
+                                            <form action="{{ route('dosen.profil_dosen.update', $profildosen->id) }}"
                                                 method="POST">
                                                 @csrf
                                                 @method('PUT')
@@ -185,7 +185,7 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <form action="{{ route('pages.profil_dosen.add') }}" method="POST">
+                                <form action="{{ route('dosen.profil_dosen.add') }}" method="POST">
                                     @csrf
 
                                     <div class="mb-3">

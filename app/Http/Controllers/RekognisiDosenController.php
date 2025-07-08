@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Komentar;
+use App\Models\ProfilDosen;
 use App\Models\RekognisiDosen;
 use App\Models\TahunAkademik;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class RekognisiDosenController extends Controller
     }
     public function index()
     {
-        return view('pages.rekognisi_dosen');
+        return view('dosen.rekognisi_dosen');
     }
 
     public function show(Request $request)
@@ -37,7 +38,7 @@ class RekognisiDosenController extends Controller
             $tabel = (new RekognisiDosen())->getTable(); 
             $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
         }
-        return view('pages.rekognisi_dosen', compact('rekognisi_dosen', 'komentar', 'tahunList', 'tahunTerpilih'));
+        return view('dosen.rekognisi_dosen', get_defined_vars());
     }
 
     public function add(Request $request)
@@ -51,13 +52,14 @@ class RekognisiDosenController extends Controller
         RekognisiDosen::create([
             'user_id' => Auth::user()->id,
             'tahun_akademik_id' => $tahunAktif->id,
-            'nama' => $request->nama,
-            'nidn' => $request->nidn,
+            'nama' => ProfilDosen::where('user_id', Auth::user()->id)->value('nama'),
+            'nidn' => ProfilDosen::where('user_id', Auth::user()->id)->value('nidn'),
             'nama_kegiatan_rekognisi' => $request->nama_kegiatan_rekognisi,
             'tingkat' => $request->tingkat,
             'bahan_ajar' => $request->bahan_ajar,
             'tahun_perolehan' => $request->tahun_perolehan,
             'url' => $formattedUrl,
+            'parent_id' => Auth::user()->parent_id
         ]);
 
         return redirect()->back()->with('success', 'Data berhasil ditambahkan!');
@@ -81,6 +83,7 @@ class RekognisiDosenController extends Controller
         $rekognisi_dosen->tahun_perolehan = $request->tahun_perolehan;
         $rekognisi_dosen->url = $formattedUrl;
         $rekognisi_dosen->save();
+        
 
         return redirect()->back()->with('success', 'Data berhasil diubah!');
     }

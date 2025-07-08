@@ -19,6 +19,7 @@ class BebanKinerjaDosen extends Model
         'penunjang',
         'jumlah_sks',
         'rata_rata_sks',
-        'tahun_akademik_id'
+        'tahun_akademik_id',
+        'parent_id'
     ];
 }

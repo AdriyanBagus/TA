@@ -16,6 +16,7 @@ class PublikasiPkm extends Model
         'jenis',
         'tingkat',
         'url',
-        'tahun_akademik_id'
+        'tahun_akademik_id',
+        'parent_id'
     ];
 }

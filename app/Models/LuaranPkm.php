@@ -16,6 +16,7 @@ class LuaranPkm extends Model
         'jenis',
         'nomor_karya',
         'url',
-        'tahun_akademik_id'
+        'tahun_akademik_id',
+        'parent_id'
     ];
 }

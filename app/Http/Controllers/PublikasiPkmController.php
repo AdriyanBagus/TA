@@ -19,7 +19,7 @@ class PublikasiPkmController extends Controller
     }
     public function index()
     {
-        return view('pages.publikasi_pkm');
+        return view('dosen.publikasi_pkm');
     }
 
     public function show(Request $request)
@@ -38,7 +38,7 @@ class PublikasiPkmController extends Controller
             $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
         }
     
-        return view('pages.publikasi_pkm', compact('publikasi_pkm', 'komentar','tahunList', 'tahunTerpilih'));
+        return view('dosen.publikasi_pkm', compact('publikasi_pkm', 'komentar','tahunList', 'tahunTerpilih'));
     }
 
     public function add(Request $request)
@@ -55,7 +55,8 @@ class PublikasiPkmController extends Controller
             'jenis' => $request->jenis,
             'tingkat' => $request->tingkat,
             'url' =>  $formattedUrl,
-            'tahun_akademik_id' => $tahunAktif->id
+            'tahun_akademik_id' => $tahunAktif->id,
+            'parent_id' => Auth::user()->parent_id
         ]);
 
         return redirect()->back()->with('success', 'Data berhasil ditambahkan!');

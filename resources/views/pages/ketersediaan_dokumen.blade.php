@@ -30,23 +30,21 @@
                         @endforeach
                     </select>
                 </form>
-
-                <div class="flex items-center space-x-4">
-                    <a href="{{ route('pages.ketersediaan_dokumen.export') }}" class="btn btn-success btn-sm" onclick="return confirm('Apakah Anda yakin ingin mendownload CSV?')">
-                        Download CSV
-                    </a>
-
-                    @if($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
-                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                            Tambah
-                        </button>
-                    @endif
-                </div>
             </div>
         </div>
     </x-slot>
+    <div class="pt-4 flex items-center justify-between space-x-4 px-8 ">
+        <a href="{{ route('pages.ketersediaan_dokumen.export') }}" class="btn btn-success btn-sm" onclick="return confirm('Apakah Anda yakin ingin mendownload CSV?')">
+            Download CSV
+        </a>
+        @if ($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
+            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Tambah
+            </button>
+        @endif
+    </div>
 
-    <div class="py-4">
+    <div class="py-2">
         <div class="max-w-10xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl rounded-lg p-6">
                 <table class="min-w-full bg-white border border-gray-500">

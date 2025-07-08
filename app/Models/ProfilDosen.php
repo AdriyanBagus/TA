@@ -16,6 +16,7 @@ class ProfilDosen extends Model
         'sertifikasi_pendidik_profesional',
         'bidang_keahlian',
         'bidang_ilmu_prodi',
-        'tahun_akademik_id'
+        'tahun_akademik_id',
+        'parent_id'
     ];
 }

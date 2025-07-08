@@ -19,7 +19,7 @@ class LuaranPkmController extends Controller
     }
     public function index()
     {
-        return view('pages.luaran_pkm');
+        return view('dosen.luaran_pkm');
     }
 
     public function show(Request $request)
@@ -38,7 +38,7 @@ class LuaranPkmController extends Controller
             $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
         }
     
-        return view('pages.luaran_pkm', compact('luaran_pkm', 'komentar', 'tahunList', 'tahunTerpilih')); 
+        return view('dosen.luaran_pkm', get_defined_vars()); 
     }
 
     public function add(Request $request)
@@ -56,7 +56,8 @@ class LuaranPkmController extends Controller
             'pencipta_utama' => $request->pencipta_utama,
             'jenis' => $request->jenis,
             'nomor_karya' => $request->nomor_karya,
-            'url' => $formattedUrl
+            'url' => $formattedUrl,
+            'parent_id' => Auth::user()->parent_id
         ]);
 
         return redirect()->back()->with('success', 'Data berhasil ditambahkan!');

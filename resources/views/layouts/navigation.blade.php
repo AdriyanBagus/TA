@@ -13,73 +13,99 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Instrumen Laporan Evaluasi Diri Internal') }}
-                    </x-nav-link>
-                </div>
+
 
                 @auth
                     @if (auth()->user()->usertype === 'admin')
                         <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                            <x-nav-link :href="route('admin.tambah-user')" :active="request()->routeIs('tambah-user')">
+                            <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+                                {{ __('Dashboard') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('admin.tambah-user')" :active="request()->routeIs('admin.tambah-user')">
                                 {{ __('Tambah User') }}
                             </x-nav-link>
 
-                            <x-nav-link :href="route('admin.show')" :active="request()->routeIs('show')">
+                            <x-nav-link :href="route('admin.show')" :active="request()->routeIs('admin.show')">
                                 {{ __('Daftar User') }}
                             </x-nav-link>
 
-                            <x-nav-link :href="route('admin.forms')" :active="request()->routeIs('show')">
+                            <x-nav-link :href="route('form.settings')" :active="request()->routeIs('form.settings')">
                                 {{ __('Form Setting') }}
+                            </x-nav-link>
+                             <x-nav-link :href="route('tahun.index')" :active="request()->routeIs('tahun.index')">
+                                {{ __('Tahun Akademik') }}
                             </x-nav-link>
                         </div>
                     @endif
                 @endauth
 
 
-                @if (auth()->user()->usertype !== 'admin')
-                    <div class="sm:flex sm:items-center sm:ms-6">
-                        <div class="relative" x-data="{ open: false }" @click.outside="open = false"
-                            @close.stop="open = false">
-                            <div @click="open = ! open">
-                                <a href="#" class="text-gray-700 hover:text-gray-900">
-                                    <i class="fa-solid fa-bell mr-2"></i>
-                                </a>
-                            </div>
-                            <div x-show="open" x-transition:enter="transition ease-out duration-200"
-                                x-transition:enter-start="opacity-0 scale-95"
-                                x-transition:enter-end="opacity-100 scale-100"
-                                x-transition:leave="transition ease-in duration-75"
-                                x-transition:leave-start="opacity-100 scale-100"
-                                x-transition:leave-end="opacity-0 scale-95"
-                                class="absolute mt-2 w-64 rounded-md shadow-lg" style="display: none;">
-                                <div class="rounded-md ring-1 ring-black ring-opacity-5 bg-white py-1">
-                                    @php
-                                        $notifications = App\Models\Notifikasi::where('prodi_id',auth()->user()->id,)
-                                            ->orderByDesc('created_at')
-                                            ->get();
+                @if (auth()->user()->usertype === 'user')
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                            {{ __('Instrumen Laporan Evaluasi Diri Internal') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('tambah-dosen.create')" :active="request()->routeIs('tambah-dosen.create')">
+                            {{ __('Tambah Dosen') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('tambah-dosen.index')" :active="request()->routeIs('tambah-dosen.index')">
+                            {{ __('Daftar Dosen') }}
+                        </x-nav-link>
+                        <div class="sm:flex sm:items-center sm:ms-6">
+                            <div class="relative" x-data="{ open: false }" @click.outside="open = false"
+                                @close.stop="open = false">
+                                <div @click="open = ! open">
+                                    <a href="#" class="text-gray-700 hover:text-gray-900">
+                                        <i class="fa-solid fa-bell mr-2"></i>
+                                    </a>
+                                </div>
+                                <div x-show="open" x-transition:enter="transition ease-out duration-200"
+                                    x-transition:enter-start="opacity-0 scale-95"
+                                    x-transition:enter-end="opacity-100 scale-100"
+                                    x-transition:leave="transition ease-in duration-75"
+                                    x-transition:leave-start="opacity-100 scale-100"
+                                    x-transition:leave-end="opacity-0 scale-95"
+                                    class="absolute mt-2 w-64 rounded-md shadow-lg" style="display: none;">
+                                    <div class="rounded-md ring-1 ring-black ring-opacity-5 bg-white py-1">
+                                        @php
+                                            $notifications = App\Models\Notifikasi::where(
+                                                'prodi_id',
+                                                auth()->user()->id,
+                                            )
+                                                ->orderByDesc('created_at')
+                                                ->get();
 
-                                        $groupedNotifications = $notifications->groupBy(function ($item) {
-                                            return $item->created_at->format('d M Y');
-                                        });
+                                            $groupedNotifications = $notifications->groupBy(function ($item) {
+                                                return $item->created_at->format('d M Y');
+                                            });
 
-                                    @endphp
-                                    @if ($groupedNotifications->isNotEmpty())
-                                        @foreach ($groupedNotifications as $date => $items)
-                                            <h3 class="px-4 pt-3 text-xs font-semibold text-black ">{{ $date }}</h3>
-                                            @foreach ($items as $notification)
-                                                <p class="px-6 py-1 text-xs text-gray-700">
-                                                    {{ $notification->pesan }}
-                                                </p>
+                                        @endphp
+                                        @if ($groupedNotifications->isNotEmpty())
+                                            @foreach ($groupedNotifications as $date => $items)
+                                                <h3 class="px-4 pt-3 text-xs font-semibold text-black ">
+                                                    {{ $date }}</h3>
+                                                @foreach ($items as $notification)
+                                                    <p class="px-6 py-1 text-xs text-gray-700">
+                                                        {{ $notification->pesan }}
+                                                    </p>
+                                                @endforeach
                                             @endforeach
-                                        @endforeach
-                                    @else
-                                        <p class="px-4 py-2 text-sm text-black-700">Tidak ada notifikasi</p>
-                                    @endif
+                                        @else
+                                            <p class="px-4 py-2 text-sm text-black-700">Tidak ada notifikasi</p>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                @endif
+
+                @if (auth()->user()->usertype === 'dosen')
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link :href="route('dosen.dashboard')" :active="request()->routeIs('dosen.dashboard')">
+                            {{ __('Dashboard Dosen') }}
+                        </x-nav-link>
                     </div>
                 @endif
 
