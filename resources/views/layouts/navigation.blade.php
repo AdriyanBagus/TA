@@ -106,7 +106,7 @@
                         <x-nav-link :href="route('dosen.dashboard')" :active="request()->routeIs('dosen.dashboard')">
                             {{ __('Dashboard Dosen') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('dosen.dashboard')" :active="request()->routeIs('dosen.dashboard')">
+                        <x-nav-link :href="route('profil-dosen.index')" :active="request()->routeIs('dosen.dashboard')">
                             {{ __('Profil Dosen') }}
                         </x-nav-link>
                     </div>

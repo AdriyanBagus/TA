@@ -31,6 +31,7 @@ use App\Http\Controllers\PengembanganTenagaKependidikanController;
 use App\Http\Controllers\PkmDosenController;
 use App\Http\Controllers\PkmMahasiswaController;
 use App\Http\Controllers\PrestasiMahasiswaController;
+use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\ProfilTenagaKependidikanController;
 use App\Http\Controllers\PublikasiKaryaIlmiahController;
 use App\Http\Controllers\PublikasiPkmController;
@@ -305,6 +306,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 
 // Dosen Route
 Route::middleware(['auth', 'role:dosen'])->group(function () {
+    Route::resource('/profil-dosen', ProfilController::class);
+
     Route::get('/dosen/dashboard', fn() => view('dosen.dashboard'))->name('dosen.dashboard');
 
     Route::get('/dosen/profildosen', [ProfilDosenController::class, 'show'])->middleware([CheckFormStatus::class . ':profil dosen'])->name('dosen.profil_dosen');
