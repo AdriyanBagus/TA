@@ -22,6 +22,13 @@ class User extends Authenticatable
         'email',
         'password',
         'usertype',
+        'nidn',
+        'kualifikasi_pendidikan',
+        'sertifikasi_pendidik_profesional',
+        'bidang_keahlian',
+        'bidang_ilmu_prodi',
+        'jenis_dosen',
+        'status_dosen',
         'parent_id',
     ];
 

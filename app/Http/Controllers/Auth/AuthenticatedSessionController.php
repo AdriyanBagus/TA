@@ -28,8 +28,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // dd($request->user());
-
         // Redirect berdasarkan role
         $role = $request->user()->usertype;
 

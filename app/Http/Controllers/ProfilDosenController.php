@@ -78,7 +78,7 @@ class ProfilDosenController extends Controller
     
     public function destroy($id)
     {
-        $profil_dosen = ProfilDosen::where('user_id', Auth::user()->parent_id)
+        $profil_dosen = ProfilDosen::where('user_id', Auth::user()->id)
                                    ->find($id);
         $profil_dosen->delete();
 

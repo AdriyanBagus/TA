@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class DosenController extends Controller
 {
@@ -38,6 +39,13 @@ class DosenController extends Controller
             'name'     => 'required',
             'email'    => 'required|email|unique:users',
             'password' => 'required|min:6',
+            'nidn' => ['required', 'string', 'max:255', 'unique:' . User::class],
+            'kualifikasi_pendidikan' => ['required', 'string', 'max:255'],
+            'sertifikasi_pendidik_profesional' => ['required',Rule::in(['Ya', 'Tidak'])],
+            'bidang_keahlian' => ['required', 'string', 'max:255'],
+            'bidang_ilmu_prodi' => ['required',Rule::in(['Sesuai', 'Tidak Sesuai',])],
+            'jenis_dosen' => ['required',Rule::in(['Dosen Tetap', 'Dosen Tidak Tetap',])],
+            'status_dosen' => ['required',Rule::in(['Dosen Akademik', 'Dosen Praktisi',])],
         ]);
 
         User::create([
@@ -46,6 +54,13 @@ class DosenController extends Controller
             'password'  => Hash::make($request->password),
             'usertype'  => 'dosen',
             'parent_id' => Auth::id(),
+            'nidn' => $request->nidn,
+            'kualifikasi_pendidikan' => $request->kualifikasi_pendidikan,
+            'sertifikasi_pendidik_profesional' => $request->sertifikasi_pendidik_profesional,
+            'bidang_keahlian' => $request->bidang_keahlian,
+            'bidang_ilmu_prodi' => $request->bidang_ilmu_prodi,
+            'jenis_dosen' => $request->jenis_dosen,
+            'status_dosen' => $request->status_dosen,
         ]);
 
         return redirect()->route('tambah-dosen.index')->with('success', 'Dosen berhasil ditambahkan');
