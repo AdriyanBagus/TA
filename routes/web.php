@@ -31,6 +31,7 @@ use App\Http\Controllers\PengembanganTenagaKependidikanController;
 use App\Http\Controllers\PkmDosenController;
 use App\Http\Controllers\PkmMahasiswaController;
 use App\Http\Controllers\PrestasiMahasiswaController;
+use App\Http\Controllers\ProdiController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\ProfilTenagaKependidikanController;
 use App\Http\Controllers\PublikasiKaryaIlmiahController;
@@ -101,7 +102,7 @@ Route::middleware(['auth','verified','role:user'])->group(function () {
     Route::delete('/evaluasipelaksanaan/{id}', [EvaluasiPelaksanaanController::class, 'destroy'])->name('pages.evaluasi_pelaksanaan.destroy');
     Route::get('/evaluasipelaksanaan/export', [EvaluasiPelaksanaanController::class, 'exportCsv'])->name('pages.evaluasi_pelaksanaan.export');
 
-    Route::get('/bebankinerjadosen', [BebanKinerjaDosenController::class, 'show'])->name('pages.beban_kinerja_dosen');
+    //Route::get('/bebankinerjadosen', [BebanKinerjaDosenController::class, 'show'])->name('pages.beban_kinerja_dosen');
     Route::post('/bebankinerjadosen', [BebanKinerjaDosenController::class, 'add'])->name('pages.beban_kinerja_dosen.add');
     Route::put('/bebankinerjadosen/{id}', [BebanKinerjaDosenController::class, 'update'])->name('pages.beban_kinerja_dosen.update');
     Route::delete('/bebankinerjadosen/{id}', [BebanKinerjaDosenController::class, 'destroy'])->name('pages.beban_kinerja_dosen.destroy');
@@ -125,7 +126,7 @@ Route::middleware(['auth','verified','role:user'])->group(function () {
     Route::delete('/lahanpraktek/{id}', [LahanPraktekController::class, 'destroy'])->name('pages.lahan_praktek.destroy');
     Route::get('/lahanpraktek/export', [LahanPraktekController::class, 'exportCsv'])->name('pages.lahan_praktek.export');
 
-    Route::get('/rekognisidosen', [RekognisiDosenController::class, 'show'])->name('pages.rekognisi_dosen');
+    // Route::get('/rekognisidosen', [RekognisiDosenController::class, 'show'])->name('pages.rekognisi_dosen');
     Route::post('/rekognisidosen', [RekognisiDosenController::class, 'add'])->name('pages.rekognisi_dosen.add');
     Route::put('/rekognisidosen/{id}', [RekognisiDosenController::class, 'update'])->name('pages.rekognisi_dosen.update');
     Route::delete('/rekognisidosen/{id}', [RekognisiDosenController::class, 'destroy'])->name('pages.rekognisi_dosen.destroy');
@@ -222,7 +223,12 @@ Route::middleware(['auth','verified','role:user'])->group(function () {
     Route::get('/prestasimahasiswa/export', [PrestasiMahasiswaController::class, 'exportCsv'])->name('pages.prestasi_mahasiswa.export');
 
 
+    //Show Data Dosen
+    Route::get('/bebankinerjadosen', [ProdiController::class, 'bebankinerjadosen'])->name('pages.beban_kinerja_dosen');
+    Route::get('/rekognisidosen', [ProdiController::class, 'rekognisidosen'])->name('pages.rekognisi_dosen');
 
+    //komentar
+    Route::post('/komentar_dosen', [KomentarController::class, 'store'])->name('pages.komentar');
 
 });
 
