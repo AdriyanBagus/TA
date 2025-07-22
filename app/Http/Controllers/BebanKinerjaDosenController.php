@@ -110,7 +110,7 @@ class BebanKinerjaDosenController extends Controller
         $beban_kinerja_dosen->user_id = Auth::user()->id;
         $beban_kinerja_dosen->save();
 
-        return redirect()->back()->with('success', 'Data Profil Dosen berhasil diubah!');
+        return redirect()->back()->with('success-edit', 'Data Profil Dosen berhasil diubah!');
     }
 
     public function destroy($id)
@@ -118,7 +118,7 @@ class BebanKinerjaDosenController extends Controller
         $beban_kinerja_dosen = BebanKinerjaDosen::find($id);
         $beban_kinerja_dosen->delete();
 
-        return redirect()->back()->with('success', 'Data Profil Dosen berhasil dihapus!');
+        return redirect()->back()->with('success-delete', 'Data Profil Dosen berhasil dihapus!');
     }
 
     public function exportCsv()

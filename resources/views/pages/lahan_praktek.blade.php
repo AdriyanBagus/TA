@@ -36,8 +36,9 @@
                         Download CSV
                     </a>
 
-                    @if($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
-                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    @if ($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal">
                             Tambah
                         </button>
                     @endif
@@ -49,7 +50,7 @@
     <div class="py-4">
         <div class="max-w-10xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl rounded-lg p-6">
-                <table class="min-w-full bg-white border border-gray-500">
+                <table id="lahanTable" class="min-w-full bg-white border border-gray-500 border-collapse">
                     <thead>
                         <tr>
                             <th class="px-2 py-2 border text-sm">No</th>
@@ -73,20 +74,20 @@
                                 <td class="px-4 py-2 border text-sm">{{ $lahanpraktek->jumlah_mahasiswa }}</td>
                                 <td class="px-4 py-2 border text-sm">{{ $lahanpraktek->daya_tampung_mahasiswa }}</td>
                                 <td class="px-4 py-2 border text-sm">{{ $lahanpraktek->kontribusi_lahan_praktek }}</td>
-                                <td class="px-1 py-3 border flex flex-col items-center space-y-2 text-sm">
-                                    <!-- Tombol Edit -->
-                                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded"
+                                <td class="px-1 py-3 border text-sm text-center">
+                                    <button
+                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded btn-sm"
                                         data-bs-toggle="modal" data-bs-target="#exampleModal{{ $lahanpraktek->id }}">
                                         Edit
                                     </button>
 
-                                    <!-- Tombol Delete -->
                                     <form action="{{ route('pages.lahan_praktek.destroy', $lahanpraktek->id) }}"
-                                        method="POST" onsubmit="return confirm('Yakin ingin menghapus user ini?');">
+                                        method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?');"
+                                        class="inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
-                                            class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded">
+                                            class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded btn-sm mt-1">
                                             Delete
                                         </button>
                                     </form>
@@ -103,8 +104,7 @@
                                                 aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                            <form
-                                                action="{{ route('pages.lahan_praktek.update', $lahanpraktek->id) }}"
+                                            <form action="{{ route('pages.lahan_praktek.update', $lahanpraktek->id) }}"
                                                 method="POST">
                                                 @csrf
                                                 @method('PUT')
@@ -143,7 +143,8 @@
                                                         value="{{ $lahanpraktek->jumlah_mahasiswa }}">
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="daya_tampung_mahasiswa" class="form-label">Daya Tampung
+                                                    <label for="daya_tampung_mahasiswa" class="form-label">Daya
+                                                        Tampung
                                                         Mahasiswa:</label>
                                                     <input type="text" class="form-control"
                                                         id="daya_tampung_mahasiswa" name="daya_tampung_mahasiswa"
@@ -199,9 +200,11 @@
                                             Keilmuan:</label>
                                         <select class="form-control" id="kesesuaian_bidang_keilmuan"
                                             name="kesesuaian_bidang_keilmuan">
-                                            <option value="Sesuai" {{ old('kesesuaian_bidang_keilmuan') == 'Sesuai' ? 'selected' : '' }}>
+                                            <option value="Sesuai"
+                                                {{ old('kesesuaian_bidang_keilmuan') == 'Sesuai' ? 'selected' : '' }}>
                                                 Sesuai</option>
-                                            <option value="Tidak Sesuai" {{ old('kesesuaian_bidang_keilmuan') == 'Tidak Sesuai' ? 'selected' : '' }}>
+                                            <option value="Tidak Sesuai"
+                                                {{ old('kesesuaian_bidang_keilmuan') == 'Tidak Sesuai' ? 'selected' : '' }}>
                                                 Tidak Sesuai</option>
                                         </select>
                                     </div>
@@ -281,6 +284,29 @@
 
             modalTitle.textContent = 'Tambah Lahan Praktek ';
             // modalBodyInput.value = recipient;
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#lahanTable').DataTable({
+                pageLength: 5,
+                lengthMenu: [5, 10, 25, 50],
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                    paginate: {
+                        next: "→",
+                        previous: "←"
+                    },
+                    zeroRecords: "Data tidak ditemukan",
+                },
+                columnDefs: [{
+                        orderable: false,
+                        targets: [7]
+                    } // Kolom Action tidak bisa sorting
+                ]
+            });
         });
     </script>
 </x-app-layout>

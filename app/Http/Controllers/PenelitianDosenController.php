@@ -51,6 +51,7 @@ class PenelitianDosenController extends Controller
             'kesesuaian_roadmap' => $request->kesesuaian_roadmap,
             'bentuk_integrasi' => $request->bentuk_integrasi,
             'mata_kuliah' => $request->mata_kuliah,
+            'url' => $request->url,
             'parent_id' => Auth::user()->parent_id
         ]);
 
@@ -74,6 +75,7 @@ class PenelitianDosenController extends Controller
         $penelitian_dosen->kesesuaian_roadmap = $request->kesesuaian_roadmap;
         $penelitian_dosen->bentuk_integrasi = $request->bentuk_integrasi;
         $penelitian_dosen->mata_kuliah = $request->mata_kuliah;
+        $penelitian_dosen->url = $request->url;
         $penelitian_dosen->user_id = Auth::user()->id;
         $penelitian_dosen->save();
 

@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0">
             <div class="flex items-center space-x-4">
-                <a href="javascript:history.back()"
+                <a href="{{ route('dashboard') }}"
                     class="inline-flex items-center bg-gray-100 hover:bg-gray-200 text-black-700 text-sm px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2">
@@ -31,15 +31,11 @@
                     </select>
                 </form>
 
-                @if($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
+                @if ($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
                     <div class="flex items-center space-x-4">
                         <a href="{{ route('pages.luaran_karya_ilmiah.export') }}" class="btn btn-success btn-sm">
                             Download CSV
                         </a>
-
-                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                            Tambah
-                        </button>
                     </div>
                 @endif
             </div>
@@ -48,8 +44,8 @@
 
     <div class="py-4">
         <div class="max-w-10xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl rounded-lg p-6">
-                <table class="min-w-full bg-white border border-gray-500">
+            <div class="bg-white overflow-hidden shadow-xl rounded-lg p-3">
+                <table id="luaranTable" class="min-w-full bg-white border border-gray-500">
                     <thead>
                         <tr>
                             <th class="px-2 py-2 border text-sm">No</th>
@@ -59,7 +55,6 @@
                             <th class="px-4 py-2 border text-sm">Jenis Karya</th>
                             <th class="px-4 py-2 border text-sm">Nomor Karya</th>
                             <th class="px-4 py-2 border text-sm">Url</th>
-                            <th class="px-4 py-2 border text-sm">action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -72,166 +67,15 @@
                                 <td class="px-4 py-2 border text-sm">{{ $luaran->jenis }}</td>
                                 <td class="px-4 py-2 border text-sm">{{ $luaran->nomor_karya }}</td>
                                 <td class="px-2 py-2 border text-sm">
-                                    <a href="{{ $luaran->url }}" target="_blank" class="text-blue-500 hover:underline">
+                                    <a href="{{ $luaran->url }}" target="_blank"
+                                        class="text-blue-500 hover:underline">
                                         Link
                                     </a>
                                 </td>
-                                <td class="px-1 py-3 border flex flex-col items-center space-y-2">
-                                    <!-- Tombol Edit -->
-                                    <button
-                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm"
-                                        data-bs-toggle="modal" data-bs-target="#exampleModal{{ $luaran->id }}">
-                                        Edit
-                                    </button>
-
-                                    <!-- Tombol Delete -->
-                                    <form action="{{ route('pages.luaran_karya_ilmiah.destroy', $luaran->id) }}"
-                                        method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                            class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm">
-                                            Delete
-                                        </button>
-                                    </form>
-                                </td>
                             </tr>
-
-                            <div class="modal fade" id="exampleModal{{ $luaran->id }}" tabindex="-1"
-                                aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">luaran Karya Ilmiah</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form action="{{ route('pages.luaran_karya_ilmiah.update', $luaran->id) }}"
-                                                method="POST">
-                                                @csrf
-                                                @method('PUT')
-                                                <input type="text" hidden name="id"
-                                                    value="{{ $luaran->id }}">
-
-                                                <div class="mb-3">
-                                                    <label for="judul_kegiatan" class="form-label">Judul
-                                                        Kegiatan:</label>
-                                                    <textarea class="form-control" id="judul_kegiatan" name="judul_kegiatan" required>{{ $luaran->judul_kegiatan }}</textarea>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="judul_karya" class="form-label">Judul karya:</label>
-                                                    <textarea class="form-control" id="judul_karya" name="judul_karya" required>{{ $luaran->judul_karya }}</textarea>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="pencipta_utama" class="form-label">Pencipta
-                                                        Utama:</label>
-                                                    <textarea class="form-control" id="pencipta_utama" name="pencipta_utama" placeholder="eg: Dosen, Mahasiswa" required>{{ $luaran->pencipta_utama }}</textarea>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Jenis:</label>
-                                                    <select class="form-control" name="jenis">
-                                                        <option value="HKI"
-                                                            {{ $luaran->jenis == 'HKI' ? 'selected' : '' }}>HKI
-                                                        </option>
-                                                        <option value="Paten"
-                                                            {{ $luaran->jenis == 'Paten' ? 'selected' : '' }}>Paten
-                                                        </option>
-                                                        <option value="TTG"
-                                                            {{ $luaran->jenis == 'TTG' ? 'selected' : '' }}>TTG
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="nomor_karya" class="form-label">Nomor Karya:</label>
-                                                    <input type="text" class="form-control" id="nomor_karya"
-                                                        name="nomor_karya" value="{{ $luaran->nomor_karya }}">
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="url" class="form-label">Url:</label>
-                                                    <input type="text" class="form-control" id="url"
-                                                        name="url" value="{{ $luaran->url }}">
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-primary">Update</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         @endforeach
                     </tbody>
                 </table>
-
-                {{-- Modal --}}
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Tambah Luaran Karya Ilmiah</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form action="{{ route('pages.luaran_karya_ilmiah.add') }}" method="POST">
-                                    @csrf
-
-                                    <div class="mb-3">
-                                        <label for="judul_kegiatan" class="form-label">Judul Kegiatan:</label>
-                                        <textarea class="form-control" id="judul_kegiatan" name="judul_kegiatan" required>{{ old('judul_kegiatan') }}</textarea>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="judul_karya" class="form-label">Judul karya:</label>
-                                        <textarea class="form-control" id="judul_karya" name="judul_karya" required>{{ old('judul_karya') }}</textarea>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="pencipta_utama" class="form-label">Pencipta Utama:</label>
-                                        <textarea class="form-control" id="pencipta_utama" name="pencipta_utama" placeholder="eg: Dosen, Mahasiswa">{{ old('pencipta_utama') }}</textarea>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Jenis:</label>
-                                        <select class="form-control" name="jenis">
-                                            <option value="HKI"
-                                                {{ old('jenis') == 'HKI' ? 'selected' : '' }}>HKI
-                                            </option>
-                                            <option value="Paten"
-                                                {{ old('jenis') == 'Paten' ? 'selected' : '' }}>Paten
-                                            </option>
-                                            <option value="TTG"
-                                                {{ old('jenis') == 'TTG' ? 'selected' : '' }}>TTG
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="nomor_karya" class="form-label">Nomor Karya:</label>
-                                        <input type="text" class="form-control" id="nomor_karya"
-                                            name="nomor_karya"
-                                            value="{{ old('nomor_karya') }}">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="url" class="form-label">Url:</label>
-                                        <input type="text" class="form-control" id="url" name="url" placeholder="https://example.com"
-                                            value="{{ old('url') }}">
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary"
-                                            data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Tambah</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {{-- End Modal --}}
-
-                @if ($luaran_karya_ilmiah->isEmpty())
-                    <p class="text-center text-gray-500 mt-4">Tidak ada data yang diinput.</p>
-                @endif
             </div>
         </div>
     </div>
@@ -267,14 +111,24 @@
         </div>
     </div>
     <script>
-        document.getElementById('exampleModal').addEventListener('show.bs.modal', function(event) {
-            const button = event.relatedTarget; // Button yang memicu modal
-            const recipient = button.getAttribute('data-whatever'); // Ambil data dari button
-            const modalTitle = this.querySelector('.modal-title');
-            const modalBodyInput = this.querySelector('.modal-body input');
-
-            modalTitle.textContent = 'Tambah luaran Karya Ilmiah ';
-            // modalBodyInput.value = recipient;
+        $(document).ready(function() {
+            $('#luaranTable').DataTable({
+                // scrollX: true,
+                pageLength: 5,
+                lengthMenu: [5, 10, 25, 50],
+                ordering: true,
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data",
+                    zeroRecords: "Data tidak ditemukan",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                    infoEmpty: "Tidak ada data",
+                    paginate: {
+                        previous: "Sebelumnya",
+                        next: "Berikutnya"
+                    }
+                }
+            });
         });
     </script>
 </x-app-layout>

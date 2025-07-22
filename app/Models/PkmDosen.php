@@ -14,9 +14,13 @@ class PkmDosen extends Model
         'mahasiswa',
         'tingkat',
         'sumber_dana',
+        'bentuk_dana',
+        'jumlah_dana',
         'kesesuaian_roadmap',
         'bentuk_integrasi',
         'mata_kuliah',
+        'url',
+        'parent_id',
         'tahun_akademik_id'
     ];
 }

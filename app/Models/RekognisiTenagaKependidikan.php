@@ -17,6 +17,9 @@ class RekognisiTenagaKependidikan extends Model
         'bahan_ajar',
         'tahun_perolehan',
         'url',
-        'tahun_akademik_id'
+        'tahun_akademik_id',
+        'status',
+        'catatan',
+        'parent_id'
     ];
 }

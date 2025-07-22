@@ -31,13 +31,15 @@
                     </select>
                 </form>
 
-                @if($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
+                @if ($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
                     <div class="flex items-center space-x-4">
-                        <a href="{{ route('pages.rekognisi_tenaga_kependidikan.export') }}" class="btn btn-success btn-sm">
+                        <a href="{{ route('pages.rekognisi_tenaga_kependidikan.export') }}"
+                            class="btn btn-success btn-sm">
                             Download CSV
                         </a>
 
-                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal">
                             Tambah
                         </button>
                     </div>
@@ -49,8 +51,9 @@
     <div class="py-4">
         <div class="max-w-10xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl rounded-lg p-6">
-                <table class="min-w-full bg-white border border-gray-500">
+                <table id="rekognisiTable" class="min-w-full bg-white border border-gray-500">
                     <thead>
+                        <tr>
                         <tr>
                             <th class="px-2 py-2 border text-sm">No</th>
                             <th class="px-4 py-2 border text-sm">Nama</th>
@@ -59,217 +62,47 @@
                             <th class="px-4 py-2 border text-sm">Bahan Ajar</th>
                             <th class="px-4 py-2 border text-sm">Tahun Perolehan</th>
                             <th class="px-4 py-2 border text-sm">Url</th>
-                            <th class="px-4 py-2 border text-sm">action</th>
+                            <th class="px-4 py-2 border text-sm">Action</th>
+                        </tr>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($rekognisi_tenaga_kependidikan as $rekognisitenagapendidik)
                             <tr>
-                                <td class="px-1 py-2 border text-sm">{{ $loop->iteration }}</td>
+                                <td class="px-2 py-2 border text-sm">{{ $loop->iteration }}</td>
                                 <td class="px-4 py-2 border text-sm">{{ $rekognisitenagapendidik->nama }}</td>
                                 <td class="px-4 py-2 border text-sm">{{ $rekognisitenagapendidik->nama_kegiatan_rekognisi }}</td>
                                 <td class="px-4 py-2 border text-sm">{{ $rekognisitenagapendidik->tingkat }}</td>
                                 <td class="px-4 py-2 border text-sm">{{ $rekognisitenagapendidik->bahan_ajar }}</td>
                                 <td class="px-4 py-2 border text-sm">{{ $rekognisitenagapendidik->tahun_perolehan }}</td>
-                                <td class="px-1 py-2 border text-sm">
+                                <td class="px-4 py-2 border text-sm">
                                     <a href="{{ $rekognisitenagapendidik->url }}" target="_blank"
                                         class="text-blue-500 hover:underline">
                                         Link
                                     </a>
                                 </td>
-                                <td class="px-1 py-3 border flex flex-col items-center space-y-2 text-sm">
-                                    <!-- Tombol Edit -->
-                                    <button
-                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm"
-                                        data-bs-toggle="modal" data-bs-target="#exampleModal{{ $rekognisitenagapendidik->id }}">
-                                        Edit
-                                    </button>
-
-                                    <!-- Tombol Delete -->
-                                    <form action="{{ route('pages.rekognisi_tenaga_kependidikan.destroy', $rekognisitenagapendidik->id) }}"
-                                        method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                            class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm">
-                                            Delete
+                                <td class="px-4 py-2 border text-sm">
+                                    @if ($rekognisitenagapendidik->status == 'Diproses')
+                                        <form
+                                            action="{{ route('rekognisi_tenaga_kependidikan.validasi', $rekognisitenagapendidik->id) }}"
+                                            method="POST" class="d-inline">
+                                            @csrf
+                                            <input type="hidden" name="status" value="Disetujui">
+                                            <button type="submit" class="btn btn-success btn-sm mb-1">Setujui</button>
+                                        </form>
+                                        <button type="button" class="btn btn-danger btn-sm mb-1"
+                                            onclick="openTolakModal('{{ $rekognisitenagapendidik->id }}')">
+                                            Tolak
                                         </button>
-                                    </form>
-                                </td>
+                                    @else
+                                        {{ $rekognisitenagapendidik->status }}
+                                    @endif
                                 </td>
                             </tr>
-
-                            <div class="modal fade" id="exampleModal{{ $rekognisitenagapendidik->id }}" tabindex="-1"
-                                aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Edit Rekognisi Tenaga Kependidikan</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form action="{{ route('pages.rekognisi_tenaga_kependidikan.update', $rekognisitenagapendidik->id) }}"
-                                                method="POST">
-                                                @csrf
-                                                @method('PUT')
-                                                <input type="text" hidden name="id"
-                                                    value="{{ $rekognisitenagapendidik->id }}">
-
-                                                <div class="mb-3">
-                                                    <label for="nama" class="form-label">Nama:</label>
-                                                    <input type="text" class="form-control" id="nama"
-                                                        name="nama" value="{{ $rekognisitenagapendidik->nama }}"
-                                                        required>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="nama_kegiatan_rekognisi" class="form-label">Nama Kegiatan Rekognisi:</label>
-                                                    <textarea class="form-control" id="nama_kegiatan_rekognisi" name="nama_kegiatan_rekognisi">{{ $rekognisitenagapendidik->nama_kegiatan_rekognisi }}</textarea>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Tingkat</label>
-                                                    <select class="form-control" name="tingkat">
-                                                        <option value="Internasional"
-                                                            {{ $rekognisitenagapendidik->tingkat == 'Internasional' ? 'selected' : '' }}>
-                                                            Internasional</option>
-                                                        <option value="Nasional"
-                                                            {{ $rekognisitenagapendidik->tingkat == 'Nasional' ? 'selected' : '' }}>
-                                                            Nasional</option>
-                                                        <option value="Lokal"
-                                                            {{ $rekognisitenagapendidik->tingkat == 'Lokal' ? 'selected' : '' }}>
-                                                            Lokal</option>
-                                                    </select>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Bahan Ajar</label>
-                                                    <select class="form-control" name="bahan_ajar">
-                                                        <option value="PPT"
-                                                            {{ $rekognisitenagapendidik->bahan_ajar == 'PPT' ? 'selected' : '' }}>
-                                                            PPT</option>
-                                                        <option value="Modul Praktikum"
-                                                            {{ $rekognisitenagapendidik->bahan_ajar == 'Modul Praktikum' ? 'selected' : '' }}>
-                                                            Modul Praktikum</option>
-                                                        <option value="Monograf"
-                                                            {{ $rekognisitenagapendidik->bahan_ajar == 'Monograf' ? 'selected' : '' }}>
-                                                            Monograf</option>
-                                                        <option value="Diktat"
-                                                            {{ $rekognisitenagapendidik->bahan_ajar == 'Diktat' ? 'selected' : '' }}>
-                                                            Diktat</option>
-                                                        <option value="Buku Ajar"
-                                                            {{ $rekognisitenagapendidik->bahan_ajar == 'Buku Ajar' ? 'selected' : '' }}>
-                                                            Buku Ajar</option>
-                                                        <option value="Modul Pembelajaran"
-                                                            {{ $rekognisitenagapendidik->bahan_ajar == 'Modul Pembelajaran' ? 'selected' : '' }}>
-                                                            Modul Pembelajaran</option>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="tahun_perolehan" class="form-label">Tahun Perolehan:</label>
-                                                    <input type="text" class="form-control" id="tahun_perolehan"
-                                                        name="tahun_perolehan" value="{{ $rekognisitenagapendidik->tahun_perolehan }}">
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="url" class="form-label">Url:</label>
-                                                    <textarea class="form-control" id="url" name="url">{{ $rekognisitenagapendidik->url }}</textarea>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-primary">Update</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         @endforeach
                     </tbody>
                 </table>
 
-                {{-- Modal --}}
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Tambah Rekognisi Tenaga Kependidikan</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form action="{{ route('pages.rekognisi_tenaga_kependidikan.add') }}" method="POST">
-                                    @csrf
-
-                                    <div class="mb-3">
-                                        <label for="nama" class="form-label">Nama:</label>
-                                        <input type="text" class="form-control" id="nama"
-                                            name="nama" value="{{ old('nama') }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="nama_kegiatan_rekognisi" class="form-label">Nama Kegiatan Rekognisi:</label>
-                                        <textarea class="form-control" id="nama_kegiatan_rekognisi" name="nama_kegiatan_rekognisi">{{ old('nama_kegiatan_rekognisi') }}</textarea>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Tingkat</label>
-                                        <select class="form-control" name="tingkat">
-                                            <option value="Internasional"
-                                                {{ old('tingkat') == 'Internasional' ? 'selected' : '' }}>
-                                                Internasional</option>
-                                            <option value="Nasional"
-                                                {{ old('tingkat') == 'Nasional' ? 'selected' : '' }}>
-                                                Nasional</option>
-                                            <option value="Lokal"
-                                                {{ old('tingkat') == 'Lokal' ? 'selected' : '' }}>
-                                                Lokal</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Bahan Ajar</label>
-                                        <select class="form-control" name="bahan_ajar">
-                                            <option value="PPT"
-                                                {{ old('bahan_ajar') == 'PPT' ? 'selected' : '' }}>
-                                                PPT</option>
-                                            <option value="Modul Praktikum"
-                                                {{ old('bahan_ajar') == 'Modul Praktikum' ? 'selected' : '' }}>
-                                                Modul Praktikum</option>
-                                            <option value="Monograf"
-                                                {{ old('bahan_ajar') == 'Monograf' ? 'selected' : '' }}>
-                                                Monograf</option>
-                                            <option value="Diktat"
-                                                {{ old('bahan_ajar') == 'Diktat' ? 'selected' : '' }}>
-                                                Diktat</option>
-                                            <option value="Buku Ajar"
-                                                {{ old('bahan_ajar') == 'Buku Ajar' ? 'selected' : '' }}>
-                                                Buku Ajar</option>
-                                            <option value="Modul Pembelajaran"
-                                                {{ old('bahan_ajar') == 'Modul Pembelajaran' ? 'selected' : '' }}>
-                                                Modul Pembelajaran</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="tahun_perolehan" class="form-label">Tahun Perolehan:</label>
-                                        <input type="text" class="form-control" id="tahun_perolehan"
-                                            name="tahun_perolehan" value="{{ old('tahun_perolehan') }}">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="url" class="form-label">Url:</label>
-                                        <textarea class="form-control" id="url" name="url" placeholder="eg: https://drive.google.com/">{{ old('url') }}</textarea>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary"
-                                            data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Tambah</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {{-- End Modal --}}
-
-                @if ($rekognisi_tenaga_kependidikan->isEmpty())
-                    <p class="text-center text-gray-500 mt-4">Tidak ada data yang diinput.</p>
-                @endif
             </div>
         </div>
     </div>
@@ -305,14 +138,35 @@
         </div>
     </div>
     <script>
-        document.getElementById('exampleModal').addEventListener('show.bs.modal', function(event) {
-            const button = event.relatedTarget; // Button yang memicu modal
-            const recipient = button.getAttribute('data-whatever'); // Ambil data dari button
-            const modalTitle = this.querySelector('.modal-title');
-            const modalBodyInput = this.querySelector('.modal-body input');
-
-            modalTitle.textContent = 'Tambah Rekognisi Tenaga Kependidikan ';
-            // modalBodyInput.value = recipient;
+        function openTolakModal(id) {
+            const modal = new bootstrap.Modal(document.getElementById('validasiModal'));
+            document.getElementById('validasiForm').action = `/rekognisitendik/${id}/validasi`;
+            document.getElementById('rekognisi_id').value = id;
+            document.getElementById('catatan').value = '';
+            modal.show();
+        }
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#rekognisiTable').DataTable({
+                pageLength: 5,
+                lengthMenu: [5, 10, 25, 50, 100],
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data",
+                    info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+                    paginate: {
+                        next: "→",
+                        previous: "←"
+                    },
+                    zeroRecords: "Data tidak ditemukan",
+                },
+                columnDefs: [{
+                        orderable: false,
+                        targets: 7
+                    } // Nonaktifkan sorting kolom Action
+                ]
+            });
         });
     </script>
 </x-app-layout>

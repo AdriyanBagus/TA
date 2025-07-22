@@ -32,7 +32,7 @@ class PkmDosenController extends Controller
             $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
         }
     
-        return view('pages.pkm_dosen', compact('pkm_dosen', 'komentar', 'tahunList', 'tahunTerpilih'));
+        return view('dosen.pkm_dosen', compact('pkm_dosen', 'komentar', 'tahunList', 'tahunTerpilih'));
     }
 
     public function add(Request $request)
@@ -48,9 +48,14 @@ class PkmDosenController extends Controller
             'mahasiswa' => $request->mahasiswa,
             'tingkat' => $request->tingkat,
             'sumber_dana' => $request->sumber_dana,
+            'bentuk_dana' => $request->bentuk_dana,
+            'jumlah_dana' => $request->jumlah_dana,
             'kesesuaian_roadmap' => $request->kesesuaian_roadmap,
             'bentuk_integrasi' => $request->bentuk_integrasi,
-            'mata_kuliah' => $request->mata_kuliah
+            'url' => $request->url,
+            'mata_kuliah' => $request->mata_kuliah,
+            'url' => $request->url,
+            'parent_id' => Auth::user()->parent_id
         ]);
 
         return redirect()->back()->with('success', 'Data berhasil ditambahkan!');
@@ -68,7 +73,9 @@ class PkmDosenController extends Controller
         $pkm_dosen->mahasiswa = $request->mahasiswa;
         $pkm_dosen->tingkat = $request->tingkat;
         $pkm_dosen->sumber_dana = $request->sumber_dana;
-        $pkm_dosen->kesesuaian_roadmap = $request->kesesuaian_roadmap;
+        $pkm_dosen->bentuk_dana = $request->bentuk_dana;
+        $pkm_dosen->jumlah_dana = $request->jumlah_dana;
+        // $pkm_dosen->kesesuaian_roadmap = $request->kesesuaian_roadmap;
         $pkm_dosen->bentuk_integrasi = $request->bentuk_integrasi;
         $pkm_dosen->mata_kuliah = $request->mata_kuliah;
         $pkm_dosen->user_id = Auth::user()->id;

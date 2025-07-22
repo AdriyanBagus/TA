@@ -35,7 +35,7 @@ class RekognisiDosenController extends Controller
 
             // Ambil data dari tabel Komentar berdasarkan nama_tabel
             // dan prodi_id yang sesuai dengan user yang sedang login
-            $tabel = (new RekognisiDosen())->getTable(); 
+            $tabel = (new RekognisiDosen())->getTable();
             $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
         }
         return view('dosen.rekognisi_dosen', get_defined_vars());
@@ -52,13 +52,15 @@ class RekognisiDosenController extends Controller
         RekognisiDosen::create([
             'user_id' => Auth::user()->id,
             'tahun_akademik_id' => $tahunAktif->id,
-            'nama' => ProfilDosen::where('user_id', Auth::user()->id)->value('nama'),
-            'nidn' => ProfilDosen::where('user_id', Auth::user()->id)->value('nidn'),
+            'nama' => Auth::user()->name,
+            'nidn' => Auth::user()->nidn,
             'nama_kegiatan_rekognisi' => $request->nama_kegiatan_rekognisi,
             'tingkat' => $request->tingkat,
             'bahan_ajar' => $request->bahan_ajar,
             'tahun_perolehan' => $request->tahun_perolehan,
             'url' => $formattedUrl,
+            'status' => 'diproses',
+            'catatan' => null,
             'parent_id' => Auth::user()->parent_id
         ]);
 
@@ -75,15 +77,15 @@ class RekognisiDosenController extends Controller
         $rekognisi_dosen = RekognisiDosen::find($id);
         $rekognisi_dosen->user_id = Auth::user()->id;
         $rekognisi_dosen->tahun_akademik_id = $tahunAktif->id;
-        $rekognisi_dosen->nama = $request->nama;
-        $rekognisi_dosen->nidn = $request->nidn;
         $rekognisi_dosen->nama_kegiatan_rekognisi = $request->nama_kegiatan_rekognisi;
         $rekognisi_dosen->tingkat = $request->tingkat;
         $rekognisi_dosen->bahan_ajar = $request->bahan_ajar;
         $rekognisi_dosen->tahun_perolehan = $request->tahun_perolehan;
         $rekognisi_dosen->url = $formattedUrl;
+        $rekognisi_dosen->status = 'Diproses';
+        $rekognisi_dosen->catatan = null;
         $rekognisi_dosen->save();
-        
+
 
         return redirect()->back()->with('success', 'Data berhasil diubah!');
     }
@@ -99,8 +101,8 @@ class RekognisiDosenController extends Controller
     public function exportCsv()
     {
         $records = RekognisiDosen::where('user_id', Auth::user()->id)
-                            ->where('tahun_akademik_id', TahunAkademik::where('is_active', true)->value('id'))
-                            ->get();
+            ->where('tahun_akademik_id', TahunAkademik::where('is_active', true)->value('id'))
+            ->get();
 
         $filename = 'Rekognisi Dosen_' . date('Y-m-d') . '.csv';
         $headers = [
@@ -112,10 +114,17 @@ class RekognisiDosenController extends Controller
         ];
 
         $columns = [
-            'No', 'Nama', 'NIDN', 'Nama Kegiatan Rekognisi', 'Tingkat', 'Bahan Ajar', 'Tahun Perolehan', 'URL'
+            'No',
+            'Nama',
+            'NIDN',
+            'Nama Kegiatan Rekognisi',
+            'Tingkat',
+            'Bahan Ajar',
+            'Tahun Perolehan',
+            'URL'
         ];
 
-        $callback = function() use ($records, $columns) {
+        $callback = function () use ($records, $columns) {
             $handle = fopen('php://output', 'w');
 
             // Tambahkan BOM di awal file (Byte Order Mark)

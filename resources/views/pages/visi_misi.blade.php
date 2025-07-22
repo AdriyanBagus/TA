@@ -262,7 +262,7 @@
         <script>
             Swal.fire({
                 icon: 'success',
-                title: 'Data berhasil diubah',
+                title: 'Data berhasil dihapus',
                 text: "{{ session('success') }}",
                 showConfirmButton: false,
                 timer: 2000

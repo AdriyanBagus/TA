@@ -43,6 +43,7 @@
                             Tambah
                         </button>
                     @endif
+
                 </div>
             </div>
         </div>
@@ -60,9 +61,12 @@
                             <th class="px-4 py-2 border text-xs">Nama Mahasiswa</th>
                             <th class="px-4 py-2 border text-xs">Tingkat</th>
                             <th class="px-4 py-2 border text-xs">Sumber Dana</th>
-                            <th class="px-4 py-2 border text-xs">Kesesuaian Roadmap</th>
+                            <th class="px-4 py-2 border text-xs">Bentuk Dana</th>
+                            <th class="px-4 py-2 border text-xs">Jumlah Dana</th>
                             <th class="px-4 py-2 border text-xs">Bentuk Integrasi</th>
                             <th class="px-4 py-2 border text-xs">Mata Kuliah</th>
+                            <th class="px-4 py-2 border text-sm text-center">Url</th>
+                            <th class="px-4 py-2 border text-xs">Roadmap</th>
                             <th class="px-4 py-2 border text-sm text-center">Action</th>
                         </tr>
                     </thead>
@@ -75,9 +79,28 @@
                                 <td class="px-4 py-2 border text-xs">{!! nl2br(e($pkmdosen->mahasiswa)) !!}</td>
                                 <td class="px-4 py-2 border text-xs">{{ $pkmdosen->tingkat }}</td>
                                 <td class="px-4 py-2 border text-xs">{{ $pkmdosen->sumber_dana }}</td>
-                                <td class="px-4 py-2 border text-xs">{{ $pkmdosen->kesesuaian_roadmap }}</td>
+                                <td class="px-4 py-2 border text-xs">{{ $pkmdosen->bentuk_dana }}</td>
+                                <td class="px-4 py-2 border text-xs">{{ $pkmdosen->jumlah_dana }}</td>
                                 <td class="px-4 py-2 border text-xs">{{ $pkmdosen->bentuk_integrasi }}</td>
                                 <td class="px-4 py-2 border text-xs">{{ $pkmdosen->mata_kuliah }}</td>
+                                <td class="px-4 py-2 border text-sm">
+                                    <a href="{{ $pkmdosen->url }}" target="_blank"
+                                        class="text-blue-500 hover:text-blue-700 underline">Link</a>
+                                </td>
+                                <td class="px-4 py-2 border text-sm text-center">
+                                    @if ($pkmdosen->kesesuaian_roadmap == 'Sesuai')
+                                        <span
+                                            class="badge bg-success text-white">{{ $pkmdosen->kesesuaian_roadmap }}</span>
+                                    @elseif ($pkmdosen->kesesuaian_roadmap == 'Kurang Sesuai')
+                                        <span
+                                            class="badge bg-warning text-white">{{ $pkmdosen->kesesuaian_roadmap }}</span>
+                                    @elseif ($pkmdosen->kesesuaian_roadmap == 'Tidak Sesuai')
+                                        <span
+                                            class="badge bg-danger text-white">{{ $pkmdosen->kesesuaian_roadmap }}</span>
+                                    @else
+                                        <span class="badge bg-secondary text-white">-</span>
+                                    @endif
+                                </td>
                                 <td class="px-1 py-3 border flex flex-col items-center space-y-2">
                                     <!-- Tombol Edit -->
                                     <button
@@ -87,9 +110,8 @@
                                     </button>
 
                                     <!-- Tombol Delete -->
-                                    <form
-                                        action="{{ route('dosen.pkm_dosen.destroy', $pkmdosen->id) }}"
-                                        method="POST" class="d-inline delete-form">
+                                    <form action="{{ route('dosen.pkm_dosen.destroy', $pkmdosen->id) }}" method="POST"
+                                        class="d-inline delete-form">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
@@ -150,21 +172,27 @@
                                                         name="sumber_dana" placeholder="PT, Mandiri, Luar PT sebutkan"
                                                         value="{{ $pkmdosen->sumber_dana }}" required>
                                                 </div>
+
                                                 <div class="form-group">
-                                                    <label>Kesesuaian Roadmap:</label>
-                                                    <select class="form-control" name="kesesuaian_roadmap"
-                                                        value="{{ $pkmdosen->kesesuaian_roadmap }}">
-                                                        <option value="sesuai"
-                                                            {{ old('kesesuaian_roadmap') == 'sesuai' ? 'selected' : '' }}>
-                                                            Sesuai</option>
-                                                        <option value="kurang sesuai"
-                                                            {{ old('kesesuaian_roadmap') == 'kurang sesuai' ? 'selected' : '' }}>
-                                                            Kurang Sesuai</option>
-                                                        <option value="tidak sesuai"
-                                                            {{ old('kesesuaian_roadmap') == 'tidak sesuai' ? 'selected' : '' }}>
-                                                            Tidak Sesuai</option>
+                                                    <label>Bentuk Dana:</label>
+                                                    <select class="form-control" name="bentuk_dana"
+                                                        value="{{ $pkmdosen->bentuk_dana }}">
+                                                        <option value="Inkind"
+                                                            {{ $pkmdosen->bentuk_dana == 'Inkind' ? 'selected' : '' }}>
+                                                            Inkind</option>
+                                                        <option value="Cash"
+                                                            {{ $pkmdosen->bentuk_dana == 'Cash' ? 'selected' : '' }}>
+                                                            Cash</option>
                                                     </select>
                                                 </div>
+
+                                                <div class="mb-3">
+                                                    <label for="jumlah_dana" class="form-label">Jumlah Dana:</label>
+                                                    <input type="number" class="form-control" id="jumlah_dana"
+                                                        name="jumlah_dana"
+                                                        value="{{ $pkmdosen->jumlah_dana }}">
+                                                </div>
+
                                                 <div class="mb-3">
                                                     <label for="bentuk_integrasi" class="form-label">Sumber
                                                         Dana:</label>
@@ -197,30 +225,33 @@
                     aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">PKM Dosen</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form action="{{ route('dosen.pkm_dosen.add') }}" method="POST">
-                                    @csrf
+                            <form action="{{ route('dosen.pkm_dosen.add') }}" method="POST">
+                                @csrf
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Tambah PKM Dosen</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
 
+                                <div class="modal-body">
                                     <div class="mb-3">
                                         <label for="judul_pkm" class="form-label">Judul PKM:</label>
                                         <textarea class="form-control" id="judul_pkm" name="judul_pkm" required>{{ session('judul_pkm') }}</textarea>
                                     </div>
+
                                     <div class="mb-3">
                                         <label for="dosen" class="form-label">Nama Dosen:</label>
                                         <textarea class="form-control" id="dosen" name="dosen" required>{{ session('dosen') }}</textarea>
                                     </div>
+
                                     <div class="mb-3">
                                         <label for="mahasiswa" class="form-label">Nama Mahasiswa:</label>
                                         <textarea class="form-control" id="mahasiswa" name="mahasiswa" required>{{ session('mahasiswa') }}</textarea>
                                     </div>
-                                    <div class="form-group">
+
+                                    <div class="mb-3">
                                         <label>Tingkat:</label>
-                                        <select class="form-control" name="tingkat">
+                                        <select class="form-control" name="tingkat" required>
                                             <option value="internasional"
                                                 {{ old('tingkat') == 'internasional' ? 'selected' : '' }}>Internasional
                                             </option>
@@ -230,47 +261,51 @@
                                                 Lokal</option>
                                         </select>
                                     </div>
+
                                     <div class="mb-3">
                                         <label for="sumber_dana" class="form-label">Sumber Dana:</label>
                                         <input type="text" class="form-control" id="sumber_dana"
-                                            name="sumber_dana" placeholder="PT, Mandiri, Luar PT sebutkan"
-                                            value="{{ session('sumber_dana') }}" required>
+                                            name="sumber_dana" value="{{ session('sumber_dana') }}" required>
                                     </div>
+
                                     <div class="form-group">
-                                        <label>Kesesuaian Roadmap:</label>
-                                        <select class="form-control" name="kesesuaian_roadmap">
-                                            <option value="sesuai"
-                                                {{ old('kesesuaian_roadmap') == 'sesuai' ? 'selected' : '' }}>Sesuai
-                                            </option>
-                                            <option value="kurang sesuai"
-                                                {{ old('kesesuaian_roadmap') == 'kurang sesuai' ? 'selected' : '' }}>
-                                                Kurang Sesuai</option>
-                                            <option value="tidak sesuai"
-                                                {{ old('kesesuaian_roadmap') == 'tidak sesuai' ? 'selected' : '' }}>
-                                                Tidak Sesuai</option>
+                                        <label>Bentuk Dana:</label>
+                                        <select class="form-control" name="bentuk_dana">
+                                            <option value="Inkind"
+                                                {{ old('bentuk_dana') == 'Inkind' ? 'selected' : '' }}>Inkind</option>
+                                            <option value="Cash"
+                                                {{ old('bentuk_dana') == 'Cash' ? 'selected' : '' }}>Cash</option>
                                         </select>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="bentuk_integrasi" class="form-label">Sumber Dana:</label>
+                                        <label for="jumlah_dana" class="form-label">Jumlah Dana:</label>
+                                        <input type="number" class="form-control" id="jumlah_dana"
+                                            name="jumlah_dana" value="{{ old('jumlah_dana') }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="bentuk_integrasi" class="form-label">Bentuk Integrasi:</label>
                                         <input type="text" class="form-control" id="bentuk_integrasi"
                                             name="bentuk_integrasi" value="{{ session('bentuk_integrasi') }}"
                                             required>
                                     </div>
+
                                     <div class="mb-3">
                                         <label for="mata_kuliah" class="form-label">Mata Kuliah:</label>
                                         <input type="text" class="form-control" id="mata_kuliah"
                                             name="mata_kuliah" value="{{ session('mata_kuliah') }}" required>
                                     </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary"
-                                            data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Tambah</button>
-                                    </div>
-                                </form>
-                            </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-primary">Tambah</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
+
                 {{-- End Modal --}}
 
                 @if ($pkm_dosen->isEmpty())
@@ -311,14 +346,11 @@
         </div>
     </div>
     <script>
-        document.getElementById('exampleModal').addEventListener('show.bs.modal', function(event) {
-            const button = event.relatedTarget; // Button yang memicu modal
-            const recipient = button.getAttribute('data-whatever'); // Ambil data dari button
-            const modalTitle = this.querySelector('.modal-title');
-            const modalBodyInput = this.querySelector('.modal-body input');
-
-            modalTitle.textContent = 'Tambah PKM Dosen ';
-            // modalBodyInput.value = recipient;
+        const exampleModal = document.getElementById('exampleModal');
+        exampleModal.addEventListener('show.bs.modal', function() {
+            const modalTitle = exampleModal.querySelector('.modal-title');
+            modalTitle.textContent = 'Tambah PKM Dosen';
         });
     </script>
+
 </x-app-layout>

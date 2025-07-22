@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0">
             <div class="flex items-center space-x-4">
-                <a href="{{ route('dosen.dashboard') }}"
+                <a href="javascript:history.back()"
                     class="inline-flex items-center bg-gray-100 hover:bg-gray-200 text-black-700 text-sm px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2">
@@ -12,13 +12,13 @@
                 </a>
 
                 <h2 class="text-xl font-semibold text-gray-800 leading-tight">
-                    {{ __('Penelitian Dosen') }}
+                    {{ __('Penelitian Mahasiswa') }}
                 </h2>
             </div>
 
             <div class="flex items-center space-x-4 mt-4">
                 {{-- Dropdown Filter Tahun Akademik --}}
-                <form method="GET" action="{{ route('dosen.penelitian_dosen') }}"
+                <form method="GET" action="{{ route('pages.penelitian_mahasiswa') }}"
                     class="flex flex-col md:flex-row md:items-center gap-2">
                     <label for="tahun" class="text-sm font-medium text-gray-700">Tahun Akademik:</label>
                     <select name="tahun" id="tahun" onchange="this.form.submit()"
@@ -32,14 +32,12 @@
                 </form>
 
                 <div class="flex items-center space-x-4">
-                    <a href="{{ route('dosen.penelitian_dosen.export') }}" class="btn btn-success btn-sm"
-                        onclick="return confirm('Apakah Anda yakin ingin mendownload CSV?')">
+                    <a href="{{ route('pages.penelitian_mahasiswa.export') }}" class="btn btn-success btn-sm" onclick="return confirm('Apakah Anda yakin ingin mendownload CSV?')">
                         Download CSV
                     </a>
 
-                    @if ($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
-                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#exampleModal">
+                    @if($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
                             Tambah
                         </button>
                     @endif
@@ -50,168 +48,143 @@
 
     <div class="py-4">
         <div class="max-w-10xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl rounded-lg p-3">
+            <div class="bg-white overflow-hidden shadow-xl rounded-lg p-6">
                 <table class="min-w-full bg-white border border-gray-500">
                     <thead>
                         <tr>
                             <th class="px-1 py-2 border text-sm">No</th>
                             <th class="px-4 py-2 border text-sm">Judul Penelitian</th>
-                            <th class="px-4 py-2 border text-sm">Nama Dosen Peneliti</th>
                             <th class="px-4 py-2 border text-sm">Nama Mahasiswa</th>
+                            <th class="px-4 py-2 border text-sm">Nama Pembimbing</th>
                             <th class="px-4 py-2 border text-sm">Tingkat</th>
                             <th class="px-4 py-2 border text-sm">Sumber Dana</th>
                             <th class="px-4 py-2 border text-sm">Bentuk Dana</th>
                             <th class="px-4 py-2 border text-sm">Jumlah Dana</th>
-                            <th class="px-4 py-2 border text-sm">Bentuk Integrasi</th>
-                            <th class="px-4 py-2 border text-sm">Mata Kuliah</th>
-                            <th class="px-4 py-2 border text-sm">Url</th>
-                            <th class="px-4 py-2 border text-sm">Roadmap</th>
-                            <th class="px-4 py-2 border text-sm text-center">Action</th>
+                            <th class="px-4 py-2 border text-sm">Kesesuaian Roadmap</th>
+                            <th class="px-1 py-2 border text-sm">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($penelitian_dosen as $penelitiandosen)
+                        @foreach ($penelitian_mahasiswa as $penelitianmahasiswa)
                             <tr>
                                 <td class="px-1 py-2 border text-sm">{{ $loop->iteration }}</td>
-                                <td class="px-4 py-2 border text-sm">{{ $penelitiandosen->judul_penelitian }}</td>
-                                <td class="px-4 py-2 border text-sm">{{ $penelitiandosen->nama_dosen_peneliti }}</td>
-                                <td class="px-4 py-2 border text-sm">{{ $penelitiandosen->nama_mahasiswa }}</td>
-                                <td class="px-4 py-2 border text-sm">{{ $penelitiandosen->tingkat }}</td>
-                                <td class="px-4 py-2 border text-sm">{{ $penelitiandosen->sumber_dana }}</td>
-                                <td class="px-4 py-2 border text-sm">{{ $penelitiandosen->bentuk_dana }}</td>
-                                <td class="px-4 py-2 border text-sm">Rp {{ $penelitiandosen->jumlah_dana }}</td>
-                                <td class="px-4 py-2 border text-sm">{{ $penelitiandosen->bentuk_integrasi }}</td>
-                                <td class="px-4 py-2 border text-sm">{{ $penelitiandosen->mata_kuliah }}</td>
-                                <td class="px-4 py-2 border text-sm">
-                                    <a href="{{ $penelitiandosen->url }}" target="_blank"
-                                        class="text-blue-500 hover:text-blue-700 underline">Link</a>
-                                </td>
-                                <td class="px-4 py-2 border text-sm text-center">
-                                    @if ($penelitiandosen->kesesuaian_roadmap == 'Sesuai')
-                                        <span
-                                            class="badge bg-success text-white">{{ $penelitiandosen->kesesuaian_roadmap }}</span>
-                                    @elseif ($penelitiandosen->kesesuaian_roadmap == 'Kurang Sesuai')
-                                        <span
-                                            class="badge bg-warning text-white">{{ $penelitiandosen->kesesuaian_roadmap }}</span>
-                                    @elseif ($penelitiandosen->kesesuaian_roadmap == 'Tidak Sesuai')
-                                        <span
-                                            class="badge bg-danger text-white">{{ $penelitiandosen->kesesuaian_roadmap }}</span>
-                                    @else
-                                        <span class="badge bg-secondary text-white">-</span>
-                                    @endif
-                                </td>
-                                <td class="px-1 py-3 border flex flex-col items-center space-y-2">
-                                    @if (is_null($penelitiandosen->kesesuaian_roadmap))
-                                        <!-- Tombol Edit -->
-                                        <button
-                                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#exampleModal{{ $penelitiandosen->id }}">
-                                            Edit
+                                <td class="px-4 py-2 border text-sm">{{ $penelitianmahasiswa->judul_penelitian }}</td>
+                                <td class="px-4 py-2 border text-sm">{!! nl2br(e($penelitianmahasiswa->nama_mahasiswa)) !!}</td>
+                                <td class="px-4 py-2 border text-sm">{!! nl2br(e($penelitianmahasiswa->nama_pembimbing)) !!}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $penelitianmahasiswa->tingkat }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $penelitianmahasiswa->sumber_dana }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $penelitianmahasiswa->bentuk_dana }}</td>
+                                <td class="px-4 py-2 border text-sm">Rp {{ $penelitianmahasiswa->jumlah_dana }}</td>
+                                <td class="px-4 py-2 border text-sm">{{ $penelitianmahasiswa->kesesuaian_roadmap }}</td>
+                                <td class="px-1 py-3 border flex flex-col items-center space-y-2 text-sm">
+                                    <!-- Tombol Edit -->
+                                    <button
+                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal{{ $penelitianmahasiswa->id }}">
+                                        Edit
+                                    </button>
+
+                                    <!-- Tombol Delete -->
+                                    <form
+                                        action="{{ route('pages.penelitian_mahasiswa.destroy', $penelitianmahasiswa->id) }}"
+                                        method="POST" onsubmit="return confirm('Yakin ingin menghapus ini?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded">
+                                            Delete
                                         </button>
-
-                                        <!-- Tombol Delete -->
-                                        <form
-                                            action="{{ route('dosen.penelitian_dosen.destroy', $penelitiandosen->id) }}"
-                                            method="POST" class="d-inline delete-form">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm">
-                                                Delete
-                                            </button>
-                                        </form>
-                                    @endif
+                                    </form>
                                 </td>
-
                             </tr>
 
-                            <div class="modal fade" id="exampleModal{{ $penelitiandosen->id }}" tabindex="-1"
+                            <div class="modal fade" id="exampleModal{{ $penelitianmahasiswa->id }}" tabindex="-1"
                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Edit Penelitian Dosen</h5>
+                                            <h5 class="modal-title" id="exampleModalLabel">Edit Penelitian Mahasiswa
+                                            </h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
                                             <form
-                                                action="{{ route('dosen.penelitian_dosen.update', $penelitiandosen->id) }}"
+                                                action="{{ route('pages.penelitian_mahasiswa.update', $penelitianmahasiswa->id) }}"
                                                 method="POST">
                                                 @csrf
                                                 @method('PUT')
                                                 <input type="text" hidden name="id"
-                                                    value="{{ $penelitiandosen->id }}">
+                                                    value="{{ $penelitianmahasiswa->id }}">
 
                                                 <div class="mb-3">
                                                     <label for="judul_penelitian" class="form-label">Judul
                                                         Penelitian:</label>
-                                                    <textarea class="form-control" id="judul_penelitian" name="judul_penelitian" required>{{ $penelitiandosen->judul_penelitian }}</textarea>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="nama_dosen_peneliti" class="form-label">Nama
-                                                        Dosen:</label>
-                                                    <textarea class="form-control" id="nama_dosen_peneliti" name="nama_dosen_peneliti" required>{{ $penelitiandosen->nama_dosen_peneliti }}</textarea>
+                                                    <textarea class="form-control" id="judul_penelitian" name="judul_penelitian" required>{{ $penelitianmahasiswa->judul_penelitian }}</textarea>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="nama_mahasiswa" class="form-label">Nama
                                                         Mahasiswa:</label>
-                                                    <input type="text" class="form-control" id="nama_mahasiswa"
-                                                        name="nama_mahasiswa"
-                                                        value="{{ $penelitiandosen->nama_mahasiswa }}">
+                                                    <textarea class="form-control" id="nama_mahasiswa" name="nama_mahasiswa" required>{{ $penelitianmahasiswa->nama_mahasiswa }}</textarea>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="nama_pembimbing" class="form-label">Nama
+                                                        Pembimbing:</label>
+                                                    <textarea class="form-control" id="nama_pembimbing" name="nama_pembimbing" required>{{ $penelitianmahasiswa->nama_pembimbing }}</textarea>
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Tingkat</label>
                                                     <select class="form-control" name="tingkat">
                                                         <option value="Internasional"
-                                                            {{ $penelitiandosen->tingkat == 'Internasional' ? 'selected' : '' }}>
+                                                            {{ $penelitianmahasiswa->tingkat == 'Internasional' ? 'selected' : '' }}>
                                                             Internasional</option>
                                                         <option value="Nasional"
-                                                            {{ $penelitiandosen->tingkat == 'Nasional' ? 'selected' : '' }}>
+                                                            {{ $penelitianmahasiswa->tingkat == 'Nasional' ? 'selected' : '' }}>
                                                             Nasional</option>
                                                         <option value="Lokal"
-                                                            {{ $penelitiandosen->tingkat == 'Lokal' ? 'selected' : '' }}>
-                                                            Lokal
-                                                        </option>
+                                                            {{ $penelitianmahasiswa->tingkat == 'Lokal' ? 'selected' : '' }}>
+                                                            Lokal</option>
                                                     </select>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="sumber_dana" class="form-label">Sumber Dana:</label>
                                                     <input type="text" class="form-control" id="sumber_dana"
                                                         name="sumber_dana"
-                                                        value="{{ $penelitiandosen->sumber_dana }}">
+                                                        value="{{ $penelitianmahasiswa->sumber_dana }}">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Bentuk Dana:</label>
-                                                    <select class="form-control" name="bentuk_dana"
-                                                        value="{{ $penelitiandosen->bentuk_dana }}">
+                                                    <select class="form-control" name="bentuk_dana">
                                                         <option value="Inkind"
-                                                            {{ $penelitiandosen->bentuk_dana == 'Inkind' ? 'selected' : '' }}>
-                                                            Inkind</option>
+                                                            {{ $penelitianmahasiswa->bentuk_dana == 'Inkind' ? 'selected' : '' }}>
+                                                            Inkind
+                                                        </option>
                                                         <option value="Cash"
-                                                            {{ $penelitiandosen->bentuk_dana == 'Cash' ? 'selected' : '' }}>
-                                                            Cash</option>
+                                                            {{ $penelitianmahasiswa->bentuk_dana == 'Cash' ? 'selected' : '' }}>
+                                                            Cash
+                                                        </option>
                                                     </select>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="jumlah_dana" class="form-label">Jumlah Dana:</label>
                                                     <input type="number" class="form-control" id="jumlah_dana"
                                                         name="jumlah_dana"
-                                                        value="{{ $penelitiandosen->jumlah_dana }}">
+                                                        value="{{ $penelitianmahasiswa->jumlah_dana }}">
                                                 </div>
-                                                <div class="mb-3">
-                                                    <label for="bentuk_integrasi" class="form-label">Bentuk
-                                                        Integrasi:</label>
-                                                    <input type="text" class="form-control" id="bentuk_integrasi"
-                                                        name="bentuk_integrasi"
-                                                        value="{{ $penelitiandosen->bentuk_integrasi }}">
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="mata_kuliah" class="form-label">Mata Kuliah:</label>
-                                                    <input type="text" class="form-control" id="mata_kuliah"
-                                                        name="mata_kuliah"
-                                                        value="{{ $penelitiandosen->mata_kuliah }}">
+                                                <div class="form-group">
+                                                    <label>Kesesuaian Roadmap</label>
+                                                    <select class="form-control" name="kesesuaian_roadmap">
+                                                        <option value="Sesuai"
+                                                            {{ $penelitianmahasiswa->kesesuaian_roadmap == 'Sesuai' ? 'selected' : '' }}>
+                                                            Sesuai</option>
+                                                        <option value="Kurang Sesuai"
+                                                            {{ $penelitianmahasiswa->kesesuaian_roadmap == 'Kurang Sesuai' ? 'selected' : '' }}>
+                                                            Kurang Sesuai</option>
+                                                        <option value="Tidak sesuai"
+                                                            {{ $penelitianmahasiswa->kesesuaian_roadmap == 'Tidak Sesuai' ? 'selected' : '' }}>
+                                                            Tidak Sesuai</option>
+                                                    </select>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary"
@@ -238,7 +211,7 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <form action="{{ route('dosen.penelitian_dosen.add') }}" method="POST">
+                                <form action="{{ route('pages.penelitian_mahasiswa.add') }}" method="POST">
                                     @csrf
 
                                     <div class="mb-3">
@@ -246,13 +219,12 @@
                                         <textarea class="form-control" id="judul_penelitian" name="judul_penelitian" required>{{ old('judul_penelitian') }}</textarea>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="nama_dosen_peneliti" class="form-label">Nama Dosen:</label>
-                                        <textarea class="form-control" id="nama_dosen_peneliti" name="nama_dosen_peneliti" required>{{ old('nama_dosen_peneliti') }}</textarea>
+                                        <label for="nama_mahasiswa" class="form-label">Nama Mahasiswa:</label>
+                                        <textarea class="form-control" id="nama_mahasiswa" name="nama_mahasiswa" required>{{ old('nama_mahasiswa') }}</textarea>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="nama_mahasiswa" class="form-label">Nama Mahasiswa:</label>
-                                        <input type="text" class="form-control" id="nama_mahasiswa"
-                                            name="nama_mahasiswa" value="{{ old('nama_mahasiswa') }}" required>
+                                        <label for="nama_pembimbing" class="form-label">Nama Pembimbing:</label>
+                                        <textarea class="form-control" id="nama_pembimbing" name="nama_pembimbing" required>{{ old('nama_pembimbing') }}</textarea>
                                     </div>
                                     <div class="form-group">
                                         <label>Tingkat</label>
@@ -275,9 +247,11 @@
                                         <label>Bentuk Dana:</label>
                                         <select class="form-control" name="bentuk_dana">
                                             <option value="Inkind"
-                                                {{ old('bentuk_dana') == 'Inkind' ? 'selected' : '' }}>Inkind</option>
+                                                {{ old('bentuk_dana') == 'Inkind' ? 'selected' : '' }}>Inkind
+                                            </option>
                                             <option value="Cash"
-                                                {{ old('bentuk_dana') == 'Cash' ? 'selected' : '' }}>Cash</option>
+                                                {{ old('bentuk_dana') == 'Cash' ? 'selected' : '' }}>Cash
+                                            </option>
                                         </select>
                                     </div>
                                     <div class="mb-3">
@@ -285,15 +259,19 @@
                                         <input type="number" class="form-control" id="jumlah_dana"
                                             name="jumlah_dana" value="{{ old('jumlah_dana') }}" required>
                                     </div>
-                                    <div class="mb-3">
-                                        <label for="bentuk_integrasi" class="form-label">Bentuk Integrasi:</label>
-                                        <input type="text" class="form-control" id="bentuk_integrasi"
-                                            name="bentuk_integrasi" value="{{ old('bentuk_integrasi') }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="mata_kuliah" class="form-label">Mata Kuliah:</label>
-                                        <input type="text" class="form-control" id="mata_kuliah"
-                                            name="mata_kuliah" value="{{ old('mata_kuliah') }}" required>
+                                    <div class="form-group">
+                                        <label>Kesesuaian Roadmap</label>
+                                        <select class="form-control" name="kesesuaian_roadmap">
+                                            <option value="Sesuai"
+                                                {{ old('kesesuaian_roadmap') == 'Sesuai' ? 'selected' : '' }}>Sesuai
+                                            </option>
+                                            <option value="Kurang Sesuai"
+                                                {{ old('kesesuaian_roadmap') == 'Kurang Sesuai' ? 'selected' : '' }}>
+                                                Kurang Sesuai</option>
+                                            <option value="Tidak sesuai"
+                                                {{ old('kesesuaian_roadmap') == 'Tidak Sesuai' ? 'selected' : '' }}>
+                                                Tidak Sesuai</option>
+                                        </select>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary"
@@ -307,7 +285,7 @@
                 </div>
                 {{-- End Modal --}}
 
-                @if ($penelitian_dosen->isEmpty())
+                @if ($penelitian_mahasiswa->isEmpty())
                     <p class="text-center text-gray-500 mt-4">Tidak ada data yang diinput.</p>
                 @endif
             </div>
@@ -351,7 +329,7 @@
             const modalTitle = this.querySelector('.modal-title');
             const modalBodyInput = this.querySelector('.modal-body input');
 
-            modalTitle.textContent = 'Tambah Pkm Dosen';
+            modalTitle.textContent = 'Tambah Penelitian Mahasiswa';
             // modalBodyInput.value = recipient;
         });
     </script>

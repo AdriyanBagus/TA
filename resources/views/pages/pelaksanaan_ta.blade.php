@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0">
             <div class="flex items-center space-x-4">
-                <a href="javascript:history.back()"
+                <a href="{{ route('dashboard') }}"
                     class="inline-flex items-center bg-gray-100 hover:bg-gray-200 text-black-700 text-sm px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2">
@@ -32,12 +32,14 @@
                 </form>
 
                 <div class="flex items-center space-x-4">
-                    <a href="{{ route('pages.pelaksanaan_ta.export') }}" class="btn btn-success btn-sm" onclick="return confirm('Apakah Anda yakin ingin mendownload CSV?')">
+                    <a href="{{ route('pages.pelaksanaan_ta.export') }}" class="btn btn-success btn-sm"
+                        onclick="return confirm('Apakah Anda yakin ingin mendownload CSV?')">
                         Download CSV
                     </a>
 
-                    @if($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
-                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    @if ($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal">
                             Tambah
                         </button>
                     @endif
@@ -49,151 +51,46 @@
     <div class="py-4">
         <div class="max-w-10xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl rounded-lg p-6">
-                <table class="min-w-full bg-white border border-gray-500">
+                <table id="pelaksanaanTable" class="min-w-full bg-white border border-gray-500 border-collapse">
                     <thead>
                         <tr>
-                            <th class="px-2 py-2 border text-sm">No</th>
-                            <th class="px-4 py-2 border text-sm">Nama</th>
-                            <th class="px-4 py-2 border text-sm">NIDN</th>
-                            <th class="px-4 py-2 border text-sm">Bimbingan Mahasiswa PS Sendiri</th>
-                            <th class="px-4 py-2 border text-sm">Jumlah Bimbingan PS sendiri</th>
-                            <th class="px-4 py-2 border text-sm">Bimbingan Mahasiswa PS Lain</th>
-                            <th class="px-4 py-2 border text-sm">Jumlah Bimbingan PS Lain</th>
-                            <th class="px-4 py-2 border text-sm">Jumlah Bimbingan Seluruh PS</th>
-                            <th class="px-4 py-2 border text-sm">action</th>
+                            <th class="border px-2 py-2 text-sm">No</th>
+                            <th class="border px-4 py-2 text-sm">Nama</th>
+                            <th class="border px-4 py-2 text-sm">NIDN</th>
+                            <th class="border px-4 py-2 text-sm">Bimbingan Mahasiswa PS Sendiri</th>
+                            <th class="border px-4 py-2 text-sm">Jumlah Bimbingan PS Sendiri</th>
+                            <th class="border px-4 py-2 text-sm">Bimbingan Mahasiswa PS Lain</th>
+                            <th class="border px-4 py-2 text-sm">Jumlah Bimbingan PS Lain</th>
+                            <th class="border px-4 py-2 text-sm">Jumlah Bimbingan Seluruh PS</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($pelaksanaan_ta as $pelaksanaanta)
+                        @foreach ($pelaksanaan_ta as $pelaksanaanta)
                             <tr>
-                                <td class="px-1 py-2 border text-sm">{{ $loop->iteration }}</td>
-                                <td class="px-4 py-2 border text-sm">{{ $pelaksanaanta->nama }}</td>
-                                <td class="px-4 py-2 border text-sm">{{ $pelaksanaanta->nidn }}</td>
-                                <td class="px-4 py-2 border text-sm">{{ $pelaksanaanta->bimbingan_mahasiswa_ps_sendiri }}</td>
-                                <td class="px-4 py-2 border text-sm">{{ $pelaksanaanta->rata_rata_jumlah_bimbingan_ps_sendiri }}</td>
-                                <td class="px-4 py-2 border text-sm">{{ $pelaksanaanta->bimbingan_mahasiswa_ps_lain }}</td>
-                                <td class="px-4 py-2 border text-sm">{{ $pelaksanaanta->rata_rata_jumlah_bimbingan_ps_lain }}</td>
-                                <td class="px-4 py-2 border text-sm">{{ $pelaksanaanta->rata_rata_jumlah_bimbingan_seluruh_ps }}</td>
-                                <td class="px-1 py-3 border flex flex-col items-center space-y-2">
-                                    <!-- Tombol Edit -->
-                                    <button 
-                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm" data-bs-toggle="modal" data-bs-target="#exampleModal{{ $pelaksanaanta->id }}">
-                                        Edit
-                                    </button>
-
-                                    <!-- Tombol Delete -->
-                                    <form action="{{ route('pages.pelaksanaan_ta.destroy', $pelaksanaanta->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm">
-                                            Delete
-                                        </button>
-                                    </form>
+                                <td class="border px-1 py-2 text-sm">{{ $loop->iteration }}</td>
+                                <td class="border px-4 py-2 text-sm">{{ $pelaksanaanta->nama }}</td>
+                                <td class="border px-4 py-2 text-sm">{{ $pelaksanaanta->nidn }}</td>
+                                <td class="border px-4 py-2 text-sm">
+                                    {{ $pelaksanaanta->bimbingan_mahasiswa_ps_sendiri }}</td>
+                                <td class="border px-4 py-2 text-sm">
+                                    {{ $pelaksanaanta->rata_rata_jumlah_bimbingan_ps_sendiri }}</td>
+                                <td class="border px-4 py-2 text-sm">{{ $pelaksanaanta->bimbingan_mahasiswa_ps_lain }}
                                 </td>
+                                <td class="border px-4 py-2 text-sm">
+                                    {{ $pelaksanaanta->rata_rata_jumlah_bimbingan_ps_lain }}</td>
+                                <td class="border px-4 py-2 text-sm">
+                                    {{ $pelaksanaanta->rata_rata_jumlah_bimbingan_seluruh_ps }}</td>
                             </tr>
-
-                            <div class="modal fade" id="exampleModal{{ $pelaksanaanta->id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Tambah Pelaksanaan TA</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form action="{{ route('pages.pelaksanaan_ta.update', $pelaksanaanta->id) }}" method="POST">
-                                                @csrf
-                                                @method('PUT')
-                                                <input type="text" hidden name="id" value="{{ $pelaksanaanta->id }}">
-            
-                                                <div class="mb-3">
-                                                    <label for="nama" class="form-label">Nama:</label>
-                                                    <input type="text" class="form-control" id="nama" name="nama" value="{{ $pelaksanaanta->nama }}" required>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="nidn" class="form-label">NIDN:</label>
-                                                    <input type="number" class="form-control" id="nidn" name="nidn" value="{{ $pelaksanaanta->nidn }}" required>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="bimbingan_mahasiswa_ps_sendiri" class="form-label">Bimbingan Mahasiswa PS sendiri:</label>
-                                                    <input type="number" class="form-control" id="bimbingan_mahasiswa_ps_sendiri" name="bimbingan_mahasiswa_ps_sendiri" value="{{ $pelaksanaanta->bimbingan_mahasiswa_ps_sendiri }}" required>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="rata_rata_jumlah_bimbingan_ps_sendiri" class="form-label">Jumlah Bimbingan PS Sendiri:</label>
-                                                    <input type="number" class="form-control" id="rata_rata_jumlah_bimbingan_ps_sendiri" name="rata_rata_jumlah_bimbingan_ps_sendiri" value="{{ $pelaksanaanta->rata_rata_jumlah_bimbingan_ps_sendiri }}" readonly>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="bimbingan_mahasiswa_ps_lain" class="form-label">Bimbingan Mahasiswa PS Lain:</label>
-                                                    <input type="number" class="form-control" id="bimbingan_mahasiswa_ps_lain" name="bimbingan_mahasiswa_ps_lain" value="{{ $pelaksanaanta->bimbingan_mahasiswa_ps_lain }}" required>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="rata_rata_jumlah_bimbingan_ps_lain" class="form-label">Jumlah Bimbingan PS Lain:</label>
-                                                    <input type="number" class="form-control" id="rata_rata_jumlah_bimbingan_ps_lain" name="rata_rata_jumlah_bimbingan_ps_lain" value="{{ $pelaksanaanta->rata_rata_jumlah_bimbingan_ps_lain }}" readonly>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="rata_rata_jumlah_bimbingan_seluruh_ps" class="form-label">Jumlah Bimbingan Seluruh PS:</label>
-                                                    <input type="number" class="form-control" id="rata_rata_jumlah_bimbingan_seluruh_ps" name="rata_rata_jumlah_bimbingan_seluruh_ps" value="{{ $pelaksanaanta->rata_rata_jumlah_bimbingan_seluruh_ps }}" readonly>
-                                                </div>
-
-                                              <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                <button type="submit" class="btn btn-primary">Edit</button>
-                                            </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                              </div>
                         @endforeach
                     </tbody>
                 </table>
-
-                {{-- Modal --}}
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Tambah Pelaksanaan TA</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form action="{{ route('pages.pelaksanaan_ta.add') }}" method="POST">
-                                    @csrf
-
-                                    <div class="mb-3">
-                                        <label for="nama" class="form-label">Nama:</label>
-                                        <input type="text" class="form-control" id="nama" name="nama" value="{{ old('nama') }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="nidn" class="form-label">NIDN:</label>
-                                        <input type="number" class="form-control" id="nidn" name="nidn" value="{{ old('nidn') }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="bimbingan_mahasiswa_ps_sendiri" class="form-label">Bimbingan Mahasiswa PS sendiri:</label>
-                                        <input type="number" class="form-control" id="bimbingan_mahasiswa_ps_sendiri" name="bimbingan_mahasiswa_ps_sendiri" value="{{ old('bimbingan_mahasiswa_ps_sendiri') }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="bimbingan_mahasiswa_ps_lain" class="form-label">Bimbingan Mahasiswa PS Lain:</label>
-                                        <input type="number" class="form-control" id="bimbingan_mahasiswa_ps_lain" name="bimbingan_mahasiswa_ps_lain" value="{{ old('bimbingan_mahasiswa_ps_lain') }}" required>
-                                    </div>
-
-                                  <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary">Tambah</button>
-                                </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                  </div>   
-                  {{-- End Modal --}}
-
-                @if($pelaksanaan_ta->isEmpty())
+                {{-- @if ($pelaksanaan_ta->isEmpty())
                     <p class="text-center text-gray-500 mt-4">Data tidak ada.</p>
-                @endif
+                @endif --}}
             </div>
         </div>
     </div>
-    
+
     {{-- Komentar --}}
     <div class="py-4">
         <div class="max-w-10xl mx-auto sm:px-6 lg:px-8">
@@ -218,20 +115,39 @@
                         @endforeach
                     @else
                         <p class="text-center text-gray-500 mt-4">Belum ada komentar.</p>
-                    @endif  
+                    @endif
                 </ul>
             </div>
         </div>
     </div>
     <script>
-        document.getElementById('exampleModal').addEventListener('show.bs.modal', function (event) {
-         const button = event.relatedTarget; // Button yang memicu modal
-         const recipient = button.getAttribute('data-whatever'); // Ambil data dari button
-         const modalTitle = this.querySelector('.modal-title');
-         const modalBodyInput = this.querySelector('.modal-body input');
-     
-         modalTitle.textContent = 'Tambah Pelaksanaan TA ';
-         // modalBodyInput.value = recipient;
+        document.getElementById('exampleModal').addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget; // Button yang memicu modal
+            const recipient = button.getAttribute('data-whatever'); // Ambil data dari button
+            const modalTitle = this.querySelector('.modal-title');
+            const modalBodyInput = this.querySelector('.modal-body input');
+
+            modalTitle.textContent = 'Tambah Pelaksanaan TA ';
+            // modalBodyInput.value = recipient;
         });
     </script>
+    <script>
+    $(document).ready(function () {
+        $('#pelaksanaanTable').DataTable({
+            pageLength: 5,
+            lengthMenu: [5, 10, 25, 50, 100],
+            language: {
+                search: "Cari:",
+                lengthMenu: "Tampilkan _MENU_ data per halaman",
+                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                paginate: {
+                    first: "Pertama",
+                    last: "Terakhir",
+                    next: "Berikutnya",
+                    previous: "Sebelumnya"
+                }
+            }
+        });
+    });
+</script>
 </x-app-layout>

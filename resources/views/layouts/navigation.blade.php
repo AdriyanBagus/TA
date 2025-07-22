@@ -43,7 +43,7 @@
                 @if (auth()->user()->usertype === 'user')
                     <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                            {{ __('Instrumen Laporan Evaluasi Diri Internal') }}
+                            {{ __('Dashboard') }}
                         </x-nav-link>
                         <x-nav-link :href="route('tambah-dosen.create')" :active="request()->routeIs('tambah-dosen.create')">
                             {{ __('Tambah Dosen') }}
@@ -106,7 +106,7 @@
                         <x-nav-link :href="route('dosen.dashboard')" :active="request()->routeIs('dosen.dashboard')">
                             {{ __('Dashboard Dosen') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('profil-dosen.index')" :active="request()->routeIs('dosen.dashboard')">
+                        <x-nav-link :href="route('profil-dosen.index')" :active="request()->routeIs('profil-dosen.index')">
                             {{ __('Profil Dosen') }}
                         </x-nav-link>
                     </div>

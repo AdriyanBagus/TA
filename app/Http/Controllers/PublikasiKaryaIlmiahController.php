@@ -19,7 +19,8 @@ class PublikasiKaryaIlmiahController extends Controller
     }
     public function index()
     {
-        return view('dosen.publikasi_karya_ilmiah');
+        // Diarahkan ke fungsi show() saja agar logikanya terpusat
+        return $this->show(new Request());
     }
 
     public function show(Request $request)
@@ -28,14 +29,15 @@ class PublikasiKaryaIlmiahController extends Controller
             $tahunList = TahunAkademik::all();
             $tahunTerpilih = $request->get('tahun') ?? TahunAkademik::where('is_active', true)->value('id');
 
-            $publikasi_karya_ilmiah = PublikasiKaryaIlmiah::where('user_id', Auth::user()->id)
+            $publikasi_karya_ilmiah = PublikasiKaryaIlmiah::where('user_id', Auth::id())
                 ->where('publikasi_karya_ilmiah.tahun_akademik_id', $tahunTerpilih)
                 ->get();
 
             // Ambil data dari tabel Komentar berdasarkan nama_tabel
             // dan prodi_id yang sesuai dengan user yang sedang login
-            $tabel = (new PublikasiKaryaIlmiah())->getTable(); 
-            $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
+            $tabel = (new PublikasiKaryaIlmiah())->getTable();
+            // Untuk komentar, mungkin masih menggunakan parent_id agar admin prodi bisa lihat. 
+            $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->parent_id)->get();
         }
     
         return view('dosen.publikasi_karya_ilmiah', get_defined_vars());
@@ -46,20 +48,25 @@ class PublikasiKaryaIlmiahController extends Controller
         $tahunAktif = TahunAkademik::where('is_active', true)->first();
         $formattedUrl = $this->formatUrl($request->url);
 
+        // Gemi's Edit: Mengambil data 'detail' sebagai array
+        $detailPublikasi = $request->input('detail', []);
+
         PublikasiKaryaIlmiah::create([
-            'user_id' => Auth::user()->id,
+            // Simpan data dengan user_id yang sesuai dengan dosen yang sedang login
+            'user_id' => Auth::id(),
             'judul_penelitian' => $request->judul_penelitian,
             'judul_publikasi' => $request->judul_publikasi,
             'nama_author' => $request->nama_author,
-            'nama_jurnal' => $request->nama_jurnal,
+            // 'nama_jurnal' => $request->jenis === 'Jurnal' ? $request->nama_jurnal : null, // Hanya simpan jika jenisnya Jurnal
             'jenis' => $request->jenis,
             'tingkat' => $request->tingkat,
             'url' =>  $formattedUrl,
+            'detail_publikasi' => $detailPublikasi, // Menyimpan semua data 'ajaib' ke dalam satu kolom
             'tahun_akademik_id' => $tahunAktif->id,
             'parent_id' => Auth::user()->parent_id
         ]);
 
-        return redirect()->back()->with('success', 'Data berhasil ditambahkan!');
+        return redirect()->route('dosen.publikasi_karya_ilmiah')->with('success', 'Data Publikasi Karya Ilmiah berhasil ditambahkan!');
     }
 
     public function update(Request $request, $id)
@@ -68,67 +75,83 @@ class PublikasiKaryaIlmiahController extends Controller
         $tahunAktif = TahunAkademik::where('is_active', true)->first();
         
         $publikasi_karya_ilmiah = PublikasiKaryaIlmiah::find($id);
-        $publikasi_karya_ilmiah->judul_penelitian = $request->judul_penelitian;
-        $publikasi_karya_ilmiah->judul_publikasi = $request->judul_publikasi;
-        $publikasi_karya_ilmiah->nama_author = $request->nama_author;
-        $publikasi_karya_ilmiah->nama_jurnal = $request->nama_jurnal;
-        $publikasi_karya_ilmiah->jenis = $request->jenis;
-        $publikasi_karya_ilmiah->tingkat = $request->tingkat;
-        $publikasi_karya_ilmiah->url =  $formattedUrl;
-        $publikasi_karya_ilmiah->tahun_akademik_id = $tahunAktif->id;
-        $publikasi_karya_ilmiah->user_id = Auth::user()->id;
-        $publikasi_karya_ilmiah->save();
 
-        return redirect()->back()->with('success', 'Data berhasil diubah!');
+        // Pastikan hanya pemilik data yang bisa mengedit
+        if ($publikasi_karya_ilmiah->user_id != Auth::id()) {
+            abort(403);
+        }
+
+        $detailPublikasi = $request->input('detail', []);
+
+        $publikasi_karya_ilmiah->update([
+            'judul_penelitian' => $request->judul_penelitian, 
+            'judul_publikasi' => $request->judul_publikasi,
+            'nama_author' => $request->nama_author,
+            'jenis' => $request->jenis,
+            'tingkat' => $request->tingkat,
+            'url' => $formattedUrl,
+            'detail_publikasi' => $detailPublikasi,
+        ]);
+
+        return redirect()->route('dosen.publikasi_karya_ilmiah')->with('success', 'Data Publikasi Karya Ilmiah berhasil diubah!');
     }
 
     public function destroy($id)
     {
         $publikasi_karya_ilmiah = PublikasiKaryaIlmiah::find($id);
+
+        // Pastikan hanya pemilik data yang bisa menghapus
+        if ($publikasi_karya_ilmiah->user_id != Auth::id()) {
+            abort(403);
+        }
+
         $publikasi_karya_ilmiah->delete();
 
-        return redirect()->back()->with('success', 'Data berhasil dihapus!');
+        return redirect()->route('dosen.publikasi_karya_ilmiah')->with('success', 'Data Publikasi Karya Ilmiah berhasil dihapus!');
     }
 
     public function exportCsv()
     {
         $records = PublikasiKaryaIlmiah::where('user_id', Auth::user()->id)
-                            ->where('tahun_akademik_id', TahunAkademik::where('is_active', true)->value('id'))
-                            ->get();
+            ->where('tahun_akademik_id', TahunAkademik::where('is_active', true)->value('id'))
+            ->get();
 
-        $filename = 'Publikasi Karya Ilmiah_' . date('Y-m-d') . '.csv';
-        $headers = [
-            "Content-type"        => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma"              => "no-cache",
-            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-            "Expires"             => "0"
+        $filename = 'Publikasi_Karya_Ilmiah_' . date('Y-m-d') . '.csv';
+        $headers = [ "Content-type" => "text/csv", "Content-Disposition" => "attachment; filename=$filename", "Pragma" => "no-cache", "Cache-Control" => "must-revalidate, post-check=0, pre-check=0", "Expires" => "0" ];
+
+        // Gemi's Edit: Menyiapkan semua kemungkinan kolom detail
+        $possibleDetails = [
+            'nama_jurnal', 'volume_nomor_jurnal', 'link_doi_jurnal', 'nama_penerbit', 'tahun_terbit', 'isbn',
+            'nama_konferensi', 'penyelenggara', 'tanggal_pelaksanaan', 'nama_acara', 'peran', 'penyelenggara_seminar',
+            'judul_buku_induk', 'nama_editor', 'penerbit_buku', 'nama_media', 'tanggal_tayang', 'link_berita'
         ];
+        
+        $baseColumns = ['No', 'Judul Penelitian', 'Judul Publikasi', 'Nama Author', 'Jenis', 'Tingkat', 'URL Pendukung'];
+        $columns = array_merge($baseColumns, $possibleDetails);
 
-        $columns = [
-            'No', 'Judul Penelitian', 'Judul Publikasi','Nama Author', 'Nama Jurnal', 'Jenis','Tingkat', 'Url'
-        ];
-
-        $callback = function() use ($records, $columns) {
+        $callback = function() use ($records, $columns, $possibleDetails) {
             $handle = fopen('php://output', 'w');
-
-            // Tambahkan BOM di awal file (Byte Order Mark)
             echo chr(239) . chr(187) . chr(191);
-
             fputcsv($handle, $columns, ';', '"');
 
             $no = 1;
             foreach ($records as $record) {
-                fputcsv($handle, [
+                $rowData = [
                     $no++,
                     $record->judul_penelitian,
                     $record->judul_publikasi,
                     $record->nama_author,
-                    $record->nama_jurnal,
                     $record->jenis,
                     $record->tingkat,
-                    $record->url
-                ], ';', '"');
+                    $record->url,
+                ];
+
+                // "Membongkar" isi laci serbaguna dan meletakkannya di kolom yang benar
+                foreach($possibleDetails as $detailKey) {
+                    $rowData[] = $record->detail_publikasi[$detailKey] ?? '';
+                }
+                
+                fputcsv($handle, $rowData, ';', '"');
             }
             fclose($handle);
         };

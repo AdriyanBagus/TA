@@ -17,6 +17,8 @@ class RekognisiDosen extends Model
         'bahan_ajar',
         'tahun_perolehan',
         'url',
+        'status',
+        'catatan',
         'tahun_akademik_id',
         'parent_id'
     ];

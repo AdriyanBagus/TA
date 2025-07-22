@@ -12,7 +12,7 @@
                     @csrf
                     <!-- Name -->
                     <div>
-                        <x-input-label for="name" :value="__('Nama Dosen')" />
+                        <x-input-label for="name" :value="__('Nama')" />
                         <x-text-input id="name" class="block mt-1 w-full" type="text" name="name"
                             :value="old('name')" required autofocus autocomplete="name" />
                         <x-input-error :messages="$errors->get('name')" class="mt-2" />
@@ -47,22 +47,37 @@
                     </div>
 
                     <div class="mt-4">
-                        <x-input-label for="nidn" :value="__('NIDN')" />
+                        <x-input-label for="nidn" :value="__('NIDN / NIPY')" />
                         <x-text-input id="nidn" class="block mt-1 w-full" type="text" name="nidn"
                             :value="old('nidn')" required autocomplete="off" />
                         <x-input-error :messages="$errors->get('nidn')" class="mt-2" />
                     </div>
 
                     <div class="mt-4">
+                        <x-input-label for="usertype" :value="__('Role')" />
+                        <select class="block mt-1 w-full" id="usertype" name="usertype" required>
+                            <option value="dosen" {{ old('usertype') == 'dosen' ? 'selected' : '' }}>Dosen</option>
+                            <option value="tendik" {{ old('usertype') == 'tendik' ? 'selected' : '' }}>Tenaga Kependidikan</option>
+                        </select>
+                        <x-input-error :messages="$errors->get('usertype')" class="mt-2" />
+                    </div>
+
+                    <div class="mt-4">
                         <x-input-label for="kualifikasi_pendidikan" :value="__('Kualifikasi Pendidikan')" />
-                        <x-text-input id="kualifikasi_pendidikan" class="block mt-1 w-full" type="text" name="kualifikasi_pendidikan"
-                            :value="old('kualifikasi_pendidikan')" required autocomplete="username" />
+                        <select class="block mt-1 w-full" id="kualifikasi_pendidikan" name="kualifikasi_pendidikan" required>
+                            <option value="" {{ old('kualifikasi_pendidikan') == null ? 'selected' : '' }}>-- Pilih --</option>
+                            <option value="D3" {{ old('kualifikasi_pendidikan') == 'D3' ? 'selected' : '' }}>D3</option>
+                            <option value="S1" {{ old('kualifikasi_pendidikan') == 'S1' ? 'selected' : '' }}>S1</option>
+                            <option value="S2" {{ old('kualifikasi_pendidikan') == 'S2' ? 'selected' : '' }}>S2</option>
+                            <option value="S3" {{ old('kualifikasi_pendidikan') == 'S3' ? 'selected' : '' }}>S3</option>
+                        </select>
                         <x-input-error :messages="$errors->get('kualifikasi_pendidikan')" class="mt-2" />
                     </div>
 
                     <div class="mt-4">
                         <x-input-label for="sertifikasi_pendidik_profesional" :value="__('Sertifikasi Pendidik Profesional')" />
-                        <select class="block mt-1 w-full" id="sertifikasi_pendidik_profesional" name="sertifikasi_pendidik_profesional" required>
+                        <select class="block mt-1 w-full" id="sertifikasi_pendidik_profesional" name="sertifikasi_pendidik_profesional">
+                            <option value="" {{ old('sertifikasi_pendidik_profesional') == null ? 'selected' : '' }}>-- Pilih --</option>
                             <option value="Ya" {{ old('sertifikasi_pendidik_profesional') == 'Ya' ? 'selected' : '' }}>Ya</option>
                             <option value="Tidak" {{ old('sertifikasi_pendidik_profesional') == 'Tidak' ? 'selected' : '' }}>Tidak</option>
                         </select>
@@ -78,7 +93,8 @@
 
                     <div class="mt-4">
                         <x-input-label for="bidang_ilmu_prodi" :value="__('Kesesuaian Bidang Ilmu Prodi')" />
-                        <select class="block mt-1 w-full" id="bidang_ilmu_prodi" name="bidang_ilmu_prodi" required>
+                        <select class="block mt-1 w-full" id="bidang_ilmu_prodi" name="bidang_ilmu_prodi">
+                            <option value="" {{ old('bidang_ilmu_prodi') == null ? 'selected' : '' }}>-- Pilih --</option>
                             <option value="Sesuai" {{ old('bidang_ilmu_prodi') == 'Sesuai' ? 'selected' : '' }}>Sesuai</option>
                             <option value="Tidak Sesuai" {{ old('bidang_ilmu_prodi') == 'Tidak Sesuai' ? 'selected' : '' }}>Tidak Sesuai</option>
                         </select>
@@ -87,7 +103,8 @@
 
                     <div class="mt-4">
                         <x-input-label for="jenis_dosen" :value="__('Jenis Dosen')" />
-                        <select class="block mt-1 w-full" id="jenis_dosen" name="jenis_dosen" required>
+                        <select class="block mt-1 w-full" id="jenis_dosen" name="jenis_dosen">
+                            <option value="" {{ old('jenis_dosen') == null ? 'selected' : '' }}>-- Pilih --</option>
                             <option value="Dosen Tetap" {{ old('jenis_dosen') == 'Dosen Tetap' ? 'selected' : '' }}>Dosen Tetap</option>
                             <option value="Dosen Tidak Tetap" {{ old('jenis_dosen') == 'Dosen Tidak Tetap' ? 'selected' : '' }}>Dosen Tidak Tetap</option>
                         </select>
@@ -97,8 +114,9 @@
                     <div class="mt-4">
                         <x-input-label for="status_dosen" :value="__('Status Dosen')" />
                         <select class="block mt-1 w-full" id="status_dosen" name="status_dosen" required>
-                            <option value="Dosen Akademik" {{ old('status') == 'Dosen Akademik' ? 'selected' : '' }}>Dosen Akademik</option>
-                            <option value="Dosen Praktisi" {{ old('status') == 'Dosen Praktisi' ? 'selected' : '' }}>Dosen Praktisi</option>
+                            <option value="" {{ old('status_dosen') == null ? 'selected' : '' }}>-- Pilih --</option>
+                            <option value="Dosen Akademik" {{ old('status_dosen') == 'Dosen Akademik' ? 'selected' : '' }}>Dosen Akademik</option>
+                            <option value="Dosen Praktisi" {{ old('status_dosen') == 'Dosen Praktisi' ? 'selected' : '' }}>Dosen Praktisi</option>
                         </select>
                         <x-input-error :messages="$errors->get('status_dosen')" class="mt-2" />
                     </div>

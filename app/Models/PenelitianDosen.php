@@ -20,6 +20,7 @@ class PenelitianDosen extends Model
         'kesesuaian_roadmap',
         'bentuk_integrasi',
         'mata_kuliah',
+        'url',
         'tahun_akademik_id',
         'parent_id'
     ];

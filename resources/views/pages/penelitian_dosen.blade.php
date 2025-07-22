@@ -32,12 +32,14 @@
                 </form>
 
                 <div class="flex items-center space-x-4">
-                    <a href="{{ route('pages.penelitian_dosen.export') }}" class="btn btn-success btn-sm" onclick="return confirm('Apakah Anda yakin ingin mendownload CSV?')">
+                    <a href="{{ route('pages.penelitian_dosen.export') }}" class="btn btn-success btn-sm"
+                        onclick="return confirm('Apakah Anda yakin ingin mendownload CSV?')">
                         Download CSV
                     </a>
 
-                    @if($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
-                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    @if ($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal">
                             Tambah
                         </button>
                     @endif
@@ -49,7 +51,7 @@
     <div class="py-4">
         <div class="max-w-10xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl rounded-lg p-3">
-                <table class="min-w-full bg-white border border-gray-500">
+                <table id="penelitianTable" class="min-w-full bg-white border border-gray-500">
                     <thead>
                         <tr>
                             <th class="px-1 py-2 border text-sm">No</th>
@@ -60,10 +62,10 @@
                             <th class="px-4 py-2 border text-sm">Sumber Dana</th>
                             <th class="px-4 py-2 border text-sm">Bentuk Dana</th>
                             <th class="px-4 py-2 border text-sm">Jumlah Dana</th>
-                            <th class="px-4 py-2 border text-sm">Kesesuaian Roadmap</th>
                             <th class="px-4 py-2 border text-sm">Bentuk Integrasi</th>
                             <th class="px-4 py-2 border text-sm">Mata Kuliah</th>
-                            <th class="px-1 py-2 border text-sm">Action</th>
+                            <th class="px-4 py-2 border text-sm">Url</th>
+                            <th class="px-4 py-2 border text-sm">Roadmap</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -76,246 +78,66 @@
                                 <td class="px-4 py-2 border text-sm">{{ $penelitiandosen->tingkat }}</td>
                                 <td class="px-4 py-2 border text-sm">{{ $penelitiandosen->sumber_dana }}</td>
                                 <td class="px-4 py-2 border text-sm">{{ $penelitiandosen->bentuk_dana }}</td>
-                                <td class="px-4 py-2 border text-sm">Rp {{ $penelitiandosen->jumlah_dana }}</td>
-                                <td class="px-4 py-2 border text-sm">{{ $penelitiandosen->kesesuaian_roadmap }}</td>
+                                <td class="px-4 py-2 border text-sm">
+                                    {{ 'Rp. ' . number_format($penelitiandosen->jumlah_dana, 0, ',', '.') }}</td>
                                 <td class="px-4 py-2 border text-sm">{{ $penelitiandosen->bentuk_integrasi }}</td>
                                 <td class="px-4 py-2 border text-sm">{{ $penelitiandosen->mata_kuliah }}</td>
-                                <td class="px-1 py-3 border flex flex-col items-center space-y-2">
-                                    <!-- Tombol Edit -->
-                                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#exampleModal{{ $penelitiandosen->id }}">
-                                        Edit
-                                    </button>
-
-                                    <!-- Tombol Delete -->
-                                    <form action="{{ route('pages.penelitian_dosen.destroy', $penelitiandosen->id) }}"
-                                        method="POST" onsubmit="return confirm('Yakin ingin menghapus ini?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                            class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm">
-                                            Delete
-                                        </button>
-                                    </form>
+                                <td class="px-4 py-2 border text-sm">
+                                    <a href="{{ $penelitiandosen->url }}" target="_blank"
+                                        class="text-blue-500 hover:text-blue-700 underline">Link</a>
+                                </td>
+                                <td class="px-4 py-2 border text-sm text-center">
+                                    @if ($penelitiandosen->kesesuaian_roadmap == 'Sesuai')
+                                        <span
+                                            class="badge bg-success text-white">{{ $penelitiandosen->kesesuaian_roadmap }}</span>
+                                    @elseif ($penelitiandosen->kesesuaian_roadmap == 'Kurang Sesuai')
+                                        <span class="badge bg-warning text-white cursor-pointer"
+                                            onclick="openValidasiRoadmapModal('{{ $penelitiandosen->id }}')">{{ $penelitiandosen->kesesuaian_roadmap }}</span>
+                                    @elseif ($penelitiandosen->kesesuaian_roadmap == 'Tidak Sesuai')
+                                        <span class="badge bg-danger text-white cursor-pointer"
+                                            onclick="openValidasiRoadmapModal('{{ $penelitiandosen->id }}')">{{ $penelitiandosen->kesesuaian_roadmap }}</span>
+                                    @else
+                                        <span class="badge bg-secondary text-white cursor-pointer"
+                                            onclick="openValidasiRoadmapModal('{{ $penelitiandosen->id }}')">Pilih</span>
+                                    @endif
                                 </td>
                             </tr>
-
-                            <div class="modal fade" id="exampleModal{{ $penelitiandosen->id }}" tabindex="-1"
-                                aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Edit Penelitian Dosen</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form
-                                                action="{{ route('pages.penelitian_dosen.update', $penelitiandosen->id) }}"
-                                                method="POST">
-                                                @csrf
-                                                @method('PUT')
-                                                <input type="text" hidden name="id"
-                                                    value="{{ $penelitiandosen->id }}">
-
-                                                <div class="mb-3">
-                                                    <label for="judul_penelitian" class="form-label">Judul
-                                                        Penelitian:</label>
-                                                    <textarea class="form-control" id="judul_penelitian"
-                                                        name="judul_penelitian" required>{{ $penelitiandosen->judul_penelitian }}</textarea>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="nama_dosen_peneliti" class="form-label">Nama
-                                                        Dosen:</label>
-                                                    <textarea class="form-control" id="nama_dosen_peneliti"
-                                                        name="nama_dosen_peneliti" required>{{ $penelitiandosen->nama_dosen_peneliti }}</textarea>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="nama_mahasiswa" class="form-label">Nama
-                                                        Mahasiswa:</label>
-                                                    <input type="text" class="form-control" id="nama_mahasiswa"
-                                                        name="nama_mahasiswa"
-                                                        value="{{ $penelitiandosen->nama_mahasiswa }}">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Tingkat</label>
-                                                    <select class="form-control" name="tingkat">
-                                                        <option value="Internasional"
-                                                            {{ $penelitiandosen->tingkat == 'Internasional' ? 'selected' : '' }}>
-                                                            Internasional</option>
-                                                        <option value="Nasional"
-                                                            {{ $penelitiandosen->tingkat == 'Nasional' ? 'selected' : '' }}>
-                                                            Nasional</option>
-                                                        <option value="Lokal"
-                                                            {{ $penelitiandosen->tingkat == 'Lokal' ? 'selected' : '' }}>Lokal
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="sumber_dana" class="form-label">Sumber Dana:</label>
-                                                    <input type="text" class="form-control" id="sumber_dana"
-                                                        name="sumber_dana"
-                                                        value="{{ $penelitiandosen->sumber_dana }}">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Bentuk Dana:</label>
-                                                    <select class="form-control" name="bentuk_dana"
-                                                        value="{{ $penelitiandosen->bentuk_dana }}">
-                                                        <option value="Inkind"
-                                                            {{ $penelitiandosen->bentuk_dana == 'Inkind' ? 'selected' : '' }}>
-                                                            Inkind</option>
-                                                        <option value="Cash"
-                                                            {{ $penelitiandosen->bentuk_dana == 'Cash' ? 'selected' : '' }}>
-                                                            Cash</option>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="jumlah_dana" class="form-label">Jumlah Dana:</label>
-                                                    <input type="number" class="form-control" id="jumlah_dana"
-                                                        name="jumlah_dana"
-                                                        value="{{ $penelitiandosen->jumlah_dana }}">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Kesesuaian Roadmap</label>
-                                                    <select class="form-control" name="kesesuaian_roadmap"
-                                                        value="{{ $penelitiandosen->kesesuaian_roadmap }}">
-                                                        <option value="sesuai"
-                                                            {{ $penelitiandosen->kesesuaian_roadmap == 'sesuai' ? 'selected' : '' }}>
-                                                            Sesuai</option>
-                                                        <option value="kurang sesuai"
-                                                            {{ $penelitiandosen->kesesuaian_roadmap == 'kurang sesuai' ? 'selected' : '' }}>
-                                                            Kurang Sesuai</option>
-                                                        <option value="tidak sesuai"
-                                                            {{ $penelitiandosen->kesesuaian_roadmap == 'tidak sesuai' ? 'selected' : '' }}>
-                                                            Tidak Sesuai</option>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="bentuk_integrasi" class="form-label">Bentuk
-                                                        Integrasi:</label>
-                                                    <input type="text" class="form-control" id="bentuk_integrasi"
-                                                        name="bentuk_integrasi"
-                                                        value="{{ $penelitiandosen->bentuk_integrasi }}">
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="mata_kuliah" class="form-label">Mata Kuliah:</label>
-                                                    <input type="text" class="form-control" id="mata_kuliah"
-                                                        name="mata_kuliah"
-                                                        value="{{ $penelitiandosen->mata_kuliah }}">
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-primary">Edit</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         @endforeach
                     </tbody>
                 </table>
-
-                {{-- Modal --}}
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true">
+                <div class="modal fade" id="validasiRoadmapModal" tabindex="-1"
+                    aria-labelledby="validasiRoadmapModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Tambah Profil Dosen</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form action="{{ route('pages.penelitian_dosen.add') }}" method="POST">
-                                    @csrf
+                        <form method="POST" action="" id="validasiForm">
+                            @csrf
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Validasi Kesesuaian Roadmap</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <input type="hidden" name="id" id="penelitian_id">
 
                                     <div class="mb-3">
-                                        <label for="judul_penelitian" class="form-label">Judul Penelitian:</label>
-                                        <textarea class="form-control" id="judul_penelitian" name="judul_penelitian" required>{{ old('judul_penelitian') }}</textarea>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="nama_dosen_peneliti" class="form-label">Nama Dosen:</label>
-                                        <textarea class="form-control" id="nama_dosen_peneliti"
-                                            name="nama_dosen_peneliti" required>{{ old('nama_dosen_peneliti') }}</textarea>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="nama_mahasiswa" class="form-label">Nama Mahasiswa:</label>
-                                        <input type="text" class="form-control" id="nama_mahasiswa"
-                                            name="nama_mahasiswa" value="{{ old('nama_mahasiswa') }}" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Tingkat</label>
-                                        <select class="form-control" name="tingkat">
-                                            <option value="Internasional"
-                                                {{ old('tingkat') == 'Internasional' ? 'selected' : '' }}>Internasional
-                                            </option>
-                                            <option value="Nasional"
-                                                {{ old('tingkat') == 'Nasional' ? 'selected' : '' }}>Nasional</option>
-                                            <option value="Lokal" {{ old('tingkat') == 'Lokal' ? 'selected' : '' }}>
-                                                Lokal</option>
+                                        <label for="kesesuaian_roadmap" class="form-label">Pilih Kesesuaian:</label>
+                                        <select name="kesesuaian_roadmap" id="kesesuaian_roadmap" class="form-select"
+                                            required>
+                                            <option value="Sesuai">Sesuai</option>
+                                            <option value="Kurang Sesuai">Kurang Sesuai</option>
+                                            <option value="Tidak Sesuai">Tidak Sesuai</option>
                                         </select>
                                     </div>
-                                    <div class="mb-3">
-                                        <label for="sumber_dana" class="form-label">Sumber Dana:</label>
-                                        <input type="text" class="form-control" id="sumber_dana"
-                                            name="sumber_dana" value="{{ old('sumber_dana') }}" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Bentuk Dana:</label>
-                                        <select class="form-control" name="bentuk_dana">
-                                            <option value="Inkind"
-                                                {{ old('bentuk_dana') == 'Inkind' ? 'selected' : '' }}>Inkind</option>
-                                            <option value="Cash"
-                                                {{ old('bentuk_dana') == 'Cash' ? 'selected' : '' }}>Cash</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="jumlah_dana" class="form-label">Jumlah Dana:</label>
-                                        <input type="number" class="form-control" id="jumlah_dana"
-                                            name="jumlah_dana" value="{{ old('jumlah_dana') }}" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Kesesuaian Roadmap</label>
-                                        <select class="form-control" name="kesesuaian_roadmap">
-                                            <option value="Sesuai"
-                                                {{ old('kesesuaian_roadmap') == 'Sesuai' ? 'selected' : '' }}>
-                                                Sesuai</option>
-                                            <option value="Kurang Sesuai"
-                                                {{ old('kesesuaian_roadmap') == 'Kurang Sesuai' ? 'selected' : '' }}>
-                                                Kurang Sesuai</option>
-                                            <option value="Tidak Sesuai"
-                                                {{ old('kesesuaian_roadmap') == 'Tidak Sesuai' ? 'selected' : '' }}>
-                                                Tidak Sesuai</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="bentuk_integrasi" class="form-label">Bentuk Integrasi:</label>
-                                        <input type="text" class="form-control" id="bentuk_integrasi"
-                                            name="bentuk_integrasi" value="{{ old('bentuk_integrasi') }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="mata_kuliah" class="form-label">Mata Kuliah:</label>
-                                        <input type="text" class="form-control" id="mata_kuliah"
-                                            name="mata_kuliah" value="{{ old('mata_kuliah') }}" required>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary"
-                                            data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Tambah</button>
-                                    </div>
-                                </form>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Validasi</button>
+                                </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
-                {{-- End Modal --}}
 
-                @if ($penelitian_dosen->isEmpty())
-                    <p class="text-center text-gray-500 mt-4">Tidak ada data yang diinput.</p>
-                @endif
             </div>
         </div>
     </div>
@@ -350,15 +172,37 @@
             </div>
         </div>
     </div>
-    <script>
-        document.getElementById('exampleModal').addEventListener('show.bs.modal', function(event) {
-            const button = event.relatedTarget; // Button yang memicu modal
-            const recipient = button.getAttribute('data-whatever'); // Ambil data dari button
-            const modalTitle = this.querySelector('.modal-title');
-            const modalBodyInput = this.querySelector('.modal-body input');
 
-            modalTitle.textContent = 'Tambah Penelitian Dosen';
-            // modalBodyInput.value = recipient;
+    <script>
+        function openValidasiRoadmapModal(id, currentValue = '') {
+            const modal = new bootstrap.Modal(document.getElementById('validasiRoadmapModal'));
+            document.getElementById('validasiForm').action = `/penelitiandosen/${id}/validasi`;
+            document.getElementById('penelitian_id').value = id;
+            document.getElementById('kesesuaian_roadmap').value = currentValue;
+            modal.show();
+        }
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#penelitianTable').DataTable({
+                responsive: true,
+                // scrollX: true,
+                ordering: true,
+                paging: true,
+                lengthMenu: [5, 10, 25, 50, 100],
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data",
+                    zeroRecords: "Data tidak ditemukan",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                    infoEmpty: "Tidak ada data",
+                    paginate: {
+                        previous: "Sebelumnya",
+                        next: "Berikutnya"
+                    }
+                }
+            });
         });
     </script>
+
 </x-app-layout>

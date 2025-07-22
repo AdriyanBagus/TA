@@ -32,11 +32,13 @@ class AuthenticatedSessionController extends Controller
         $role = $request->user()->usertype;
 
         if ($role === 'admin') {
-            return redirect()->intended('/admin/dashboard');
+            return redirect()->intended('/admin/dashboard')->with('success', 'Login Berhasil!');
         } elseif ($role === 'user') {
-            return redirect()->intended('/dashboard')->with('success', 'Login Berhasil!');;
+            return redirect()->intended('/dashboard')->with('success', 'Login Berhasil!');
         } elseif ($role === 'dosen') {
-            return redirect()->intended('/dosen/dashboard');
+            return redirect()->intended('/dosen/dashboard')->with('success', 'Login Berhasil!');
+        } elseif ($role === 'tendik') {
+            return redirect()->intended('/tendik/dashboard')->with('success', 'Login Berhasil!');
         }
 
         // Default jika tidak ada role
