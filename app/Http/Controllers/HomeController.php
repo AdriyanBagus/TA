@@ -30,7 +30,7 @@ class HomeController extends Controller
 
     public function show()
     {
-        $users = User::where('usertype', '!=', 'admin')->get();
+        $users = User::whereNotIn('usertype', ['admin', 'dosen'])->get();
         return view('admin.show', compact('users'));
     }
 

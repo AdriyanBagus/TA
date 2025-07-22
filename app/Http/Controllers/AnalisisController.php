@@ -35,26 +35,44 @@ class AnalisisController extends Controller
 {
     public function visimisi(Request $request)
     {
-        $sortBy = $request->get('sort_by', 'nama_user'); // Default: Sort by nama_user
-        $sortOrder = $request->get('sort_order', 'asc'); // Default: Ascending
+        $sortBy = $request->get('sort_by', 'nama_user');
+        $sortOrder = $request->get('sort_order', 'asc');
 
-        // Ambil daftar tahun akademik & tahun yang dipilih (atau default ke aktif)
+        // Ambil semua tahun akademik dan tahun yang dipilih
         $tahunList = TahunAkademik::all();
         $tahunTerpilih = $request->get('tahun') ?? TahunAkademik::where('is_active', true)->value('id');
 
-        $visimisi = DB::table('visi_misi')
+        // Ambil nama user yang difilter (jika ada)
+        $userTerpilih = $request->get('user_id');
+
+        // Query utama dengan filter tahun dan optional filter user
+        $query = DB::table('visi_misi')
             ->join('users', 'visi_misi.user_id', '=', 'users.id')
             ->select('visi_misi.*', 'users.name as nama_user')
-            ->where('visi_misi.tahun_akademik_id', $tahunTerpilih)
-            ->orderBy($sortBy, $sortOrder)
-            ->get();
+            ->where('visi_misi.tahun_akademik_id', $tahunTerpilih);
 
-        //Komentar
+        if ($userTerpilih) {
+            $query->where('users.id', $userTerpilih);
+        }
+
+        $visimisi = $query->orderBy($sortBy, $sortOrder)->get();
+
+        // Komentar
         $tabel = (new VisiMisi())->getTable();
         $prodi = User::select('id', 'name')->where('usertype', '!=', 'admin')->get();
         $komentar = Komentar::where('nama_tabel', $tabel)->get();
 
-        return view('admin.analisis.visimisi', compact('visimisi', 'sortBy', 'sortOrder', 'tabel', 'prodi', 'komentar', 'tahunList', 'tahunTerpilih'));
+        return view('admin.analisis.visimisi', compact(
+            'visimisi',
+            'sortBy',
+            'sortOrder',
+            'tabel',
+            'prodi',
+            'komentar',
+            'tahunList',
+            'tahunTerpilih',
+            'userTerpilih'
+        ));
     }
 
     public function kerjasama(Request $request)
@@ -171,25 +189,48 @@ class AnalisisController extends Controller
 
     public function profil_dosen(Request $request)
     {
-        $sortBy = $request->get('sort_by', 'nama_user'); // Default: Sort by nama_user
+        $sortBy = $request->get('sort_by', 'users.name'); // Default: Sort by name
         $sortOrder = $request->get('sort_order', 'asc'); // Default: Ascending
 
         // Ambil daftar tahun akademik & tahun yang dipilih (atau default ke aktif)
         $tahunList = TahunAkademik::all();
         $tahunTerpilih = $request->get('tahun') ?? TahunAkademik::where('is_active', true)->value('id');
 
-        $profil_dosen = DB::table('profil_dosen')
-            ->join('users', 'profil_dosen.user_id', '=', 'users.id')
-            ->select('profil_dosen.*', 'users.name as nama_user')
+        // Ambil data dosen dari tabel users + ambil nama parent (jika ada)
+        $profil_dosen = DB::table('users')
+            ->leftJoin('users as parent', 'users.parent_id', '=', 'parent.id')
+            ->where('users.usertype', 'dosen')
+            ->select(
+                'users.id',
+                'users.name',
+                'users.nidn',
+                'users.kualifikasi_pendidikan',
+                'users.sertifikasi_pendidik_profesional',
+                'users.bidang_keahlian',
+                'users.bidang_ilmu_prodi',
+                'users.jenis_dosen',
+                'users.status_dosen',
+                'users.parent_id',
+                'parent.name as nama_parent'
+            )
             ->orderBy($sortBy, $sortOrder)
             ->get();
 
-        //Komentar
-        $tabel = (new ProfilDosen())->getTable();
+        // Komentar
+        $tabel = 'users'; // Karena ambil langsung dari tabel users
         $prodi = User::select('id', 'name')->where('usertype', '!=', 'admin')->get();
         $komentar = Komentar::where('nama_tabel', $tabel)->get();
 
-        return view('admin.analisis.profil_dosen', compact('profil_dosen', 'sortBy', 'sortOrder', 'tabel', 'prodi', 'komentar', 'tahunList', 'tahunTerpilih'));
+        return view('admin.analisis.profil_dosen', compact(
+            'profil_dosen',
+            'sortBy',
+            'sortOrder',
+            'tabel',
+            'prodi',
+            'komentar',
+            'tahunList',
+            'tahunTerpilih'
+        ));
     }
 
     public function beban_kinerja_dosen(Request $request)
@@ -203,7 +244,7 @@ class AnalisisController extends Controller
 
         // Query dengan filter tahun akademik
         $beban_kinerja_dosen = DB::table('beban_kinerja_dosen')
-            ->join('users', 'beban_kinerja_dosen.user_id', '=', 'users.id')
+            ->join('users', 'beban_kinerja_dosen.parent_id', '=', 'users.id')
             ->select('beban_kinerja_dosen.*', 'users.name as nama_user')
             ->where('beban_kinerja_dosen.tahun_akademik_id', $tahunTerpilih)
             ->orderBy($sortBy, $sortOrder)
@@ -260,7 +301,7 @@ class AnalisisController extends Controller
         $tahunTerpilih = $request->get('tahun') ?? TahunAkademik::where('is_active', true)->value('id');
 
         $pelaksana_ta = DB::table('pelaksanaan_ta')
-            ->join('users', 'pelaksanaan_ta.user_id', '=', 'users.id')
+            ->join('users', 'pelaksanaan_ta.parent_id', '=', 'users.id')
             ->select('pelaksanaan_ta.*', 'users.name as nama_user')
             ->orderBy($sortBy, $sortOrder)
             ->get();
@@ -526,7 +567,7 @@ class AnalisisController extends Controller
         return view('admin.analisis.pkm_mahasiswa', compact('pkm_mahasiswa', 'sortBy', 'sortOrder', 'tabel', 'prodi', 'komentar', 'tahunList', 'tahunTerpilih'));
     }
 
-/*************  ✨ Windsurf Command ⭐  *************/
+    /*************  ✨ Windsurf Command ⭐  *************/
     /**
      * Halaman analisis publikasi karya ilmiah pkm.
      *

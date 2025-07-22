@@ -22,7 +22,10 @@
                             <tr>
                                 <td class="px-4 py-2 border">{{ $user->name }}</td>
                                 <td class="px-4 py-2 border">{{ $user->email }}</td>
-                                <td class="px-4 py-2 border">{{ $user->usertype }}</td>
+                                <td class="px-4 py-2 border">
+                                    {{ $user->usertype === 'user' ? 'Admin Prodi' : $user->usertype }}
+                                </td>
+
                                 <td class="px-4 py-3 border flex items-center justify-center space-x-6">
                                     <!-- Tombol Edit -->
                                     <a href="{{ route('admin.edit-user', $user->id) }}"
@@ -31,12 +34,13 @@
                                     </a>
 
                                     <!-- Tombol Delete -->
-                                    <form action="{{ route('admin.delete-user', $user->id) }}" method="POST"
-                                        onsubmit="return confirm('Yakin ingin menghapus user ini?');">
+                                    <form method="POST" action="{{ route('admin.delete-user', $user->id) }}"
+                                        class="delete-user-form">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit"
-                                            class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded">
+                                        <button type="button"
+                                            class="delete-user-btn bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded"
+                                            data-username="{{ $user->name }}">
                                             Delete
                                         </button>
                                     </form>
@@ -52,4 +56,51 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const deleteButtons = document.querySelectorAll('.delete-user-btn');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const form = button.closest('form');
+                    const username = button.getAttribute('data-username');
+
+                    Swal.fire({
+                        title: 'Yakin ingin menghapus?',
+                        text: `Akun "${username}" akan dihapus secara permanen!`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Ya, Hapus!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+    @if (session('success-edit'))
+        <script>
+            Swal.fire({
+                title: 'Berhasil Diubah',
+                text: '{{ session('success-edit') }}',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+        </script>
+    @endif
+    @if (session('delete'))
+        <script>
+            Swal.fire({
+                title: 'Berhasil Dihapus',
+                text: '{{ session('delete') }}',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+        </script>
+    @endif
 </x-app-layout>

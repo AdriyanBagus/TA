@@ -24,36 +24,24 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl rounded-lg p-6">
-                <table class="min-w-full bg-white border border-gray-500">
+                <table id="profilDosenTable" class="display min-w-full bg-white border border-gray-500">
                     <thead>
                         <tr>
                             <th class="px-4 py-2 border">No</th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('profil_dosen', ['sort_by' => 'nama_user', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Nama Prodi</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('profil_dosen', ['sort_by' => 'visi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Nama Dosen</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('profil_dosen', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Kualifikasi pendidikan</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('profil_dosen', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Sertifikat pendidik profesional</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('profil_dosen', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Bidang Keahlian</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('profil_dosen', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Bidang Ilmu Prodi</a>
-                            </th>
+                            <th class="px-4 py-2 border">Nama Prodi</th>
+                            <th class="px-4 py-2 border">Nama Dosen</th>
+                            <th class="px-4 py-2 border">Kualifikasi Pendidikan</th>
+                            <th class="px-4 py-2 border">Sertifikat Pendidik Profesional</th>
+                            <th class="px-4 py-2 border">Bidang Keahlian</th>
+                            <th class="px-4 py-2 border">Bidang Ilmu Prodi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($profil_dosen as $data)
                             <tr>
                                 <td class="px-4 py-2 border">{{ $loop->iteration }}</td>
-                                <td class="px-4 py-2 border">{{ $data->nama_user }}</td>
-                                <td class="px-4 py-2 border">{{ $data->nama }}</td>
+                                <td class="px-4 py-2 border">{{ $data->nama_parent ?? $data->name }}</td>
+                                <td class="px-4 py-2 border">{{ $data->name }}</td>
                                 <td class="px-4 py-2 border">{{ $data->kualifikasi_pendidikan }}</td>
                                 <td class="px-4 py-2 border">{{ $data->sertifikasi_pendidik_profesional }}</td>
                                 <td class="px-4 py-2 border">{{ $data->bidang_keahlian }}</td>
@@ -63,10 +51,31 @@
                     </tbody>
                 </table>
 
+
                 @if($profil_dosen->isEmpty())
                     <p class="text-center text-gray-500 mt-4">Tidak ada pengguna yang terdaftar.</p>
                 @endif
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function () {
+            $('#profilDosenTable').DataTable({
+                responsive: true,
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data per halaman",
+                    info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+                    paginate: {
+                        previous: "Sebelumnya",
+                        next: "Selanjutnya"
+                    }
+                },
+                columnDefs: [
+                    { orderable: false, targets: 0 } // Kolom "No" tidak perlu sorting
+                ]
+            });
+        });
+    </script>
+
 </x-app-layout>

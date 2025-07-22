@@ -24,20 +24,14 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl rounded-lg p-6">
-                <table class="min-w-full bg-white border border-gray-500">
+                <table id="dokumenTable" class="display min-w-full bg-white border border-gray-500">
                     <thead>
                         <tr>
                             <th class="px-4 py-2 border">No</th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('ketersediaan_dokumen', ['sort_by' => 'nama_user', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Nama Prodi</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('ketersediaan_dokumen', ['sort_by' => 'visi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Kegiatan</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('ketersediaan_dokumen', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">ketersediaan dokumen</a>
-                            </th>
-                            <th class="px-4 py-2 border">nomer dokumen</th>
+                            <th class="px-4 py-2 border">Nama Prodi</th>
+                            <th class="px-4 py-2 border">dokumen</th>
+                            <th class="px-4 py-2 border">Nomor Dokumen</th>
+                            <th class="px-1 py-2 border text-sm">Link Dokumen</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -45,13 +39,18 @@
                             <tr>
                                 <td class="px-4 py-2 border">{{ $loop->iteration }}</td>
                                 <td class="px-4 py-2 border">{{ $data->nama_user }}</td>
-                                <td class="px-4 py-2 border">{{ $data->kegiatan }}</td>
-                                <td class="px-4 py-2 border">{{ $data->ketersediaan_dokumen }}</td>
+                                <td class="px-4 py-2 border">{{ $data->dokumen }}</td>
                                 <td class="px-4 py-2 border">{{ $data->nomor_dokumen }}</td>
+                                <td class="px-1 py-2 border text-sm">
+                                    <a href="{{ $data->url }}" target="_blank" class="text-blue-500 hover:underline">
+                                        Link
+                                    </a>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
+
 
                 @if($ketersediaan_dokumen->isEmpty())
                     <p class="text-center text-gray-500 mt-4">Tidak ada pengguna yang terdaftar.</p>
@@ -59,4 +58,24 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function () {
+            $('#dokumenTable').DataTable({
+                responsive: true,
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data per halaman",
+                    info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+                    paginate: {
+                        previous: "Sebelumnya",
+                        next: "Selanjutnya"
+                    }
+                },
+                columnDefs: [
+                    { orderable: false, targets: 0 } // Kolom "No" tidak bisa di-sort
+                ]
+            });
+        });
+    </script>
+
 </x-app-layout>

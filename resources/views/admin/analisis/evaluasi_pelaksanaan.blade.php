@@ -24,28 +24,16 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl rounded-lg p-6">
-                <table class="min-w-full bg-white border border-gray-500">
+                <table id="evaluasiTable" class="display min-w-full bg-white border border-gray-500">
                     <thead>
                         <tr>
                             <th class="px-4 py-2 border">No</th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('evaluasi_pelaksanaan', ['sort_by' => 'nama_user', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Nama Prodi</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('evaluasi_pelaksanaan', ['sort_by' => 'visi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Nomer PTK</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('evaluasi_pelaksanaan', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Kategori PTK</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('evaluasi_pelaksanaan', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Rencana Penyelesaian</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('evaluasi_pelaksanaan', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Realisasi Perbaikan</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('evaluasi_pelaksanaan', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Penanggung Jawab Perbaikan</a>
-                            </th>
+                            <th class="px-4 py-2 border">Nama Prodi</th>
+                            <th class="px-4 py-2 border">Nomor PTK</th>
+                            <th class="px-4 py-2 border">Kategori PTK</th>
+                            <th class="px-4 py-2 border">Rencana Penyelesaian</th>
+                            <th class="px-4 py-2 border">Realisasi Perbaikan</th>
+                            <th class="px-4 py-2 border">Penanggung Jawab</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -69,4 +57,24 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function () {
+            $('#evaluasiTable').DataTable({
+                responsive: true,
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data per halaman",
+                    info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+                    paginate: {
+                        previous: "Sebelumnya",
+                        next: "Selanjutnya"
+                    }
+                },
+                columnDefs: [
+                    { orderable: false, targets: 0 } // Kolom "No" tidak bisa diurutkan
+                ]
+            });
+        });
+    </script>
+
 </x-app-layout>

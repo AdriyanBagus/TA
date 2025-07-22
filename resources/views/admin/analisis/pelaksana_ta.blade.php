@@ -6,7 +6,7 @@
             </h2>
 
             {{-- Dropdown Filter Tahun Akademik --}}
-            <form method="GET" action="{{ route('pelaksanaan_ta') }}"
+            <form method="GET" action="{{ route('pelaksana_ta') }}"
                 class="flex flex-col md:flex-row md:items-center gap-2">
                 <label for="tahun" class="text-sm font-medium text-gray-700">Tahun Akademik:</label>
                 <select name="tahun" id="tahun" onchange="this.form.submit()"
@@ -38,13 +38,16 @@
                                 <a href="{{ route('pelaksana_ta', ['sort_by' => 'visi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">NIDN</a>
                             </th>
                             <th class="px-4 py-2 border">
-                                <a href="{{ route('pelaksana_ta', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Bimbingan Mahasiswa</a>
+                                <a href="{{ route('pelaksana_ta', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Bimbingan Mahasiswa Program Studi Sendiri</a>
                             </th>
                             <th class="px-4 py-2 border">
-                                <a href="{{ route('pelaksana_ta', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Rata-rata Jumlah Bimbingan</a>
+                                <a href="{{ route('pelaksana_ta', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Rata-rata Jumlah Bimbingan Program Studi Sendiri</a>
                             </th>
                             <th class="px-4 py-2 border">
                                 <a href="{{ route('pelaksana_ta', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Bimbingan Mahasiswa Program Studi Lain</a>
+                            </th>
+                            <th class="px-4 py-2 border">
+                                <a href="{{ route('pelaksana_ta', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Rata-rata Jumlah Bimbingan Program Studi Lain</a>
                             </th>
                             <th class="px-4 py-2 border">
                                 <a href="{{ route('pelaksana_ta', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Rata-rata jumlah bimbingan seluruh Program Studi</a>
@@ -58,9 +61,10 @@
                                 <td class="px-4 py-2 border">{{ $data->nama_user }}</td>
                                 <td class="px-4 py-2 border">{{ $data->nama }}</td>
                                 <td class="px-4 py-2 border">{{ $data->nidn }}</td>
-                                <td class="px-4 py-2 border">{{ $data->bimbingan_mahasiswa_ps }}</td>
-                                <td class="px-4 py-2 border">{{ $data->rata_rata_jumlah_bimbingan }}</td>
+                                <td class="px-4 py-2 border">{{ $data->bimbingan_mahasiswa_ps_sendiri }}</td>
+                                <td class="px-4 py-2 border">{{ $data->rata_rata_jumlah_bimbingan_ps_sendiri }}</td>
                                 <td class="px-4 py-2 border">{{ $data->bimbingan_mahasiswa_ps_lain }}</td>
+                                <td class="px-4 py-2 border">{{ $data->rata_rata_jumlah_bimbingan_ps_lain }}</td>
                                 <td class="px-4 py-2 border">{{ $data->rata_rata_jumlah_bimbingan_seluruh_ps }}</td>
                             </tr>
                         @endforeach
