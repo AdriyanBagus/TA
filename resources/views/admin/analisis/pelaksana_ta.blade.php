@@ -23,58 +23,79 @@
 
     <div class="py-12">
         <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
+
+            <form action="{{ route('pelaksana_ta.export.csv') }}" method="GET" class="mb-4">
+                <input type="hidden" name="tahun" value="{{ $tahunTerpilih }}">
+
+
+                <button type="submit"
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg shadow transition duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M12 12v9m0 0l-3.5-3.5M12 21l3.5-3.5M12 3v9" />
+                    </svg>
+                    Download Data
+                </button>
+            </form>
             <div class="bg-white overflow-hidden shadow-xl rounded-lg p-6">
-                <table class="min-w-full bg-white border border-gray-500">
+                <table class="min-w-full bg-white border border-gray-500 border-collapse">
                     <thead>
-                        <tr>
-                            <th class="px-4 py-2 border">No</th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('pelaksana_ta', ['sort_by' => 'nama_user', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Nama Prodi </a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('pelaksana_ta', ['sort_by' => 'nama', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Nama</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('pelaksana_ta', ['sort_by' => 'visi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">NIDN</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('pelaksana_ta', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Bimbingan Mahasiswa Program Studi Sendiri</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('pelaksana_ta', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Rata-rata Jumlah Bimbingan Program Studi Sendiri</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('pelaksana_ta', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Bimbingan Mahasiswa Program Studi Lain</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('pelaksana_ta', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Rata-rata Jumlah Bimbingan Program Studi Lain</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('pelaksana_ta', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Rata-rata jumlah bimbingan seluruh Program Studi</a>
-                            </th> 
+                        <tr class="bg-gray-100">
+                            <th class="border px-2 py-2 text-sm">No</th>
+                            <th class="border px-4 py-2 text-sm">Nama</th>
+                            <th class="border px-4 py-2 text-sm">NIDN</th>
+                            <th class="border px-4 py-2 text-sm">Jumlah Bimbingan PS Sendiri</th>
+                            <th class="border px-4 py-2 text-sm">Jumlah Bimbingan PS Lain</th>
+                            <th class="border px-4 py-2 text-sm">Jumlah Bimbingan Seluruh PS</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($pelaksana_ta as $data)
+                        @forelse ($pelaksanaan_ta as $item)
                             <tr>
-                                <td class="px-4 py-2 border">{{ $loop->iteration }}</td>
-                                <td class="px-4 py-2 border">{{ $data->nama_user }}</td>
-                                <td class="px-4 py-2 border">{{ $data->nama }}</td>
-                                <td class="px-4 py-2 border">{{ $data->nidn }}</td>
-                                <td class="px-4 py-2 border">{{ $data->bimbingan_mahasiswa_ps_sendiri }}</td>
-                                <td class="px-4 py-2 border">{{ $data->rata_rata_jumlah_bimbingan_ps_sendiri }}</td>
-                                <td class="px-4 py-2 border">{{ $data->bimbingan_mahasiswa_ps_lain }}</td>
-                                <td class="px-4 py-2 border">{{ $data->rata_rata_jumlah_bimbingan_ps_lain }}</td>
-                                <td class="px-4 py-2 border">{{ $data->rata_rata_jumlah_bimbingan_seluruh_ps }}</td>
+                                <td class="border px-2 py-2 text-sm text-center">{{ $loop->iteration }}</td>
+                                <td class="border px-4 py-2 text-sm">{{ $item->nama }}</td>
+                                <td class="border px-4 py-2 text-sm">{{ $item->nidn }}</td>
+                                <td class="border px-4 py-2 text-sm text-center">
+                                    {{ $item->rata_rata_jumlah_bimbingan_ps_sendiri }}
+                                </td>
+                                <td class="border px-4 py-2 text-sm text-center">
+                                    {{ $item->rata_rata_jumlah_bimbingan_ps_lain }}
+                                </td>
+                                <td class="border px-4 py-2 text-sm text-center">
+                                    {{ $item->rata_rata_jumlah_bimbingan_seluruh_ps }}
+                                </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="6" class="border px-4 py-2 text-center text-gray-500">
+                                    Data tidak ditemukan.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
-                </table>
 
-                @if($pelaksana_ta->isEmpty())
-                    <p class="text-center text-gray-500 mt-4">Tidak ada pengguna yang terdaftar.</p>
-                @endif
+                </table>
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function () {
+            $('#pelaksanaanTable').DataTable({
+                pageLength: 5,
+                lengthMenu: [5, 10, 25, 50, 100],
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data per halaman",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                    paginate: {
+                        first: "Pertama",
+                        last: "Terakhir",
+                        next: "Berikutnya",
+                        previous: "Sebelumnya"
+                    }
+                }
+            });
+        });
+    </script>
 </x-app-layout>

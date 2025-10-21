@@ -15,6 +15,7 @@ use App\Models\PublikasiPkm;
 use App\Models\RekognisiDosen;
 use App\Models\RekognisiTenagaKependidikan;
 use App\Models\TahunAkademik;
+use App\Models\BimbinganTaDosen;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -48,24 +49,50 @@ class ProdiController extends Controller
     //Pelaksanaan TA
     public function pelaksanaanta(Request $request)
     {
-        if (Auth::user()->id) {
-            // Ambil daftar tahun akademik
-            $tahunList = TahunAkademik::all();
-            $tahunTerpilih = $request->get('tahun') ?? TahunAkademik::where('is_active', true)->value('id');
+        $tahunList = TahunAkademik::all();
+        $tahunTerpilih = $request->get('tahun') ?? TahunAkademik::where('is_active', true)->value('id');
+        $user = Auth::user();
 
-            $pelaksanaan_ta = PelaksanaanTa::where('parent_id', Auth::user()->id)
-                ->where('pelaksanaan_ta.tahun_akademik_id', $tahunTerpilih)
-                ->get();
+        // Ambil semua dosen yang parent_id-nya sama dengan prodi login
+        $dosenProdi = User::where('parent_id', $user->id)
+            ->where('usertype', 'dosen')
+            ->pluck('id');
 
-            $dosen = User::select('id', 'name')
-                ->where('usertype', 'dosen')
-                ->where('parent_id', Auth::user()->id)
-                ->get();
+        // Ambil semua bimbingan dari dosen-dosen prodi ini di tahun akademik terpilih
+        $semuaBimbingan = BimbinganTaDosen::whereIn('user_id', $dosenProdi)
+            ->where('tahun_akademik_id', $tahunTerpilih)
+            ->get();
 
-            // Ambil data dari tabel Komentar berdasarkan nama_tabel
-            $tabel = (new PelaksanaanTa())->getTable();
-            $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
+        // Hitung total berdasarkan posisi_dosen
+        $rekap = [
+            'total_bimbingan' => $semuaBimbingan->unique('nama_mahasiswa')->count(),
+            'total_dospem_1' => $semuaBimbingan->where('posisi_dosen', 'Dospem 1')->count(),
+            'total_dospem_2' => $semuaBimbingan->where('posisi_dosen', 'Dospem 2')->count(),
+        ];
+        $pelaksanaan_ta = [];
+
+        foreach ($dosenProdi as $dosenId) {
+            $dosen = User::find($dosenId);
+
+            $bimbinganDosen = $semuaBimbingan->where('user_id', $dosenId);
+
+            $psSendiri = $bimbinganDosen->where('prodi_mahasiswa', $dosen->bidang_ilmu_prodi);
+            $psLain = $bimbinganDosen->where('prodi_mahasiswa', '!=', $dosen->bidang_ilmu_prodi);
+
+            $pelaksanaan_ta[] = (object) [
+                'nama' => $dosen->name,
+                'nidn' => $dosen->nidn,
+                'bimbingan_mahasiswa_ps_sendiri' => $psSendiri->pluck('nama_mahasiswa')->unique()->implode(', '),
+                'rata_rata_jumlah_bimbingan_ps_sendiri' => $psSendiri->unique('nama_mahasiswa')->count(),
+                'bimbingan_mahasiswa_ps_lain' => $psLain->pluck('nama_mahasiswa')->unique()->implode(', '),
+                'rata_rata_jumlah_bimbingan_ps_lain' => $psLain->unique('nama_mahasiswa')->count(),
+                'rata_rata_jumlah_bimbingan_seluruh_ps' => $bimbinganDosen->unique('nama_mahasiswa')->count(),
+            ];
         }
+        // Ambil komentar untuk tabel ini
+        $tabel = (new BimbinganTaDosen())->getTable();
+        $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', $user->parent_id)->get();
+
         return view('pages.pelaksanaan_ta', get_defined_vars());
     }
 
@@ -149,14 +176,14 @@ class ProdiController extends Controller
             $tahunList = TahunAkademik::all();
             $tahunTerpilih = $request->get('tahun') ?? TahunAkademik::where('is_active', true)->value('id');
 
-            $penelitian_dosen = PenelitianDosen ::where('parent_id', Auth::user()->id)
+            $penelitian_dosen = PenelitianDosen::where('parent_id', Auth::user()->id)
                 ->where('penelitian_dosen.tahun_akademik_id', $tahunTerpilih)
                 ->get();
 
             $dosen = User::select('id', 'name')
-            ->where('usertype', 'dosen')
-            ->where('parent_id', Auth::user()->id)
-            ->get();
+                ->where('usertype', 'dosen')
+                ->where('parent_id', Auth::user()->id)
+                ->get();
             // Ambil data dari tabel Komentar berdasarkan nama_tabel
             $tabel = (new PenelitianDosen())->getTable();
             $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
@@ -185,14 +212,14 @@ class ProdiController extends Controller
             $tahunList = TahunAkademik::all();
             $tahunTerpilih = $request->get('tahun') ?? TahunAkademik::where('is_active', true)->value('id');
 
-            $publikasi_karya_ilmiah = PublikasiKaryaIlmiah ::where('parent_id', Auth::user()->id)
+            $publikasi_karya_ilmiah = PublikasiKaryaIlmiah::where('parent_id', Auth::user()->id)
                 ->where('publikasi_karya_ilmiah.tahun_akademik_id', $tahunTerpilih)
                 ->get();
 
             $dosen = User::select('id', 'name')
-            ->where('usertype', 'dosen')
-            ->where('parent_id', Auth::user()->id)
-            ->get();
+                ->where('usertype', 'dosen')
+                ->where('parent_id', Auth::user()->id)
+                ->get();
             // Ambil data dari tabel Komentar berdasarkan nama_tabel
             $tabel = (new PublikasiKaryaIlmiah())->getTable();
             $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
@@ -207,14 +234,14 @@ class ProdiController extends Controller
             $tahunList = TahunAkademik::all();
             $tahunTerpilih = $request->get('tahun') ?? TahunAkademik::where('is_active', true)->value('id');
 
-            $luaran_karya_ilmiah = LuaranKaryaIlmiah ::where('parent_id', Auth::user()->id)
+            $luaran_karya_ilmiah = LuaranKaryaIlmiah::where('parent_id', Auth::user()->id)
                 ->where('luaran_karya_ilmiah.tahun_akademik_id', $tahunTerpilih)
                 ->get();
 
             $dosen = User::select('id', 'name')
-            ->where('usertype', 'dosen')
-            ->where('parent_id', Auth::user()->id)
-            ->get();
+                ->where('usertype', 'dosen')
+                ->where('parent_id', Auth::user()->id)
+                ->get();
             // Ambil data dari tabel Komentar berdasarkan nama_tabel
             $tabel = (new LuaranKaryaIlmiah())->getTable();
             $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
@@ -223,7 +250,7 @@ class ProdiController extends Controller
     }
 
     //PKM Dosen
-    
+
     public function pkmdosen(Request $request)
     {
         if (Auth::user()->id) {
@@ -231,14 +258,14 @@ class ProdiController extends Controller
             $tahunList = TahunAkademik::all();
             $tahunTerpilih = $request->get('tahun') ?? TahunAkademik::where('is_active', true)->value('id');
 
-            $pkm_dosen = PkmDosen ::where('parent_id', Auth::user()->id)
+            $pkm_dosen = PkmDosen::where('parent_id', Auth::user()->id)
                 ->where('pkm_dosen.tahun_akademik_id', $tahunTerpilih)
                 ->get();
 
             $dosen = User::select('id', 'name')
-            ->where('usertype', 'dosen')
-            ->where('parent_id', Auth::user()->id)
-            ->get();
+                ->where('usertype', 'dosen')
+                ->where('parent_id', Auth::user()->id)
+                ->get();
             // Ambil data dari tabel Komentar berdasarkan nama_tabel
             $tabel = (new PkmDosen())->getTable();
             $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
@@ -267,14 +294,14 @@ class ProdiController extends Controller
             $tahunList = TahunAkademik::all();
             $tahunTerpilih = $request->get('tahun') ?? TahunAkademik::where('is_active', true)->value('id');
 
-            $luaran_pkm = LuaranPkm ::where('parent_id', Auth::user()->id)
+            $luaran_pkm = LuaranPkm::where('parent_id', Auth::user()->id)
                 ->where('luaran_pkm.tahun_akademik_id', $tahunTerpilih)
                 ->get();
 
             $dosen = User::select('id', 'name')
-            ->where('usertype', 'dosen')
-            ->where('parent_id', Auth::user()->id)
-            ->get();
+                ->where('usertype', 'dosen')
+                ->where('parent_id', Auth::user()->id)
+                ->get();
             // Ambil data dari tabel Komentar berdasarkan nama_tabel
             $tabel = (new LuaranPkm())->getTable();
             $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
@@ -288,14 +315,14 @@ class ProdiController extends Controller
             $tahunList = TahunAkademik::all();
             $tahunTerpilih = $request->get('tahun') ?? TahunAkademik::where('is_active', true)->value('id');
 
-            $publikasi_pkm = PublikasiPkm ::where('parent_id', Auth::user()->id)
+            $publikasi_pkm = PublikasiPkm::where('parent_id', Auth::user()->id)
                 ->where('publikasi_pkm.tahun_akademik_id', $tahunTerpilih)
                 ->get();
 
             $dosen = User::select('id', 'name')
-            ->where('usertype', 'dosen')
-            ->where('parent_id', Auth::user()->id)
-            ->get();
+                ->where('usertype', 'dosen')
+                ->where('parent_id', Auth::user()->id)
+                ->get();
             // Ambil data dari tabel Komentar berdasarkan nama_tabel
             $tabel = (new PublikasiPkm())->getTable();
             $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();

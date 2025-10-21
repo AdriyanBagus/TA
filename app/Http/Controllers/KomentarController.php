@@ -26,12 +26,21 @@ class KomentarController extends Controller
         $notifikasi = Notifikasi::create([
             'prodi_id' => $request->prodi_id,
             'user_id' => Auth::user()->id,
-            'pesan' => "New comment in table ".$request->nama_tabel,
+            'pesan' => "New comment in table " . $request->nama_tabel,
             'nama_tabel' => $request->nama_tabel,
         ]);
 
         return redirect()->back()->with('success', 'Komentar berhasil di tambahkan');
     }
 
-    
+    public function destroy($id)
+    {
+        $komentar = Komentar::findOrFail($id);
+        $komentar->delete();
+
+        return redirect()->back()->with('success', 'Komentar berhasil dihapus');
+    }
+
+
+
 }

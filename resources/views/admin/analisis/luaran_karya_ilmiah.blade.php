@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Beban Kinerja Dosen') }}
+                {{ __('Luaran Karya Ilmiah') }}
             </h2>
 
             {{-- Dropdown Filter Tahun Akademik --}}
@@ -29,47 +29,67 @@
                         <tr>
                             <th class="px-4 py-2 border">No</th>
                             <th class="px-4 py-2 border">
-                                <a href="{{ route('luaran_karya_ilmiah', ['sort_by' => 'nama_user', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Nama Prodi</a>
+                                <a
+                                    href="{{ route('luaran_karya_ilmiah', ['sort_by' => 'nama_user', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">
+                                    Nama Prodi
+                                </a>
                             </th>
                             <th class="px-4 py-2 border">
-                                <a href="{{ route('luaran_karya_ilmiah', ['sort_by' => 'visi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Judul Kegiatan PKM</a>
+                                <a
+                                    href="{{ route('luaran_karya_ilmiah', ['sort_by' => 'judul_kegiatan', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">
+                                    Judul Kegiatan
+                                </a>
                             </th>
                             <th class="px-4 py-2 border">
-                                <a href="{{ route('luaran_karya_ilmiah', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Judul Karya</a>
+                                <a
+                                    href="{{ route('luaran_karya_ilmiah', ['sort_by' => 'judul_karya', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">
+                                    Judul Karya
+                                </a>
                             </th>
                             <th class="px-4 py-2 border">
-                                <a href="{{ route('luaran_karya_ilmiah', ['sort_by' => 'visi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Dosen</a>
+                                <a
+                                    href="{{ route('luaran_karya_ilmiah', ['sort_by' => 'pencipta_utama', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">
+                                    Pencipta Utama
+                                </a>
                             </th>
                             <th class="px-4 py-2 border">
-                                <a href="{{ route('luaran_karya_ilmiah', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Mahasiswa</a>
+                                <a
+                                    href="{{ route('luaran_karya_ilmiah', ['sort_by' => 'jenis', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">
+                                    Jenis
+                                </a>
                             </th>
                             <th class="px-4 py-2 border">
-                                <a href="{{ route('luaran_karya_ilmiah', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Penyusun Utama</a>
+                                <a
+                                    href="{{ route('luaran_karya_ilmiah', ['sort_by' => 'nomor_karya', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">
+                                    Nomor Karya
+                                </a>
                             </th>
                             <th class="px-4 py-2 border">
-                                <a href="{{ route('luaran_karya_ilmiah', ['sort_by' => 'visi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Jenis</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('luaran_karya_ilmiah', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Nomor Karya</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('luaran_karya_ilmiah', ['sort_by' => 'visi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Keterangan</a>
+                                <a
+                                    href="{{ route('luaran_karya_ilmiah', ['sort_by' => 'url', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">
+                                    URL
+                                </a>
                             </th>
                         </tr>
                     </thead>
+
                     <tbody>
                         @foreach($luaran_karya_ilmiah as $data)
                             <tr>
                                 <td class="px-4 py-2 border">{{ $loop->iteration }}</td>
                                 <td class="px-4 py-2 border">{{ $data->nama_user }}</td>
-                                <td class="px-4 py-2 border">{{ $data->judul_kegiatan_pkm }}</td>
+                                <td class="px-4 py-2 border">{{ $data->judul_kegiatan }}</td>
                                 <td class="px-4 py-2 border">{{ $data->judul_karya }}</td>
-                                <td class="px-4 py-2 border">{{ $data->dosen }}</td>
-                                <td class="px-4 py-2 border">{{ $data->mahasiswa }}</td>
-                                <td class="px-4 py-2 border">{{ $data->penyusun_utama }}</td>
+                                <td class="px-4 py-2 border">{{ $data->pencipta_utama }}</td>
                                 <td class="px-4 py-2 border">{{ $data->jenis }}</td>
                                 <td class="px-4 py-2 border">{{ $data->nomor_karya }}</td>
-                                <td class="px-4 py-2 border">{{ $data->keterangan }}</td>
+                                <td class="px-1 py-2 border text-sm">
+                                    <a href="{{ $data->url }}" target="_blank"
+                                        class="text-blue-500 hover:underline">
+                                        Link
+                                    </a>
+                                </td>
+
                             </tr>
                         @endforeach
                     </tbody>

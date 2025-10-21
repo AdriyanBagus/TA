@@ -23,29 +23,33 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+
+            <form action="{{ route('tenaga_kependidikan.export.csv') }}" method="GET" class="mb-4">
+                <input type="hidden" name="tahun" value="{{ $tahunTerpilih }}">
+
+
+                <button type="submit"
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg shadow transition duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M12 12v9m0 0l-3.5-3.5M12 21l3.5-3.5M12 3v9" />
+                    </svg>
+                    Download CSV
+                </button>
+            </form>
+
             <div class="bg-white overflow-hidden shadow-xl rounded-lg p-6">
-                <table class="min-w-full bg-white border border-gray-500">
+                <table id="tenagaKependidikanTable" class="display min-w-full bg-white border border-gray-500">
                     <thead>
                         <tr>
                             <th class="px-4 py-2 border">No</th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('tenaga_kependidikan', ['sort_by' => 'nama_user', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Nama Prodi</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('tenaga_kependidikan', ['sort_by' => 'visi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Nama</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('tenaga_kependidikan', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">NIPY</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('tenaga_kependidikan', ['sort_by' => 'visi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Kualifikasi Pendidikan</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('tenaga_kependidikan', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Jabatan</a>
-                            </th>
-                            <th class="px-4 py-2 border">
-                                <a href="{{ route('tenaga_kependidikan', ['sort_by' => 'misi', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">Kesesuaian Bidang Kerja</a>
-                            </th>
+                            <th class="px-4 py-2 border">Nama Prodi</th>
+                            <th class="px-4 py-2 border">Nama</th>
+                            <th class="px-4 py-2 border">NIPY</th>
+                            <th class="px-4 py-2 border">Kualifikasi Pendidikan</th>
+                            <th class="px-4 py-2 border">Jabatan</th>
+                            <th class="px-4 py-2 border">Kesesuaian Bidang Kerja</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -63,10 +67,31 @@
                     </tbody>
                 </table>
 
+
                 @if($tenaga_kependidikan->isEmpty())
                     <p class="text-center text-gray-500 mt-4">Tidak ada pengguna yang terdaftar.</p>
                 @endif
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function () {
+            $('#tenagaKependidikanTable').DataTable({
+                responsive: true,
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data per halaman",
+                    info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+                    paginate: {
+                        previous: "Sebelumnya",
+                        next: "Selanjutnya"
+                    }
+                },
+                columnDefs: [
+                    { orderable: false, targets: 0 } // Kolom No tidak diurutkan
+                ]
+            });
+        });
+    </script>
+
 </x-app-layout>

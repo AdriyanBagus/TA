@@ -8,5 +8,5 @@ class TahunAkademik extends Model
 {
     protected $table = 'tahun_akademik';
     
-    protected $fillable = ['tahun', 'is_active'];
+    protected $fillable = ['tahun','tanggal_mulai', 'tanggal_batas_pengisian', 'is_active'];
 }

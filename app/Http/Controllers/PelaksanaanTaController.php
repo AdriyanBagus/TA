@@ -3,138 +3,173 @@
 namespace App\Http\Controllers;
 
 use App\Models\Komentar;
-use App\Models\PelaksanaanTa;
-use App\Models\ProfilDosen;
 use App\Models\TahunAkademik;
+use App\Models\BimbinganTaDosen; // Menggunakan Model baru
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PelaksanaanTaController extends Controller
 {
-    public function index()
-    {
-        return view('dosen.pelaksanaan_ta');
-    }
-
+    /**
+     * Fungsi 'show' yang bekerja sebagai "Detektif Pribadi".
+     */
     public function show(Request $request)
     {
-        if (Auth::user()->id) {
-            // Ambil daftar tahun akademik
-            $tahunList = TahunAkademik::all();
-            $tahunTerpilih = $request->get('tahun') ?? TahunAkademik::where('is_active', true)->value('id');
+        $tahunList = TahunAkademik::all();
+        $tahunTerpilih = $request->get('tahun') ?? TahunAkademik::where('is_active', true)->value('id');
+        $user = Auth::user();
+        $prodiList = User::where('usertype', 'dosen')->pluck('bidang_ilmu_prodi')->unique()->sort();
 
-            $pelaksanaan_ta = PelaksanaanTa::where('user_id', Auth::user()->id)
-                                          ->where('pelaksanaan_ta.tahun_akademik_id', $tahunTerpilih)
-                                          ->get();
+        // TUGAS #1: Menerima "Daftar Tugas"
+        $namaMahasiswaTerkait = BimbinganTaDosen::where('user_id', $user->id)
+            ->where('tahun_akademik_id', $tahunTerpilih)
+            ->pluck('nama_mahasiswa')
+            ->unique();
 
-            // Cek apakah sudah ada data
-            $sudahAdaData = PelaksanaanTa::where('user_id', Auth::user()->id)
-                ->where('pelaksanaan_ta.tahun_akademik_id', $tahunTerpilih)
-                ->exists();
-
-            // Ambil data dari tabel Komentar berdasarkan nama_tabel
-            $tabel = (new PelaksanaanTa())->getTable(); 
-            $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', Auth::user()->id)->get();
+        if ($namaMahasiswaTerkait->isEmpty()) {
+            return view('dosen.pelaksanaan_ta', [
+                'list_bimbingan_final' => [],
+                'rekap' => ['ps_sendiri' => 0, 'ps_lain' => 0, 'sebagai_dospem_1' => 0, 'sebagai_dospem_2' => 0, 'total_bimbingan' => 0],
+                'komentar' => collect(), 'tahunList' => $tahunList,
+                'tahunTerpilih' => $tahunTerpilih, 'prodiList' => $prodiList
+            ]);
         }
-        return view('dosen.pelaksanaan_ta', get_defined_vars());
+
+        // TUGAS #2: Mengumpulkan semua "bukti" terkait
+        $potongan_puzzle = BimbinganTaDosen::where('tahun_akademik_id', $tahunTerpilih)
+            ->whereIn('nama_mahasiswa', $namaMahasiswaTerkait)
+            ->with('user')
+            ->get();
+
+        // TUGAS #3: Menyusun "laporan"
+        $bimbinganTersusun = [];
+        foreach ($potongan_puzzle as $potongan) {
+            $namaMahasiswa = $potongan->nama_mahasiswa;
+            if (!isset($bimbinganTersusun[$namaMahasiswa])) {
+                $bimbinganTersusun[$namaMahasiswa] = [
+                    'nama_mahasiswa' => $namaMahasiswa, 'prodi_mahasiswa' => $potongan->prodi_mahasiswa,
+                    'dosen_pembimbing_1' => null, 'dosen_pembimbing_2' => null,
+                    'id_dospem_1' => null, 'id_dospem_2' => null,
+                ];
+            }
+            if ($potongan->posisi_dosen == 'Dospem 1') {
+                $bimbinganTersusun[$namaMahasiswa]['dosen_pembimbing_1'] = $potongan->user->name;
+                $bimbinganTersusun[$namaMahasiswa]['id_dospem_1'] = $potongan->id;
+            } elseif ($potongan->posisi_dosen == 'Dospem 2') {
+                $bimbinganTersusun[$namaMahasiswa]['dosen_pembimbing_2'] = $potongan->user->name;
+                $bimbinganTersusun[$namaMahasiswa]['id_dospem_2'] = $potongan->id;
+            }
+        }
+        $list_bimbingan_final = array_values($bimbinganTersusun);
+
+        // TUGAS #4: Menghitung rekapitulasi
+        $rekap = [
+            'ps_sendiri' => 0, 'ps_lain' => 0, 'sebagai_dospem_1' => 0,
+            'sebagai_dospem_2' => 0, 'total_bimbingan' => count($list_bimbingan_final),
+        ];
+        $prodiDosen = $user->bidang_ilmu_prodi;
+        foreach ($list_bimbingan_final as $bimbingan) {
+            if (trim(strtolower($bimbingan['prodi_mahasiswa'])) == trim(strtolower($prodiDosen))) { $rekap['ps_sendiri']++; } else { $rekap['ps_lain']++; }
+            if ($bimbingan['dosen_pembimbing_1'] == $user->name) { $rekap['sebagai_dospem_1']++; }
+            if ($bimbingan['dosen_pembimbing_2'] == $user->name) { $rekap['sebagai_dospem_2']++; }
+        }
+
+        $tabel = 'bimbingan_ta_dosen';
+        $komentar = Komentar::where('nama_tabel', $tabel)->where('prodi_id', $user->parent_id)->get();
+        
+        return view('dosen.pelaksanaan_ta', compact('list_bimbingan_final', 'rekap', 'komentar', 'tahunList', 'tahunTerpilih', 'prodiList'));
     }
 
-    public function add(Request $request)
+    /**
+     * Fungsi 'store' yang sudah direnovasi.
+     */
+    public function store(Request $request)
     {
-        // Ambil tahun akademik aktif
+        $request->validate(['nama_mahasiswa' => 'required|string|max:255', 'prodi_mahasiswa' => 'required|string|max:255', 'posisi_dosen' => 'required|string']);
         $tahunAktif = TahunAkademik::where('is_active', true)->first();
-
-        //Rumus jumlah bimbingan
-        $rata_rata_jumlah_bimbingan_ps_sendiri = $request->bimbingan_mahasiswa_ps_sendiri;
-        $rata_rata_jumlah_bimbingan_ps_lain = $request->bimbingan_mahasiswa_ps_lain;
-        $rata_rata_jumlah_bimbingan_seluruh_ps = $request->bimbingan_mahasiswa_ps_sendiri + $request->bimbingan_mahasiswa_ps_lain;
-
-        PelaksanaanTa::create([
-            'user_id' => Auth::user()->id,
-            'tahun_akademik_id' => $tahunAktif->id,
-            'nama' => ProfilDosen::where('user_id', Auth::user()->id)->value('nama'),
-            'nidn' => ProfilDosen::where('user_id', Auth::user()->id)->value('nidn'),
-            'bimbingan_mahasiswa_ps_sendiri' => $request->bimbingan_mahasiswa_ps_sendiri,
-            'rata_rata_jumlah_bimbingan_ps_sendiri' => $rata_rata_jumlah_bimbingan_ps_sendiri,
-            'bimbingan_mahasiswa_ps_lain' => $request->bimbingan_mahasiswa_ps_lain,
-            'rata_rata_jumlah_bimbingan_ps_lain' => $rata_rata_jumlah_bimbingan_ps_lain,
-            'rata_rata_jumlah_bimbingan_seluruh_ps' => $rata_rata_jumlah_bimbingan_seluruh_ps,
-            'parent_id' => Auth::user()->parent_id
-        ]);
-
-        return redirect()->back()->with('success', 'Data berhasil ditambahkan!');
+        BimbinganTaDosen::updateOrCreate(
+            [ 'user_id' => Auth::id(), 'tahun_akademik_id' => $tahunAktif->id, 'nama_mahasiswa' => $request->nama_mahasiswa, ],
+            [ 'prodi_mahasiswa' => $request->prodi_mahasiswa, 'posisi_dosen' => $request->posisi_dosen, ]
+        );
+        return redirect()->route('dosen.pelaksanaan_ta.show')->with('success', 'Data Bimbingan Mahasiswa berhasil disimpan!');
     }
 
+    /**
+     * Fungsi 'update' yang baru untuk mengedit potongan puzzle.
+     */
     public function update(Request $request, $id)
     {
-        // Ambil tahun akademik aktif
-        $tahunAktif = TahunAkademik::where('is_active', true)->first();
-
-        $rata_rata_jumlah_bimbingan_ps_sendiri = $request->bimbingan_mahasiswa_ps_sendiri;
-        $rata_rata_jumlah_bimbingan_ps_lain = $request->bimbingan_mahasiswa_ps_lain;
-        $rata_rata_jumlah_bimbingan_seluruh_ps = $request->bimbingan_mahasiswa_ps_sendiri + $request->bimbingan_mahasiswa_ps_lain;
-
-        $pelaksanaan_ta = PelaksanaanTa::find($id);
-        $pelaksanaan_ta->user_id = Auth::user()->id;
-        $pelaksanaan_ta->tahun_akademik_id = $tahunAktif->id;
-        $pelaksanaan_ta->nama = $request->nama;
-        $pelaksanaan_ta->nidn = $request->nidn;
-        $pelaksanaan_ta->bimbingan_mahasiswa_ps_sendiri = $request->bimbingan_mahasiswa_ps_sendiri;
-        $pelaksanaan_ta->rata_rata_jumlah_bimbingan_ps_sendiri = $rata_rata_jumlah_bimbingan_ps_sendiri;
-        $pelaksanaan_ta->bimbingan_mahasiswa_ps_lain = $request->bimbingan_mahasiswa_ps_lain;
-        $pelaksanaan_ta->rata_rata_jumlah_bimbingan_ps_lain = $rata_rata_jumlah_bimbingan_ps_lain;
-        $pelaksanaan_ta->rata_rata_jumlah_bimbingan_seluruh_ps = $rata_rata_jumlah_bimbingan_seluruh_ps;
-        $pelaksanaan_ta->save();
-        return redirect()->back()->with('success', 'Data berhasil diubah!');
+        $request->validate(['nama_mahasiswa' => 'required|string|max:255', 'prodi_mahasiswa' => 'required|string|max:255', 'posisi_dosen' => 'required|string']);
+        $potongan_puzzle = BimbinganTaDosen::findOrFail($id);
+        if ($potongan_puzzle->user_id != Auth::id()) { abort(403); }
+        $potongan_puzzle->update($request->all());
+        return redirect()->route('dosen.pelaksanaan_ta.show')->with('success', 'Data Bimbingan Mahasiswa berhasil diubah!');
     }
 
+    /**
+     * Fungsi 'destroy' yang baru untuk menghapus potongan puzzle.
+     */
     public function destroy($id)
     {
-        $pelaksanaan_ta = PelaksanaanTa::find($id);
-        $pelaksanaan_ta->delete();
-
-        return redirect()->back()->with('success', 'Data berhasil dihapus!');
+        $potongan_puzzle = BimbinganTaDosen::findOrFail($id);
+        if ($potongan_puzzle->user_id != Auth::id()) { abort(403); }
+        $potongan_puzzle->delete();
+        return redirect()->route('dosen.pelaksanaan_ta.show')->with('success', 'Data Bimbingan Mahasiswa berhasil dihapus!');
     }
 
-    public function exportCsv()
+    /**
+     * Gemi's Edit: Membangun "Pabrik CSV" baru dari nol.
+     */
+    public function exportCsv(Request $request)
     {
-        $records = PelaksanaanTa::where('user_id', Auth::user()->id)
-                            ->where('tahun_akademik_id', TahunAkademik::where('is_active', true)->value('id'))
-                            ->get();
+        // Logikanya meniru fungsi show() untuk mendapatkan data yang benar
+        $tahunTerpilih = $request->get('tahun') ?? TahunAkademik::where('is_active', true)->value('id');
+        $user = Auth::user();
 
-        $filename = 'Pelaksanaan TA_' . date('Y-m-d') . '.csv';
-        $headers = [
-            "Content-type"        => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma"              => "no-cache",
-            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-            "Expires"             => "0"
-        ];
+        $namaMahasiswaTerkait = BimbinganTaDosen::where('user_id', $user->id)
+            ->where('tahun_akademik_id', $tahunTerpilih)
+            ->pluck('nama_mahasiswa')->unique();
 
-        $columns = [
-            'No', 'Nama', 'NIDN', 'Bimbingan Mahasiswa PS Sendiri', 'Jumlah Bimbingan PS Sendiri',
-            'Bimbingan Mahasiswa PS Lain', 'Jumlah Bimbingan PS Lain', 'Jumlah Bimbingan Seluruh PS'
-        ];
+        if ($namaMahasiswaTerkait->isEmpty()) {
+            return redirect()->back()->with('error', 'Tidak ada data untuk diekspor.');
+        }
+
+        $potongan_puzzle = BimbinganTaDosen::where('tahun_akademik_id', $tahunTerpilih)
+            ->whereIn('nama_mahasiswa', $namaMahasiswaTerkait)
+            ->with('user')->get();
+
+        $bimbinganTersusun = [];
+        foreach ($potongan_puzzle as $potongan) {
+            $namaMahasiswa = $potongan->nama_mahasiswa;
+            if (!isset($bimbinganTersusun[$namaMahasiswa])) {
+                $bimbinganTersusun[$namaMahasiswa] = [
+                    'nama_mahasiswa' => $namaMahasiswa, 'prodi_mahasiswa' => $potongan->prodi_mahasiswa,
+                    'dosen_pembimbing_1' => null, 'dosen_pembimbing_2' => null,
+                ];
+            }
+            if ($potongan->posisi_dosen == 'Dospem 1') { $bimbinganTersusun[$namaMahasiswa]['dosen_pembimbing_1'] = $potongan->user->name; }
+            elseif ($potongan->posisi_dosen == 'Dospem 2') { $bimbinganTersusun[$namaMahasiswa]['dosen_pembimbing_2'] = $potongan->user->name; }
+        }
+        $records = array_values($bimbinganTersusun);
+
+        // Proses pembuatan file CSV
+        $filename = 'Pelaksanaan_TA_' . date('Y-m-d') . '.csv';
+        $headers = [ "Content-type" => "text/csv", "Content-Disposition" => "attachment; filename=$filename", "Pragma" => "no-cache", "Cache-Control" => "must-revalidate, post-check=0, pre-check=0", "Expires" => "0" ];
+        $columns = ['No', 'Nama Mahasiswa', 'Prodi Mahasiswa', 'Dosen Pembimbing 1', 'Dosen Pembimbing 2'];
 
         $callback = function() use ($records, $columns) {
             $handle = fopen('php://output', 'w');
-
-            // Tambahkan BOM di awal file (Byte Order Mark)
             echo chr(239) . chr(187) . chr(191);
-
             fputcsv($handle, $columns, ';', '"');
-
             $no = 1;
             foreach ($records as $record) {
                 fputcsv($handle, [
                     $no++,
-                    $record->nama,
-                    $record->nidn,
-                    $record->bimbingan_mahasiswa_ps_sendiri,
-                    $record->rata_rata_jumlah_bimbingan_ps_sendiri,
-                    $record->bimbingan_mahasiswa_ps_lain,
-                    $record->rata_rata_jumlah_bimbingan_ps_lain,
-                    $record->rata_rata_jumlah_bimbingan_seluruh_ps
+                    $record['nama_mahasiswa'],
+                    $record['prodi_mahasiswa'],
+                    $record['dosen_pembimbing_1'] ?? '-',
+                    $record['dosen_pembimbing_2'] ?? '-',
                 ], ';', '"');
             }
             fclose($handle);

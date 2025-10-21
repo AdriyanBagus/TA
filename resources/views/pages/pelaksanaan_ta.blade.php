@@ -36,13 +36,6 @@
                         onclick="return confirm('Apakah Anda yakin ingin mendownload CSV?')">
                         Download CSV
                     </a>
-
-                    @if ($tahunTerpilih && $tahunList->where('id', $tahunTerpilih)->first()->is_active)
-                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#exampleModal">
-                            Tambah
-                        </button>
-                    @endif
                 </div>
             </div>
         </div>
@@ -51,37 +44,60 @@
     <div class="py-4">
         <div class="max-w-10xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl rounded-lg p-6">
-                <table id="pelaksanaanTable" class="min-w-full bg-white border border-gray-500 border-collapse">
+                <table class="min-w-full bg-white border border-gray-500 border-collapse">
                     <thead>
-                        <tr>
+                        <tr class="bg-gray-100">
                             <th class="border px-2 py-2 text-sm">No</th>
                             <th class="border px-4 py-2 text-sm">Nama</th>
                             <th class="border px-4 py-2 text-sm">NIDN</th>
-                            <th class="border px-4 py-2 text-sm">Bimbingan Mahasiswa PS Sendiri</th>
+                            {{-- <th class="border px-4 py-2 text-sm">Bimbingan Mahasiswa PS Sendiri</th> --}}
                             <th class="border px-4 py-2 text-sm">Jumlah Bimbingan PS Sendiri</th>
-                            <th class="border px-4 py-2 text-sm">Bimbingan Mahasiswa PS Lain</th>
+                            {{-- <th class="border px-4 py-2 text-sm">Bimbingan Mahasiswa PS Lain</th> --}}
                             <th class="border px-4 py-2 text-sm">Jumlah Bimbingan PS Lain</th>
                             <th class="border px-4 py-2 text-sm">Jumlah Bimbingan Seluruh PS</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($pelaksanaan_ta as $pelaksanaanta)
+                        @forelse ($pelaksanaan_ta as $item)
                             <tr>
-                                <td class="border px-1 py-2 text-sm">{{ $loop->iteration }}</td>
-                                <td class="border px-4 py-2 text-sm">{{ $pelaksanaanta->nama }}</td>
-                                <td class="border px-4 py-2 text-sm">{{ $pelaksanaanta->nidn }}</td>
-                                <td class="border px-4 py-2 text-sm">
-                                    {{ $pelaksanaanta->bimbingan_mahasiswa_ps_sendiri }}</td>
-                                <td class="border px-4 py-2 text-sm">
-                                    {{ $pelaksanaanta->rata_rata_jumlah_bimbingan_ps_sendiri }}</td>
-                                <td class="border px-4 py-2 text-sm">{{ $pelaksanaanta->bimbingan_mahasiswa_ps_lain }}
-                                </td>
-                                <td class="border px-4 py-2 text-sm">
-                                    {{ $pelaksanaanta->rata_rata_jumlah_bimbingan_ps_lain }}</td>
-                                <td class="border px-4 py-2 text-sm">
-                                    {{ $pelaksanaanta->rata_rata_jumlah_bimbingan_seluruh_ps }}</td>
+                                <td class="border px-2 py-2 text-sm text-center">{{ $loop->iteration }}</td>
+                                <td class="border px-4 py-2 text-sm">{{ $item->nama }}</td>
+                                <td class="border px-4 py-2 text-sm">{{ $item->nidn }}</td>
+                                {{-- <td class="border px-4 py-2 text-sm">
+                                    @if ($item->bimbingan_mahasiswa_ps_sendiri)
+                                        <ul class="list-disc list-inside">
+                                            @foreach (explode(',', $item->bimbingan_mahasiswa_ps_sendiri) as $mhs)
+                                                <li>{{ trim($mhs) }}</li>
+                                            @endforeach
+                                        </ul>
+                                    @else
+                                        <span class="text-gray-500">-</span>
+                                    @endif
+                                </td> --}}
+                                <td class="border px-4 py-2 text-sm text-center">
+                                    {{ $item->rata_rata_jumlah_bimbingan_ps_sendiri }}</td>
+                                {{-- <td class="border px-4 py-2 text-sm">
+                                    @if ($item->bimbingan_mahasiswa_ps_lain)
+                                        <ul class="list-disc list-inside">
+                                            @foreach (explode(',', $item->bimbingan_mahasiswa_ps_lain) as $mhs)
+                                                <li>{{ trim($mhs) }}</li>
+                                            @endforeach
+                                        </ul>
+                                    @else
+                                        <span class="text-gray-500">-</span>
+                                    @endif
+                                </td> --}}
+                                <td class="border px-4 py-2 text-sm text-center">
+                                    {{ $item->rata_rata_jumlah_bimbingan_ps_lain }}</td>
+                                <td class="border px-4 py-2 text-sm text-center">
+                                    {{ $item->rata_rata_jumlah_bimbingan_seluruh_ps }}</td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="8" class="border px-4 py-2 text-center text-gray-500">Data tidak
+                                    ditemukan.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
                 {{-- @if ($pelaksanaan_ta->isEmpty())
@@ -132,22 +148,22 @@
         });
     </script>
     <script>
-    $(document).ready(function () {
-        $('#pelaksanaanTable').DataTable({
-            pageLength: 5,
-            lengthMenu: [5, 10, 25, 50, 100],
-            language: {
-                search: "Cari:",
-                lengthMenu: "Tampilkan _MENU_ data per halaman",
-                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-                paginate: {
-                    first: "Pertama",
-                    last: "Terakhir",
-                    next: "Berikutnya",
-                    previous: "Sebelumnya"
+        $(document).ready(function() {
+            $('#pelaksanaanTable').DataTable({
+                pageLength: 5,
+                lengthMenu: [5, 10, 25, 50, 100],
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data per halaman",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                    paginate: {
+                        first: "Pertama",
+                        last: "Terakhir",
+                        next: "Berikutnya",
+                        previous: "Sebelumnya"
+                    }
                 }
-            }
+            });
         });
-    });
-</script>
+    </script>
 </x-app-layout>

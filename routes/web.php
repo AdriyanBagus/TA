@@ -3,6 +3,7 @@
 use App\Http\Controllers\AnalisisController;
 use App\Http\Controllers\BebanKinerjaDosenController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ImportExportController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KerjasamaPendidikanController;
 use App\Http\Controllers\KerjasamaPenelitianController;
@@ -66,7 +67,7 @@ Route::middleware(['auth','verified','role:user'])->group(function () {
     Route::delete('/visimisi/{id}', [VisiMisiController::class, 'destroy'])->name('pages.visi_misi.destroy');
     Route::get('/visimisi/export', [VisiMisiController::class, 'exportCsv'])->name('pages.visi_misi.export');
 
-    Route::get('/kerjasama', [KerjasamaController::class, 'show'])->name('pages.kerjasama.show');
+    Route::get('/kerjasama', [KerjasamaController::class, 'show'])->middleware([CheckFormStatus::class . ':kerjasama'])->name('pages.kerjasama.show');
     Route::post('/kerjasama', [KerjasamaController::class, 'add'])->name('pages.kerjasama.add');
     Route::put('/kerjasama/{id}', [KerjasamaController::class, 'update'])->name('pages.kerjasama.update');
     Route::delete('/kerjasama/{id}', [KerjasamaController::class, 'destroy'])->name('pages.kerjasama.destroy');
@@ -84,7 +85,7 @@ Route::middleware(['auth','verified','role:user'])->group(function () {
     Route::post('/kerjasamapengabiankepadamasyarakat', [KerjasamaPengabdianKepadaMasyarakatController::class, 'add'])->name('pages.kerjasama_pengabdian_kepada_masyarakat.add');
     Route::put('/kerjasamapengabiankepadamasyarakat/{id}', [KerjasamaPengabdianKepadaMasyarakatController::class, 'update'])->name('pages.kerjasama_pengabdian_kepada_masyarakat.update');
 
-    Route::get('/ketersediaandokumen', [KetersediaanDokumenController::class, 'show'])->name('pages.ketersediaan_dokumen');
+    Route::get('/ketersediaandokumen', [KetersediaanDokumenController::class, 'show'])->middleware([CheckFormStatus::class . ':ketersediaan dokumen'])->name('pages.ketersediaan_dokumen');
     Route::post('/ketersediaandokumen', [KetersediaanDokumenController::class, 'add'])->name('pages.ketersediaan_dokumen.add');
     Route::put('/ketersediaandokumen/{id}', [KetersediaanDokumenController::class, 'update'])->name('pages.ketersediaan_dokumen.update');
     Route::delete('/ketersediaandokumen/{id}', [KetersediaanDokumenController::class, 'destroy'])->name('pages.ketersediaan_dokumen.destroy');
@@ -96,68 +97,68 @@ Route::middleware(['auth','verified','role:user'])->group(function () {
     Route::delete('/profildosen/{id}', [ProfilDosenController::class, 'destroy'])->name('pages.profil_dosen.destroy');
     Route::get('/profildosen/export', [ProfilDosenController::class, 'exportCsv'])->name('pages.profil_dosen.export');
 
-    Route::get('/evaluasipelaksanaan', [EvaluasiPelaksanaanController::class, 'show'])->name('pages.evaluasi_pelaksanaan');
+    Route::get('/evaluasipelaksanaan', [EvaluasiPelaksanaanController::class, 'show'])->middleware([CheckFormStatus::class . ':evaluasi pelaksanaan'])->name('pages.evaluasi_pelaksanaan');
     Route::post('/evaluasipelaksanaan', [EvaluasiPelaksanaanController::class, 'add'])->name('pages.evaluasi_pelaksanaan.add');
     Route::put('/evaluasipelaksanaan/{id}', [EvaluasiPelaksanaanController::class, 'update'])->name('pages.evaluasi_pelaksanaan.update');
     Route::delete('/evaluasipelaksanaan/{id}', [EvaluasiPelaksanaanController::class, 'destroy'])->name('pages.evaluasi_pelaksanaan.destroy');
     Route::get('/evaluasipelaksanaan/export', [EvaluasiPelaksanaanController::class, 'exportCsv'])->name('pages.evaluasi_pelaksanaan.export');
 
-    Route::post('/bebankinerjadosen', [BebanKinerjaDosenController::class, 'add'])->name('pages.beban_kinerja_dosen.add');
+    Route::post('/bebankinerjadosen', [BebanKinerjaDosenController::class, 'add'])->middleware([CheckFormStatus::class . ':beban kinerja dosen'])->name('pages.beban_kinerja_dosen.add');
     Route::put('/bebankinerjadosen/{id}', [BebanKinerjaDosenController::class, 'update'])->name('pages.beban_kinerja_dosen.update');
     Route::delete('/bebankinerjadosen/{id}', [BebanKinerjaDosenController::class, 'destroy'])->name('pages.beban_kinerja_dosen.destroy');
     Route::get('/bebankinerjadosen/export', [BebanKinerjaDosenController::class, 'exportCsv'])->name('pages.beban_kinerja_dosen.export');
 
-    Route::get('/profildosentidaktetap', [ProfilDosenTidakTetapController::class, 'show'])->name('pages.profil_dosen_tidak_tetap');
+    Route::get('/profildosentidaktetap', [ProfilDosenTidakTetapController::class, 'show'])->middleware([CheckFormStatus::class . ':profil dosen tidak tetap'])->name('pages.profil_dosen_tidak_tetap');
     Route::post('/profildosentidaktetap', [ProfilDosenTidakTetapController::class, 'add'])->name('pages.profil_dosen_tidak_tetap.add');
     Route::put('/profildosentidaktetap/{id}', [ProfilDosenTidakTetapController::class, 'update'])->name('pages.profil_dosen_tidak_tetap.update');
     Route::delete('/profildosentidaktetap/{id}', [ProfilDosenTidakTetapController::class, 'destroy'])->name('pages.profil_dosen_tidak_tetap.destroy');
     Route::get('/profildosentidaktetap/export', [ProfilDosenTidakTetapController::class, 'exportCsv'])->name('pages.profil_dosen_tidak_tetap.export');
 
-    Route::post('/pelaksanaanta', [PelaksanaanTaController::class, 'add'])->name('pages.pelaksanaan_ta.add');
+    Route::post('/pelaksanaanta', [PelaksanaanTaController::class, 'add'])->middleware([CheckFormStatus::class . ':Pelaksanaan TA'])->name('pages.pelaksanaan_ta.add');
     Route::put('/pelaksanaanta/{id}', [PelaksanaanTaController::class, 'update'])->name('pages.pelaksanaan_ta.update');
     Route::delete('/pelaksanaanta/{id}', [PelaksanaanTaController::class, 'destroy'])->name('pages.pelaksanaan_ta.destroy');
     Route::get('/pelaksanaanta/export', [PelaksanaanTaController::class, 'exportCsv'])->name('pages.pelaksanaan_ta.export');
 
-    Route::get('/lahanpraktek', [LahanPraktekController::class, 'show'])->name('pages.lahan_praktek');
+    Route::get('/lahanpraktek', [LahanPraktekController::class, 'show'])->middleware([CheckFormStatus::class . ':Lahan praktek'])->name('pages.lahan_praktek');
     Route::post('/lahanpraktek', [LahanPraktekController::class, 'add'])->name('pages.lahan_praktek.add');
     Route::put('/lahanpraktek/{id}', [LahanPraktekController::class, 'update'])->name('pages.lahan_praktek.update');
     Route::delete('/lahanpraktek/{id}', [LahanPraktekController::class, 'destroy'])->name('pages.lahan_praktek.destroy');
     Route::get('/lahanpraktek/export', [LahanPraktekController::class, 'exportCsv'])->name('pages.lahan_praktek.export');
 
-    Route::post('/rekognisidosen', [RekognisiDosenController::class, 'add'])->name('pages.rekognisi_dosen.add');
+    Route::post('/rekognisidosen', [RekognisiDosenController::class, 'add'])->middleware([CheckFormStatus::class . ':rekognisi dosen'])->name('pages.rekognisi_dosen.add');
     Route::put('/rekognisidosen/{id}', [RekognisiDosenController::class, 'update'])->name('pages.rekognisi_dosen.update');
     Route::delete('/rekognisidosen/{id}', [RekognisiDosenController::class, 'destroy'])->name('pages.rekognisi_dosen.destroy');
     Route::get('/rekognisidosen/export', [RekognisiDosenController::class, 'exportCsv'])->name('pages.rekognisi_dosen.export');
 
-    Route::get('/profiltenagakependidikan', [ProfilTenagaKependidikanController::class, 'show'])->name('pages.profil_tenaga_kependidikan');
+    Route::get('/profiltenagakependidikan', [ProfilTenagaKependidikanController::class, 'show'])->middleware([CheckFormStatus::class . ':profil tenaga kependidikan'])->name('pages.profil_tenaga_kependidikan');
     Route::post('/profiltenagakependidikan', [ProfilTenagaKependidikanController::class, 'add'])->name('pages.profil_tenaga_kependidikan.add');
     Route::put('/profiltenagakependidikan/{id}', [ProfilTenagaKependidikanController::class, 'update'])->name('pages.profil_tenaga_kependidikan.update');
     Route::delete('/profiltenagakependidikan/{id}', [ProfilTenagaKependidikanController::class, 'destroy'])->name('pages.profil_tenaga_kependidikan.destroy');
     Route::get('/profiltenagakependidikan/export', [ProfilTenagaKependidikanController::class, 'exportCsv'])->name('pages.profil_tenaga_kependidikan.export');
 
-    Route::post('/rekognisitenagakependidikan', [RekognisiTenagaKependidikanController::class, 'add'])->name('pages.rekognisi_tenaga_kependidikan.add');
+    Route::post('/rekognisitenagakependidikan', [RekognisiTenagaKependidikanController::class, 'add'])->middleware([CheckFormStatus::class . ':rekognisi tenaga kependidikan'])->name('pages.rekognisi_tenaga_kependidikan.add');
     Route::put('/rekognisitenagakependidikan/{id}', [RekognisiTenagaKependidikanController::class, 'update'])->name('pages.rekognisi_tenaga_kependidikan.update');
     Route::delete('/rekognisitenagakependidikan/{id}', [RekognisiTenagaKependidikanController::class, 'destroy'])->name('pages.rekognisi_tenaga_kependidikan.destroy');
     Route::get('/rekognisitenagakependidikan/export', [RekognisiTenagaKependidikanController::class, 'exportCsv'])->name('pages.rekognisi_tenaga_kependidikan.export');
 
     // Route::get('/penelitiandosen', [PenelitianDosenController::class, 'show'])->name('pages.penelitian_dosen');
-    Route::post('/penelitiandosen', [PenelitianDosenController::class, 'add'])->name('pages.penelitian_dosen.add');
+    Route::post('/penelitiandosen', [PenelitianDosenController::class, 'add'])->middleware([CheckFormStatus::class . ':Penelitian Dosen'])->name('pages.penelitian_dosen.add');
     Route::put('/penelitiandosen/{id}', [PenelitianDosenController::class, 'update'])->name('pages.penelitian_dosen.update');
     Route::delete('/penelitiandosen/{id}', [PenelitianDosenController::class, 'destroy'])->name('pages.penelitian_dosen.destroy');
     Route::get('/penelitiandosen/export', [PenelitianDosenController::class, 'exportCsv'])->name('pages.penelitian_dosen.export');
 
-    Route::get('/penelitianmahasiswa', [PenelitianMahasiswaController::class, 'show'])->name('pages.penelitian_mahasiswa');
+    Route::get('/penelitianmahasiswa', [PenelitianMahasiswaController::class, 'show'])->middleware([CheckFormStatus::class . ':Penelitian Mahasiswa'])->name('pages.penelitian_mahasiswa');
     Route::post('/penelitianmahasiswa', [PenelitianMahasiswaController::class, 'add'])->name('pages.penelitian_mahasiswa.add');
     Route::put('/penelitianmahasiswa/{id}', [PenelitianMahasiswaController::class, 'update'])->name('pages.penelitian_mahasiswa.update');
     Route::delete('/penelitianmahasiswa/{id}', [PenelitianMahasiswaController::class, 'destroy'])->name('pages.penelitian_mahasiswa.destroy');
     Route::get('/penelitianmahasiswa/export', [PenelitianMahasiswaController::class, 'exportCsv'])->name('pages.penelitian_mahasiswa.export');
 
-    Route::post('/publikasikaryailmiah', [PublikasiKaryaIlmiahController::class, 'add'])->name('pages.publikasi_karya_ilmiah.add');
+    Route::post('/publikasikaryailmiah', [PublikasiKaryaIlmiahController::class, 'add'])->middleware([CheckFormStatus::class . ':Publikasi Karya Ilmiah'])->name('pages.publikasi_karya_ilmiah.add');
     Route::put('/publikasikaryailmiah/{id}', [PublikasiKaryaIlmiahController::class, 'update'])->name('pages.publikasi_karya_ilmiah.update');
     Route::delete('/publikasikaryailmiah/{id}', [PublikasiKaryaIlmiahController::class, 'destroy'])->name('pages.publikasi_karya_ilmiah.destroy');
     Route::get('/publikasikaryailmiah/export', [PublikasiKaryaIlmiahController::class, 'exportCsv'])->name('pages.publikasi_karya_ilmiah.export');
 
-    Route::post('/luarankaryailmiah', [LuaranKaryaIlmiahController::class, 'add'])->name('pages.luaran_karya_ilmiah.add');
+    Route::post('/luarankaryailmiah', [LuaranKaryaIlmiahController::class, 'add'])->middleware([CheckFormStatus::class . ':Luaran Karya Ilmiah'])->name('pages.luaran_karya_ilmiah.add');
     Route::put('/luarankaryailmiah/{id}', [LuaranKaryaIlmiahController::class, 'update'])->name('pages.luaran_karya_ilmiah.update');
     Route::delete('/luarankaryailmiah/{id}', [LuaranKaryaIlmiahController::class, 'destroy'])->name('pages.luaran_karya_ilmiah.destroy');
     Route::get('/luarankaryailmiah/export', [LuaranKaryaIlmiahController::class, 'exportCsv'])->name('pages.luaran_karya_ilmiah.export');
@@ -168,18 +169,18 @@ Route::middleware(['auth','verified','role:user'])->group(function () {
     Route::delete('/sitasiluaranpenelitiandosen/{id}', [SitasiLuaranPenelitianDosenController::class, 'destroy'])->name('pages.sitasi_luaran_penelitian_dosen.destroy');
     Route::get('/sitasiluaranpenelitiandosen/export', [SitasiLuaranPenelitianDosenController::class, 'exportCsv'])->name('pages.sitasi_luaran_penelitian_dosen.export');
 
-    Route::get('/pkmmahasiswa', [PkmMahasiswaController::class, 'show'])->name('pages.pkm_mahasiswa');
+    Route::get('/pkmmahasiswa', [PkmMahasiswaController::class, 'show'])->middleware([CheckFormStatus::class . ':pkm mahasiswa'])->name('pages.pkm_mahasiswa');
     Route::post('/pkmmahasiswa', [PkmMahasiswaController::class, 'add'])->name('pages.pkm_mahasiswa.add');
     Route::put('/pkmmahasiswa/{id}', [PkmMahasiswaController::class, 'update'])->name('pages.pkm_mahasiswa.update');
     Route::delete('/pkmmahasiswa/{id}', [PkmMahasiswaController::class, 'destroy'])->name('pages.pkm_mahasiswa.destroy');
     Route::get('/pkmmahasiswa/export', [PkmMahasiswaController::class, 'exportCsv'])->name('pages.pkm_mahasiswa.export');
 
-    Route::post('/pkmdosen', [PkmDosenController::class, 'add'])->name('pages.pkm_dosen.add');
+    Route::post('/pkmdosen', [PkmDosenController::class, 'add'])->middleware([CheckFormStatus::class . ':pkm dosen'])->name('pages.pkm_dosen.add');
     Route::put('/pkmdosen/{id}', [PkmDosenController::class, 'update'])->name('pages.pkm_dosen.update');
     Route::delete('/pkmdosen/{id}', [PkmDosenController::class, 'destroy'])->name('pages.pkm_dosen.destroy');
     Route::get('/pkmdosen/export', [PkmDosenController::class, 'exportCsv'])->name('pages.pkm_dosen.export');
 
-    Route::get('/publikasipkm', [PublikasiPkmController::class, 'show'])->name('pages.publikasi_pkm');
+    Route::get('/publikasipkm', [PublikasiPkmController::class, 'show'])->middleware([CheckFormStatus::class . ':publikasi pkm'])->name('pages.publikasi_pkm');
     Route::post('/publikasipkm', [PublikasiPkmController::class, 'add'])->name('pages.publikasi_pkm.add');
     Route::put('/publikasipkm/{id}', [PublikasiPkmController::class, 'update'])->name('pages.publikasi_pkm.update');
     Route::delete('/publikasipkm/{id}', [PublikasiPkmController::class, 'destroy'])->name('pages.publikasi_pkm.destroy');
@@ -233,8 +234,6 @@ Route::middleware(['auth','verified','role:user'])->group(function () {
     Route::get('/luaranpkm', [ProdiController::class, 'luaranpkm'])->name('pages.luaran_pkm');
     Route::get('/publikasipkm', [ProdiController::class, 'publikasipkm'])->name('pages.publikasi_pkm');
 
-
-
     //komentar
     Route::post('/komentar_dosen', [KomentarController::class, 'store'])->name('pages.komentar');
 
@@ -264,11 +263,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 
     //Route untuk komentar
     Route::post('/komentar', [KomentarController::class, 'store'])->name('admin.komentar');
+    Route::delete('/komentar/{id}', [KomentarController::class, 'destroy'])->name('admin.komentar.destroy');
 
-     //route tahun_akademik
+    //route tahun_akademik
     Route::get('/tahun-akademik', [TahunAkademikController::class, 'index'])->name('tahun.index');
     Route::post('/tahun-akademik', [TahunAkademikController::class, 'store'])->name('tahun.store');
     Route::post('/tahun-akademik/{id}/aktifkan', [TahunAkademikController::class, 'setAktif'])->name('tahun.setAktif');
+    Route::delete('/tahun/{id}', [TahunAkademikController::class, 'destroy'])->name('tahun.destroy');
 
     // Route untuk edit user
     Route::get('/edit-user/{id}', [HomeController::class, 'edit'])->name('admin.edit-user');
@@ -308,10 +309,28 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/sitasi-luaranpd', [AnalisisController::class, 'sitasi_luaran_pd'])->name('sitasi_luaran_pd');
     Route::get('/pkm-dosen', [AnalisisController::class, 'pkm_dosen'])->name('pkm_dosen');
     Route::get('/pkm-mahasiswa', [AnalisisController::class, 'pkm_mahasiswa'])->name('pkm_mahasiswa');
-    Route::get('/publikasi-ki-pkm', [AnalisisController::class, 'publikasi_ki_pkm'])->name('publikasi_ki_pkm');
-    Route::get('/luaran-ki-pkm', [AnalisisController::class, 'luaran_ki_pkm'])->name('luaran_ki_pkm');
+    Route::get('/publikasi-ki-pkm', [AnalisisController::class, 'publikasi_pkm'])->name('publikasi_ki_pkm');
+    Route::get('/luaran-pkm', [AnalisisController::class, 'luaran_ki_pkm'])->name('luaran_pkm');
     Route::get('/luaran-pkm-dosen', [AnalisisController::class, 'sitasi_luaran_pkm_dosen'])->name('luaran_pkm_dosen');
 
+    // import export route
+    Route::get('/visimisi/export-csv', [ImportExportController::class, 'exportVisiMisiCSV'])->name('visimisi.export.csv');
+    Route::get('/kerjasama/export-csv', [ImportExportController::class, 'exportKerjasamaCSV'])->name('kerjasama.export.csv');
+    Route::get('/ketersediaan-dokumen/export-csv', [ImportExportController::class, 'exportKetersediaanDokumenCSV'])->name('ketersediaan_dokumen.export.csv');
+    Route::get('/evaluasi-pelaksanaan/export-csv', [ImportExportController::class, 'exportEvaluasiPelaksanaanCSV'])->name('evaluasi_pelaksanaan.export.csv');
+    Route::get('/profile-dosen/export-csv', [ImportExportController::class, 'exportProfileDosenCSV'])->name('profile_dosen.export.csv');
+    Route::get('/beban-kinerja-dosen/export-csv', [ImportExportController::class, 'exportBebanKinerjaDosenCSV'])->name('beban_kinerja_dosen.export.csv');
+    Route::get('/dosen-tidak-tetap/export-csv', [ImportExportController::class, 'exportDosenTidakTetapCSV'])->name('dosen_tidak_tetap.export.csv');
+    Route::get('/pelaksana-ta/export-csv', [ImportExportController::class, 'exportPelaksanaTaCSV'])->name('pelaksana_ta.export.csv');
+    Route::get('/lahan-praktek/export-csv', [ImportExportController::class, 'exportLahanPraktekCSV'])->name('lahan_praktek.export.csv');
+    Route::get('/kinerja-dtps/export-csv', [ImportExportController::class, 'exportKinerjaDTPSCSV'])->name('kinerja_dtps.export.csv');
+    Route::get('/tenaga-kependidikan/export-csv', [ImportExportController::class, 'exportTenagaKependidikanCSV'])->name('tenaga_kependidikan.export.csv');
+    Route::get('/rekognisi-tenaga-kependidikan/export-csv', [ImportExportController::class, 'exportRekognisiTenagaKependidikanCSV'])->name('rekognisi_tenaga_kependidikan.export.csv');
+    Route::get('/penelitian-dosen/export-csv', [ImportExportController::class, 'exportPenelitianDosenCSV'])->name('penelitian_dosen.export.csv');
+    Route::get('/penelitian-mahasiswa/export-csv', [ImportExportController::class, 'exportPenelitianMahasiswaCSV'])->name('penelitian_mahasiswa.export.csv');
+    Route::get('/publikasi-karya-ilmiah/export-csv', [ImportExportController::class, 'exportPublikasiKaryaIlmiahCSV'])->name('publikasi_karya_ilmiah.export.csv');
+    Route::get('/luaran-karyailmiah/export-csv', [ImportExportController::class, 'exportLuaranKaryaIlmiahCSV'])->name('luaran_karya_ilmiah.export.csv');
+    
 });
 
 // Dosen Route
@@ -380,11 +399,11 @@ Route::middleware(['auth', 'role:dosen'])->group(function () {
     Route::delete('/dosen/pengembangandosen/{id}', [PengembanganDosenController::class, 'destroy'])->name('dosen.pengembangan_dosen.destroy');
     Route::get('/dosen/pengembangandosen/export', [PengembanganDosenController::class, 'exportCsv'])->name('dosen.pengembangan_dosen.export');
 
-    Route::get('/dosen/pelaksanaanta', [PelaksanaanTaController::class, 'show'])->name('dosen.pelaksanaan_ta');
-    Route::post('/dosen/pelaksanaanta', [PelaksanaanTaController::class, 'add'])->name('dosen.pelaksanaan_ta.add');
-    Route::put('/dosen/pelaksanaanta/{id}', [PelaksanaanTaController::class, 'update'])->name('dosen.pelaksanaan_ta.update');
-    Route::delete('/dosen/pelaksanaanta/{id}', [PelaksanaanTaController::class, 'destroy'])->name('dosen.pelaksanaan_ta.destroy');
-    Route::get('/dosen/pelaksanaanta/export', [PelaksanaanTaController::class, 'exportCsv'])->name('dosen.pelaksanaan_ta.export');
+    Route::get('/dosen/pelaksanaan-ta', [PelaksanaanTaController::class, 'show'])->name('dosen.pelaksanaan_ta.show');
+    Route::post('/pelaksanaan-ta/store', [PelaksanaanTaController::class, 'store'])->name('dosen.pelaksanaan_ta.store');
+    Route::put('/dosen/pelaksanaan-ta/{id}/update', [PelaksanaanTaController::class, 'update'])->name('dosen.pelaksanaan_ta.update');
+    Route::delete('/dosen/pelaksanaan-ta/{id}/destroy', [PelaksanaanTaController::class, 'destroy'])->name('dosen.pelaksanaan_ta.destroy');
+    Route::get('/dosen/pelaksanaan-ta/export', [PelaksanaanTaController::class, 'exportCsv'])->name('dosen.pelaksanaan_ta.export');
 });
 
 // middleware untuk tendik
